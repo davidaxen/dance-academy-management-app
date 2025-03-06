@@ -29,4 +29,9 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":features:auth")
+include(":features:reservation")
+include(":domain:auth")
+include(":data:auth")
 include(":core:ui")
+include(":core:firebase")
