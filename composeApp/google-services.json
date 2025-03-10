@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "523219677722",
+    "project_id": "mydancesharedui",
+    "storage_bucket": "mydancesharedui.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523219677722:android:f2b61de6b2b0a667e317a3",
+        "android_client_info": {
+          "package_name": "com.daxen.mydancekmpsharedui"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3pkM5c7Mj_vKogFC_v3ghojBfNox2jYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

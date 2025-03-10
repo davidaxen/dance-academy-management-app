@@ -30,7 +30,6 @@ internal fun LoginScreen(
     viewModel: LoginViewModel,
     modifier: Modifier = Modifier
 ) {
-//    val state by viewModel.currentUser.collectAsState()
     Column(
         Modifier.fillMaxSize()
     ) {
