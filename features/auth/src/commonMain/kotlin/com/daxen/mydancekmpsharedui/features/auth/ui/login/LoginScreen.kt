@@ -28,20 +28,26 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun LoginScreen(
     viewModel: LoginViewModel,
+    navigateToUserScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     Column(
         Modifier.fillMaxSize()
     ) {
         CurvedBackground(modifier)
-        FieldsSection(modifier, viewModel = viewModel)
+        FieldsSection(
+            modifier,
+            viewModel = viewModel,
+            navigateToUserScreen = navigateToUserScreen
+        )
 
     }
 }
 
 
 @Composable
-private fun FieldsSection(modifier: Modifier = Modifier, viewModel: LoginViewModel) {
+private fun FieldsSection(modifier: Modifier = Modifier, viewModel: LoginViewModel, navigateToUserScreen: () -> Unit) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -71,6 +77,10 @@ private fun FieldsSection(modifier: Modifier = Modifier, viewModel: LoginViewMod
                 )
         ) {
             Text("Iniciar")
+        }
+
+        Button(onClick = navigateToUserScreen) {
+            Text("probando")
         }
     }
 }

@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.daxen.mydancekmpsharedui.features.auth.Auth
 import com.daxen.mydancekmpsharedui.features.auth.authRoutes
+import com.daxen.mydancekmpsharedui.features.user.UserRoute
+import com.daxen.mydancekmpsharedui.features.user.userRoutes
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.koin.core.module.Module
@@ -27,9 +29,13 @@ fun App(
                 startDestination = Auth
             ) {
                 authRoutes(
-//                    goToExample = {}
-
+                    goToUser = {
+                        navController.navigate(
+                            UserRoute
+                        )
+                    }
                 )
+                userRoutes()
             }
         }
     }

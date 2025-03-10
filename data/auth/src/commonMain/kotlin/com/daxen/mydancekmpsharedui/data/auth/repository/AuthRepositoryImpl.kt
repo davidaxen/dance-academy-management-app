@@ -1,17 +1,19 @@
 package com.daxen.mydancekmpsharedui.data.auth.repository
 
 import com.daxen.mydancekmpsharedui.core.firebase.auth.FirebaseAuthService
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class AuthRepositoryImpl(
     private val firebaseAuthService: FirebaseAuthService,
 ): AuthRepository {
 
-//    private val _currentUser = MutableStateFlow<User?>(null)
-//    override val currentUser: StateFlow<User?> get() = _currentUser
+    private val _currentUid = MutableStateFlow(firebaseAuthService.getCurrentUserId())
+    override val currentUid: StateFlow<String?> get() = _currentUid
 
     override suspend fun login(email: String, password: String) {
-        val userReponse = firebaseAuthService.login(email, password)
-//        _currentUser.value = userReponse.toUser()
+        val currentUserAuthId = firebaseAuthService.login(email, password)
+        _currentUid.value = currentUserAuthId
     }
 
     override suspend fun register(email: String, password: String) {
@@ -20,6 +22,6 @@ class AuthRepositoryImpl(
 
     override suspend fun logout() {
         firebaseAuthService.logout()
-//        _currentUser.value = null
+        _currentUid.value = null
     }
 }

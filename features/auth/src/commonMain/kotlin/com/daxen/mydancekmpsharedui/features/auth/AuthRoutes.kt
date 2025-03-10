@@ -13,12 +13,13 @@ import org.koin.compose.viewmodel.koinViewModel
 data object Auth
 
 fun NavGraphBuilder.authRoutes(
-//    goToExample: () -> Unit,
+    goToUser: () -> Unit,
 ) {
     composable<Auth> {
         val viewModel: LoginViewModel = koinViewModel()
         LoginScreen(
             viewModel = viewModel,
+            navigateToUserScreen = goToUser,
             modifier = Modifier.fillMaxSize()
         )
     }

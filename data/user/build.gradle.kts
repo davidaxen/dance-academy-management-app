@@ -3,10 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.google.playServices)
+    alias(libs.plugins.androidLibrary)
 }
 
 kotlin {
@@ -16,49 +13,34 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_17)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "ComposeApp"
+            baseName = "dataUser"
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        androidMain.dependencies {
-            implementation(project.dependencies.platform(libs.firebase.bom))
-        }
         commonMain.dependencies {
-            implementation(projects.core.ui)
-            implementation(projects.features.auth)
-            implementation(projects.features.user)
+            implementation(projects.core.firebase)
 
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
-
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.koin.core)
-            implementation(libs.bundles.koin.compose)
-
-            implementation(libs.firebase.auth)
-            implementation(libs.firebase.firestore)
         }
     }
 }
 
 android {
-    namespace = "com.daxen.mydancekmpsharedui"
+    namespace = "com.daxen.mydancekmpsharedui.data.user"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.daxen.mydancekmpsharedui"
         minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
     }
     packaging {
         resources {
@@ -75,8 +57,3 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
-
-dependencies {
-    debugImplementation(compose.uiTooling)
-}
-

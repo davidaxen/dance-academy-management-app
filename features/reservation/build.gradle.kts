@@ -22,7 +22,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "reservationAuth"
+            baseName = "featuresReservation"
             isStatic = true
         }
     }
@@ -33,7 +33,6 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
-            implementation(projects.domain.auth)
 
             implementation(compose.runtime)
             implementation(compose.foundation)
