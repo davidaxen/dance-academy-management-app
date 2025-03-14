@@ -1,13 +1,17 @@
 package com.daxen.mydancekmpsharedui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.daxen.mydancekmpsharedui.features.auth.Auth
-import com.daxen.mydancekmpsharedui.features.auth.authRoutes
-import com.daxen.mydancekmpsharedui.features.user.UserRoute
-import com.daxen.mydancekmpsharedui.features.user.userRoutes
+import com.daxen.mydancekmpsharedui.navigation.bottomnavigation.AppBottomNavigation
+import com.daxen.mydancekmpsharedui.navigation.CentralNavigation
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.koin.core.module.Module
@@ -24,19 +28,33 @@ fun App(
     ) {
         MaterialTheme {
             val navController = rememberNavController()
-            NavHost(
-                navController = navController,
-                startDestination = Auth
+
+            val isUserLogged = Firebase.auth.currentUser != null
+            Scaffold (
+                bottomBar = {
+                     if (isUserLogged) AppBottomNavigation(navController)
+                }
             ) {
-                authRoutes(
-                    goToUser = {
-                        navController.navigate(
-                            UserRoute
-                        )
-                    }
-                )
-                userRoutes()
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                ) {
+
+                    CentralNavigation(navController, isUserLogged)
+                }
             }
+
+//            CoroutineScope(Dispatchers.Main).launch {
+//                //Firebase.auth.signOut()
+//            }
+
+//            if (Firebase.auth.currentUser != null) {
+//
+//            } else {
+//                NavigationWrapper()
+//            }
+
         }
     }
 }
