@@ -10,11 +10,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun UserScreen(
-    viewModel: UserViewModel,
-    modifier: Modifier = Modifier
+    viewModel: UserViewModel = koinViewModel(),
+    modifier: Modifier = Modifier,
+    navigateToLogin: () -> Unit
 ) {
     val currentUser by viewModel.currentUser.collectAsState()
 
@@ -28,6 +30,12 @@ internal fun UserScreen(
             println(currentUser)
         }) {
             Text("Ver")
+        }
+
+        Button(onClick = {
+            navigateToLogin()
+        }) {
+            Text("LogOut")
         }
 
     }

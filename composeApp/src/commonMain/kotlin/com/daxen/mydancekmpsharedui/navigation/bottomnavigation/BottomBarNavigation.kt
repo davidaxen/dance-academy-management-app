@@ -16,8 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 fun AppBottomNavigation(navController: NavHostController) {
     val bottomScreens = remember {
         listOf(
-            BottomDestinations.User,
-            BottomDestinations.Auth
+            BottomBarDestination.User
         )
     }
 

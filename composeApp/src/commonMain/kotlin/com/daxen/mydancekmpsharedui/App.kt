@@ -1,15 +1,9 @@
 package com.daxen.mydancekmpsharedui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.daxen.mydancekmpsharedui.navigation.bottomnavigation.AppBottomNavigation
-import com.daxen.mydancekmpsharedui.navigation.CentralNavigation
+import com.daxen.mydancekmpsharedui.navigation.CentralAppNavHost
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -27,33 +21,15 @@ fun App(
         }
     ) {
         MaterialTheme {
-            val navController = rememberNavController()
-
             val isUserLogged = Firebase.auth.currentUser != null
-            Scaffold (
-                bottomBar = {
-                     if (isUserLogged) AppBottomNavigation(navController)
-                }
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                ) {
+            val navController = rememberNavController()
+            CentralAppNavHost(navController,isUserLogged)
 
-                    CentralNavigation(navController, isUserLogged)
-                }
-            }
 
 //            CoroutineScope(Dispatchers.Main).launch {
-//                //Firebase.auth.signOut()
+//                Firebase.auth.signOut()
 //            }
 
-//            if (Firebase.auth.currentUser != null) {
-//
-//            } else {
-//                NavigationWrapper()
-//            }
 
         }
     }
