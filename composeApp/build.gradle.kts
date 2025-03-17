@@ -37,6 +37,7 @@ kotlin {
             implementation(projects.core.ui)
             implementation(projects.features.auth)
             implementation(projects.features.user)
+            implementation(projects.features.reservation)
 
             implementation(libs.navigation.compose)
 
