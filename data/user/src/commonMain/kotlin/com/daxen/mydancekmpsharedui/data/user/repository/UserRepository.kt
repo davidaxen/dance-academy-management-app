@@ -4,6 +4,6 @@ import com.daxen.mydancekmpsharedui.data.user.model.User
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
-    val currentUser: StateFlow<User?>
+    val currentUser: StateFlow<User>
     suspend fun updateCurrentUser()
 }

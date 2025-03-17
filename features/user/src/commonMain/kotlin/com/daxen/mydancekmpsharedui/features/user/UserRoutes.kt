@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 data object UserGraph
 
 @Serializable
-data object UserScreenRoute
+private data object UserScreenRoute
 
 
 fun NavGraphBuilder.userNavGraph(navigateToLogin: () -> Unit) {

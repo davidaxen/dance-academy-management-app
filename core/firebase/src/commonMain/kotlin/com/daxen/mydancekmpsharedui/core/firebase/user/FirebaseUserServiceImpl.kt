@@ -9,7 +9,7 @@ class FirebaseUserServiceImpl(
     private val firebaseAuthService: FirebaseAuthService
 ): FirebaseUserService {
 
-    override suspend fun updateCurrentUser(): UserResponse {
+    override suspend fun getCurrentUserData(): UserResponse {
         val userId = firebaseAuthService.getCurrentUserId()
             ?: throw IllegalStateException("ID de usuario nulo")
 

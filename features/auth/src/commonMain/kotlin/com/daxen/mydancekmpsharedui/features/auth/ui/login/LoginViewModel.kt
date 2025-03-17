@@ -8,14 +8,12 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
-//    val currentUser: StateFlow<User?> = authRepository.currentUser
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
                 println("entroooo")
                 authRepository.login(email.trim(), password.trim())
-//                loginUseCase(email.trim(), password.trim())
             }catch (e: Exception) {
                 println("LoginViewModel Error en login $e")
             }
@@ -26,7 +24,6 @@ class LoginViewModel(
         viewModelScope.launch {
             try {
                 authRepository.register(email.trim(), password.trim())
-//                registerUseCase(email.trim(), password.trim())
             }catch (e: Exception) {
                 println("UserViewModel Error en register $e")
             }

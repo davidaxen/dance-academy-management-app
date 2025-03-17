@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 class UserRepositoryImpl(
     private val firebaseUserService: FirebaseUserService,
 ): UserRepository {
-    private val _currentUser = MutableStateFlow<User?>(null)
-    override val currentUser: StateFlow<User?> get() = _currentUser
+    private val _currentUser = MutableStateFlow(User.EMPTY)
+    override val currentUser: StateFlow<User> get() = _currentUser
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -23,8 +23,8 @@ class UserRepositoryImpl(
     }
 
     override suspend fun updateCurrentUser() {
-        val userResponse = firebaseUserService.updateCurrentUser()
-        _currentUser.value =  userResponse.toUser()
+        val userResponse = firebaseUserService.getCurrentUserData()?.toUser() ?: User.EMPTY
+        _currentUser.value =  userResponse
     }
 
 }

@@ -24,13 +24,6 @@ fun App(
             val isUserLogged = Firebase.auth.currentUser != null
             val navController = rememberNavController()
             CentralAppNavHost(navController,isUserLogged)
-
-
-//            CoroutineScope(Dispatchers.Main).launch {
-//                Firebase.auth.signOut()
-//            }
-
-
         }
     }
 }
