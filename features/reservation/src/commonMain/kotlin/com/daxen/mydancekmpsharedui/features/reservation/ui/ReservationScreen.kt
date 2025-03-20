@@ -45,6 +45,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
@@ -57,10 +58,9 @@ val monthNames = listOf(
 )
 
 fun getCurrentWeek(date: LocalDate): List<LocalDate> {
-    val dayOfWeek = (date.dayOfWeek.ordinal + 6) % 6 // Convertimos 0=Lunes, 6=Domingo
-    val startOfWeek = date.minus(dayOfWeek.toLong(), DateTimeUnit.DAY)
+    val todayWeekDay = date.dayOfWeek.isoDayNumber
 
-    return (0..6).map { startOfWeek.plus(it.toLong(), DateTimeUnit.DAY) }
+    return (0..6).map { date.plus(it - todayWeekDay + 1, DateTimeUnit.DAY) }
 }
 
 fun getPreviousWeek(date: LocalDate) = getCurrentWeek(date.minus(7, DateTimeUnit.DAY))
@@ -177,7 +177,11 @@ fun ClassScheduleScreen(classes: List<ClassModel>) {
                     onDateSelected = { selectedDate = it },
                     onPreviousWeek = {
                         currentWeek = getPreviousWeek(currentWeek.first())
-                        selectedDate = currentWeek.first()
+                        if (currentWeek.contains(today)) {
+                            selectedDate = today
+                        } else {
+                            selectedDate = currentWeek.first()
+                        }
                     },
                     onNextWeek = {
                         currentWeek = getNextWeek(currentWeek.first())
@@ -195,11 +199,34 @@ fun ClassScheduleScreen(classes: List<ClassModel>) {
                 LocalDate.parse(it.date) == selectedDate
             }
 
-            LazyColumn {
-                items(filteredClasses) { danceClass ->
-                    DanceClassCard(danceClass, /* onReserveClick = {  Acción de reserva  }*/)
+            if (filteredClasses.isEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info, // Icono de "sin eventos"
+                        contentDescription = "Sin clases",
+                        modifier = Modifier.size(64.dp),
+                        tint = Color.Gray
+                    )
+                    Text(
+                        text = "No hay clases disponibles para este día",
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
+                }
+            } else {
+                // Mostrar la lista de clases si hay
+                LazyColumn {
+                    items(filteredClasses) { danceClass ->
+                        DanceClassCard(danceClass, /* onReserveClick = {  Acción de reserva  }*/)
+                    }
                 }
             }
+
+
         }
     }
 }
@@ -218,7 +245,7 @@ fun WeekSelector(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val canGoBack = currentWeek.first().minus(7, DateTimeUnit.DAY) >= today
+        val canGoBack = currentWeek.last().minus(7, DateTimeUnit.DAY) >= today
         IconButton(
             onClick = onPreviousWeek,
             enabled = canGoBack
