@@ -3,8 +3,11 @@ package com.daxen.mydancekmpsharedui.navigation.bottomnavigation
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.AccountBox
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.runtime.Composable
+import com.daxen.mydancekmpsharedui.features.reservation.ReservationGraph
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import kotlinx.serialization.Serializable
 
@@ -26,5 +29,16 @@ sealed class BottomBarDestination<T>(
             Icon(imageVector = Icons.Outlined.AccountBox, contentDescription = "")
         },
         route = UserGraph
+    )
+    @Serializable
+    data object Reservation: BottomBarDestination<ReservationGraph>(
+        title = "Reservas",
+        selectedIcon = {
+            Icon(imageVector = Icons.Filled.DateRange, contentDescription = "")
+        },
+        unselectedIcon = {
+            Icon(imageVector = Icons.Outlined.DateRange, contentDescription = "")
+        },
+        route = ReservationGraph
     )
 }

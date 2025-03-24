@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.navigation.bottomnavigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.daxen.mydancekmpsharedui.features.reservation.reservationNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userNavGraph
 import com.daxen.mydancekmpsharedui.navigation.CentralAppDestination
 
@@ -10,12 +11,14 @@ import com.daxen.mydancekmpsharedui.navigation.CentralAppDestination
 fun BottomBarNavHost(bottomNavController: NavHostController, appNavController: NavHostController) {
     NavHost(
         navController = bottomNavController,
-        startDestination = BottomBarDestination.User.route
+        startDestination = BottomBarDestination.Reservation.route
     ) {
         userNavGraph(
             navigateToLogin = {
                 appNavController.navigate(CentralAppDestination.Auth.route)
             }
         )
+
+        reservationNavGraph()
     }
 }
