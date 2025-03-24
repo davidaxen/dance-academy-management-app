@@ -4,11 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClassesResponse(
-    val academyId: String,
-    val availableSpots: Int,
-    val date: String,
-    val hour: String,
-    val maxCapacity: Int,
     val name: String,
+    val hour: String,
     val status: String,
+    val teacherId: String,
+    val dayOfWeek: String,
 )

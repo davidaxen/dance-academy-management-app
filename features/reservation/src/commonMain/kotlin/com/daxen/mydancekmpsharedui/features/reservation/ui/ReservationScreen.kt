@@ -100,10 +100,9 @@ private fun ClassScheduleScreen(classes: List<ClassModel>, viewModel: Reservatio
     val currentWeek by viewModel.currentWeek.collectAsState()
     val canGoBack by viewModel.canGoBack.collectAsState()
     val filteredClasses = remember(classes, selectedDate) {
-        classes.filter { LocalDate.parse(it.date) == selectedDate }
+        classes.filter { it.day == selectedDate.dayOfWeek.toString() }
     }
     val today = viewModel.today
-
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -137,7 +136,11 @@ private fun ClassScheduleScreen(classes: List<ClassModel>, viewModel: Reservatio
 private fun ClassesListSection(
     classes: List<ClassModel>,
 ) {
-    Box(modifier = Modifier.fillMaxWidth().padding(LocalPadding.current.tiny)) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = LocalPadding.current.tiny)
+        .padding(horizontal = LocalPadding.current.normal)
+    ) {
         if (classes.isEmpty()) {
             Column(
                 modifier = Modifier.fillMaxSize(),

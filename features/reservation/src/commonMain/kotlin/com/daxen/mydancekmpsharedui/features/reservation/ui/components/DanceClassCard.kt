@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.data.classes.model.ClassModel
-import kotlinx.datetime.LocalDate
 
 @Composable
 internal fun DanceClassCard(
@@ -41,11 +40,9 @@ internal fun DanceClassCard(
 //                contentDescription = null,
 //                modifier = Modifier.size(60.dp).clip(CircleShape)
 //            )
-            val local = LocalDate.parse(danceClass.date)
             Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) {
                 Text(danceClass.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("Instructor: ${danceClass.academyId}", fontSize = 14.sp, color = Color.Gray)
-                Text("Dia: ${local.dayOfWeek}", fontSize = 14.sp, color = Color.Gray)
+                Text("Dia: ${danceClass.day}", fontSize = 14.sp, color = Color.Gray)
                 Text("Hora: ${danceClass.hour}", fontSize = 14.sp, color = Color.Gray)
             }
 

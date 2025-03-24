@@ -7,10 +7,9 @@ class FirebaseClassesServiceImpl(
     private val firestore: FirebaseFirestore,
 ) : FirebaseClassesService {
     override suspend fun getClassesByAcademyId(id: String): MutableList<ClassesResponse> {
-        val documents = firestore.collection("classes")
-            .where {
-                "academyId" equalTo id
-            }.get().documents
+        val documents = firestore.collection("academies/$id/classes")
+            .get()
+            .documents
 
         val classesResponseList = mutableListOf<ClassesResponse>()
         for (document in documents) {

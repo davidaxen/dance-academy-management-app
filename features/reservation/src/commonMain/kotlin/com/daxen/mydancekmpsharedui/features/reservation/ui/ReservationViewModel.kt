@@ -49,7 +49,7 @@ internal class ReservationViewModel(
 
     private fun getClasses() {
         viewModelScope.launch {
-            classesRepository.getClassesByAcademyId("ACADEMYID1")
+            classesRepository.getClassesByAcademyId("CJK3TNrlIeIXdKYeI5Ee")
 
             try {
                 classesRepository.classesList.collect { classList ->
