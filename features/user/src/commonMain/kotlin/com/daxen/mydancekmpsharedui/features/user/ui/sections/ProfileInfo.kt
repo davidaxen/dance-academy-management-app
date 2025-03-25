@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.user.ui
+package com.daxen.mydancekmpsharedui.features.user.ui.sections
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun ProfileInfo(
+internal fun ProfileInfo(
     navigateBack: () -> Unit
 ) {
     Scaffold (
