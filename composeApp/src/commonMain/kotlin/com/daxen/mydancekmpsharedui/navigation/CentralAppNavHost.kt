@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
+import com.daxen.mydancekmpsharedui.features.user.userOptionsNavGraph
 import com.daxen.mydancekmpsharedui.main.mainNavGraph
 
 @Composable
@@ -24,5 +25,7 @@ fun CentralAppNavHost(navController: NavHostController, isUserLogged: Boolean) {
         mainNavGraph(
             navController = navController
         )
+
+        userOptionsNavGraph(appNavController = navController)
     }
 }

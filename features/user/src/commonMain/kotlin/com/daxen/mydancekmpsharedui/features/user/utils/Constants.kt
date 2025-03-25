@@ -6,12 +6,14 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.ui.graphics.Color
+import com.daxen.mydancekmpsharedui.features.user.ProfileAction
 
 object Constants {
     val profileItems = listOf(
         ProfileItem.Section("Tu cuenta"),
-        ProfileItem.Option("Datos personales", Icons.Default.Person, ProfileAction.ViewPersonalInfo),
-        ProfileItem.Option("Cambiar contraseña", Icons.Default.Lock, ProfileAction.ChangePassword),
+        ProfileItem.Option("Datos personales", Icons.Default.Person, ProfileAction.PersonalInfoRoute),
+        ProfileItem.Option("Cambiar contraseña", Icons.Default.Lock),
 
 //        ProfileItem.Section("Mis clases"),
 //        ProfileItem.Option("Próximas clases", Icons.Default.Event, "upcoming_classes"),
@@ -26,13 +28,13 @@ object Constants {
 //        ProfileItem.Option("Mi perfil profesional", Icons.Default.Info, "bio"),
 
         ProfileItem.Section("Preferencias"),
-        ProfileItem.Option("Notificaciones", Icons.Default.Notifications, ProfileAction.Notifications),
+        ProfileItem.Option("Notificaciones", Icons.Default.Notifications),
 //        ProfileItem.Option("WhatsApp", Icons.Default.Chat, "whatsapp"),
 
         ProfileItem.Section("Ajustes"),
 //        ProfileItem.Option("Ayuda", Icons.Default.Info, "help"),
-        ProfileItem.Option("Idioma", Icons.Default.Edit, ProfileAction.ViewPersonalInfo),
-        ProfileItem.Option("Cerrar sesión", Icons.AutoMirrored.Filled.ExitToApp, ProfileAction.Logout)
+        ProfileItem.Option("Idioma", Icons.Default.Edit),
+        ProfileItem.Option("Cerrar sesión", Icons.AutoMirrored.Filled.ExitToApp, color = Color.Red),
     )
 
 }

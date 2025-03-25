@@ -1,10 +1,18 @@
 package com.daxen.mydancekmpsharedui.features.user
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.daxen.mydancekmpsharedui.features.user.ui.ProfileInfo
 import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
 import kotlinx.serialization.Serializable
 
@@ -14,15 +22,51 @@ data object UserGraph
 @Serializable
 private data object UserScreenRoute
 
+@Serializable
+data object UserOptionsGraph
 
-fun NavGraphBuilder.userNavGraph(navigateToLogin: () -> Unit) {
+@Serializable
+sealed class ProfileAction {
+    @Serializable
+    data object PersonalInfoRoute : ProfileAction()
 
+}
+
+fun NavGraphBuilder.userNavGraph(navigateToLogin: () -> Unit, appNavController: NavController) {
     navigation<UserGraph>(startDestination = UserScreenRoute) {
         composable<UserScreenRoute> {
             UserScreen(
                 navigateToLogin = navigateToLogin,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                navigateToSection = { action ->
+                    when (action) {
+                        is ProfileAction.PersonalInfoRoute -> {
+                            appNavController.navigate(ProfileAction.PersonalInfoRoute)
+                        }
+                    }
+                }
             )
+        }
+    }
+}
+
+fun NavGraphBuilder.userOptionsNavGraph(appNavController: NavController) {
+    navigation<UserOptionsGraph>(startDestination = ProfileAction.PersonalInfoRoute) {
+        composable<ProfileAction.PersonalInfoRoute>(
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(300),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                ) + fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(300),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                ) + fadeOut(animationSpec = tween(300, easing = EaseIn))
+            }
+        ) {
+            ProfileInfo({ appNavController.popBackStack() })
         }
     }
 }
