@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.daxen.mydancekmpsharedui.features.user.ui.sections.ProfileInfo
+import com.daxen.mydancekmpsharedui.features.user.ui.sections.personalData.PersonalDataScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserViewModel
 import kotlinx.serialization.Serializable
@@ -75,7 +75,7 @@ fun NavGraphBuilder.userOptionsNavGraph(appNavController: NavController) {
                 ) + fadeOut(animationSpec = tween(300, easing = EaseIn))
             }
         ) {
-            ProfileInfo({ appNavController.popBackStack() })
+            PersonalDataScreen(navigateBack = { appNavController.popBackStack() })
         }
     }
 }

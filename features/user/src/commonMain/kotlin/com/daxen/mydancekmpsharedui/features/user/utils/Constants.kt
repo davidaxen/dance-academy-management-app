@@ -34,7 +34,7 @@ object Constants {
         ProfileItem.Section("Ajustes"),
 //        ProfileItem.Option("Ayuda", Icons.Default.Info, "help"),
         ProfileItem.Option("Idioma", Icons.Default.Edit),
-        ProfileItem.Option("Cerrar sesión", Icons.AutoMirrored.Filled.ExitToApp, ProfileAction.LogOut,color = Color.Red),
+        ProfileItem.Option("Cerrar sesión", Icons.AutoMirrored.Filled.ExitToApp, ProfileAction.LogOut, color = Color.Red),
     )
 
 }
