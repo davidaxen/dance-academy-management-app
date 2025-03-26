@@ -14,6 +14,7 @@ fun BottomBarNavHost(bottomNavController: NavHostController, appNavController: N
         startDestination = BottomBarDestination.Reservation.route
     ) {
         userNavGraph(
+            appNavController = appNavController,
             navigateToLogin = {
                 appNavController.navigate(CentralAppDestination.Auth.route)
             }
