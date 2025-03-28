@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -31,11 +29,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
-import com.daxen.mydancekmpsharedui.data.classes.model.ClassModel
+import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
+import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
+import com.daxen.mydancekmpsharedui.data.classes.models.SpecificClassModel
+import com.daxen.mydancekmpsharedui.data.classes.models.WeeklyClassModel
 import com.daxen.mydancekmpsharedui.features.reservation.ui.components.DanceClassCard
 import com.daxen.mydancekmpsharedui.features.reservation.ui.components.WeekSelector
+import com.daxen.mydancekmpsharedui.features.reservation.utils.ClassOrigin
 import com.daxen.mydancekmpsharedui.features.reservation.utils.Constants
+import com.daxen.mydancekmpsharedui.features.reservation.utils.DisplayClass
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -47,17 +51,9 @@ internal fun ReservationScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        when (classesState.value) {
+        when (val state = classesState.value) {
             is ClassesListUiState.Loading -> {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Cargando clases...")
-                }
+                LoadingComponent(text = "Cargando clases...")
             }
 
             is ClassesListUiState.Empty -> {
@@ -73,21 +69,20 @@ internal fun ReservationScreen(
             }
 
             is ClassesListUiState.Success -> {
-                val classes = (classesState.value as ClassesListUiState.Success).classes
-                ClassScheduleScreen(classes, viewModel)
+                ClassScheduleScreen(
+                    weeklyClasses = state.weekly,
+                    specificClasses = state.specific,
+                    viewModel = viewModel
+                )
             }
 
             is ClassesListUiState.Error -> {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Error al cargar las clases",
-                        color = Color.Red,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(onClick = { }) {
-                        Text("Reintentar")
+                ErrorComponent(
+                    message = "Error al cargar las clases",
+                    onRetry = {
+                        viewModel.reloadClasses()
                     }
-                }
+                )
             }
         }
 
@@ -95,13 +90,57 @@ internal fun ReservationScreen(
 }
 
 @Composable
-private fun ClassScheduleScreen(classes: List<ClassModel>, viewModel: ReservationViewModel) {
+private fun ClassScheduleScreen(
+    weeklyClasses: List<WeeklyClassModel>,
+    specificClasses: List<SpecificClassModel>,
+    viewModel: ReservationViewModel
+) {
+    val currentUser by viewModel.currentUser.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
     val currentWeek by viewModel.currentWeek.collectAsState()
     val canGoBack by viewModel.canGoBack.collectAsState()
-    val filteredClasses = remember(classes, selectedDate) {
-        classes.filter { it.day == selectedDate.dayOfWeek.toString() }
+//    val filteredClasses = remember(classes, selectedDate) {
+//        classes.filter { it.day == selectedDate.dayOfWeek.toString() }
+//    }
+
+    val filteredClasses = remember(specificClasses, weeklyClasses, selectedDate) {
+        val dayOfWeek = selectedDate.dayOfWeek.name
+        val specific = specificClasses
+            .filter { it.date == selectedDate.toString() }
+            .map {
+                DisplayClass(
+                    id = it.data.id,
+                    hour = it.data.hour,
+                    name = it.data.name,
+                    teacherId = it.data.teacherId,
+                    status = it.data.status,
+                    availableSpots = it.data.availableSpots,
+                    origin = ClassOrigin.SPECIFIC
+                )
+            }
+
+        val weekly = weeklyClasses
+            .filter { it.dayOfWeek == dayOfWeek }
+            .map {
+                DisplayClass(
+                    id = it.data.id,
+                    hour = it.data.hour,
+                    name = it.data.name,
+                    teacherId = it.data.teacherId,
+                    status = it.data.status,
+                    availableSpots = it.data.availableSpots,
+                    origin = ClassOrigin.WEEKLY
+                )
+            }
+
+        (specific + weekly).sortedBy { LocalTime.parse(it.hour) }
     }
+//    val filteredClasses = remember(specificClasses, weeklyClasses, selectedDate) {
+//        val dayOfWeek = selectedDate.dayOfWeek.name
+//        val weekly = weeklyClasses.filter { it.dayOfWeek == dayOfWeek }
+//        val specific = specificClasses.filter { it.date == selectedDate.toString() }
+//        (specific + weekly).sortedBy { it.hour }
+//    }
     val today = viewModel.today
 
     Column(
@@ -127,14 +166,22 @@ private fun ClassScheduleScreen(classes: List<ClassModel>, viewModel: Reservatio
         }
 
         ClassesListSection(
-            classes = filteredClasses
+            classes = filteredClasses,
+            onReserveClick = { classModel ->
+                viewModel.reserveClass(
+                    academyId = "CJK3TNrlIeIXdKYeI5Ee",
+                    studentId = currentUser.uid,
+                    classId = classModel.id
+                )
+            }
         )
     }
 }
 
 @Composable
 private fun ClassesListSection(
-    classes: List<ClassModel>,
+    classes: List<DisplayClass>,
+    onReserveClick: (DisplayClass) -> Unit,
 ) {
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -163,7 +210,7 @@ private fun ClassesListSection(
             // Mostrar la lista de clases si hay
             LazyColumn {
                 items(classes) { danceClass ->
-                    DanceClassCard(danceClass /* onReserveClick = {  Acción de reserva  }*/)
+                    DanceClassCard(danceClass, onReserveClick = onReserveClick)
                 }
             }
         }

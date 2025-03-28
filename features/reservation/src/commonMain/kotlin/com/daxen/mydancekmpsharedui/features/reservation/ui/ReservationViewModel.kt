@@ -2,8 +2,8 @@ package com.daxen.mydancekmpsharedui.features.reservation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daxen.mydancekmpsharedui.data.classes.model.ClassModel
 import com.daxen.mydancekmpsharedui.data.classes.repository.ClassesRepository
+import com.daxen.mydancekmpsharedui.data.reservation.repository.ReservationRepository
 import com.daxen.mydancekmpsharedui.data.user.model.User
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +23,8 @@ import kotlinx.datetime.todayIn
 
 internal class ReservationViewModel(
     userRepository: UserRepository,
-    private val classesRepository: ClassesRepository
+    private val classesRepository: ClassesRepository,
+    private val reservationRepository: ReservationRepository,
 ) : ViewModel() {
     val currentUser: StateFlow<User> = userRepository.currentUser
 
@@ -42,31 +43,39 @@ internal class ReservationViewModel(
         week.last().minus(7, DateTimeUnit.DAY) >= today
     }.stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
-
     init {
-        getClasses()
+        loadClasses()
     }
-
-    private fun getClasses() {
+    private fun loadClasses() {
         viewModelScope.launch {
-            classesRepository.getClassesByAcademyId("CJK3TNrlIeIXdKYeI5Ee")
+            _classesListState.value = ClassesListUiState.Loading
 
             try {
-                classesRepository.classesList.collect { classList ->
-                    when (classList) {
-                        null -> {
-                            _classesListState.value = ClassesListUiState.Loading
-                        }
-                        emptyList<ClassModel>() -> {
-                            _classesListState.value = ClassesListUiState.Empty
-                        }
-                        else -> {
-                            _classesListState.value = ClassesListUiState.Success(classList)
-                        }
-                    }
+                classesRepository.getClassesByAcademyId("CJK3TNrlIeIXdKYeI5Ee")
+
+                val weekly = classesRepository.weeklyClassesList.value
+                val specific = classesRepository.specificClassesList.value
+
+                if (weekly.isEmpty() && specific.isEmpty()) {
+                    _classesListState.value = ClassesListUiState.Empty
+                } else {
+                    _classesListState.value = ClassesListUiState.Success(
+                        weekly = weekly,
+                        specific = specific
+                    )
                 }
             } catch (e: Exception) {
                 _classesListState.value = ClassesListUiState.Error
+            }
+        }
+    }
+
+    fun reserveClass(academyId: String, studentId: String, classId: String) {
+        viewModelScope.launch {
+            try {
+                reservationRepository.reserveClass(academyId, studentId, classId)
+            } catch (e: Exception) {
+                println("Error al reservar clase: ${e.message}")
             }
         }
     }
@@ -101,4 +110,9 @@ internal class ReservationViewModel(
 
     private fun getPreviousWeek(date: LocalDate) = getCurrentWeek(date.minus(7, DateTimeUnit.DAY))
     private fun getNextWeek(date: LocalDate) = getCurrentWeek(date.plus(7, DateTimeUnit.DAY))
+
+    fun reloadClasses() {
+        _classesListState.value = ClassesListUiState.Loading
+        loadClasses()
+    }
 }

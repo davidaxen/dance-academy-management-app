@@ -18,12 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
-import com.daxen.mydancekmpsharedui.data.classes.model.ClassModel
+import com.daxen.mydancekmpsharedui.features.reservation.utils.DisplayClass
 
 @Composable
 internal fun DanceClassCard(
-    danceClass: ClassModel,
-//  onReserveClick: (DanceClass) -> Unit
+    danceClass: DisplayClass,
+    onReserveClick: (DisplayClass) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -42,13 +42,13 @@ internal fun DanceClassCard(
 //            )
             Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) {
                 Text(danceClass.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("Dia: ${danceClass.day}", fontSize = 14.sp, color = Color.Gray)
+                Text("Dia: ${danceClass.origin.name}", fontSize = 14.sp, color = Color.Gray)
                 Text("Hora: ${danceClass.hour}", fontSize = 14.sp, color = Color.Gray)
             }
 
             Button(
                 onClick = {
-//                    onReserveClick(danceClass)
+                    onReserveClick(danceClass)
                 },
                 enabled = danceClass.availableSpots > 0,
                 colors = ButtonDefaults.buttonColors(
