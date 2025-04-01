@@ -1,6 +1,5 @@
 package com.daxen.mydancekmpsharedui.data.classes.models
 
-
 data class ClassModel(
     val id: String,
     val name: String,

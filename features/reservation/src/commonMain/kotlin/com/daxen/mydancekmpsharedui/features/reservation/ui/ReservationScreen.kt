@@ -228,7 +228,9 @@ private fun WeekSelectorSection(
     onNextWeek: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(8.dp), elevation = 4.dp, modifier = Modifier.fillMaxWidth()
+        shape = RoundedCornerShape(8.dp),
+        elevation = 4.dp,
+        modifier = Modifier.fillMaxWidth()
     ) {
         WeekSelector(
             currentWeek = currentWeek,

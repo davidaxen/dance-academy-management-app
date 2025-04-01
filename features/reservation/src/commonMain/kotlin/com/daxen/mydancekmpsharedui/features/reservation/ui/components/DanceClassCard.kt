@@ -1,6 +1,7 @@
 package com.daxen.mydancekmpsharedui.features.reservation.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,34 +29,43 @@ internal fun DanceClassCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = LocalPadding.current.tiny)
-            .clickable { /* Ir a detalles */ },
+            .padding(vertical = LocalPadding.current.tiny),
         shape = RoundedCornerShape(12.dp),
         elevation = 4.dp
     ) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-
-//            Image(
-//                painter = painterResource(id = danceClass.imageRes),
-//                contentDescription = null,
-//                modifier = Modifier.size(60.dp).clip(CircleShape)
-//            )
-            Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) {
-                Text(danceClass.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("Dia: ${danceClass.origin.name}", fontSize = 14.sp, color = Color.Gray)
-                Text("Hora: ${danceClass.hour}", fontSize = 14.sp, color = Color.Gray)
-            }
-
-            Button(
-                onClick = {
-                    onReserveClick(danceClass)
-                },
-                enabled = danceClass.availableSpots > 0,
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (danceClass.availableSpots > 0) Color.Green else Color.Gray
-                )
+        Box(modifier = Modifier.clickable { /* Ir a detalles */ }) {
+            Row(
+                modifier = Modifier.padding(LocalPadding.current.normal),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(if (danceClass.availableSpots > 0) "Reservar" else "Llena")
+
+    //            Image(
+    //                painter = painterResource(id = danceClass.imageRes),
+    //                contentDescription = null,
+    //                modifier = Modifier.size(60.dp).clip(CircleShape)
+    //            )
+                Column {
+                    Text(danceClass.hour, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                }
+
+                Column(modifier = Modifier.weight(1f).padding(start = LocalPadding.current.normal)) {
+                    Text(danceClass.name.uppercase(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+//                    Text("Dia: ${danceClass.origin.name}", fontSize = 14.sp, color = Color.Gray)
+//                    Text(danceClass.teacherId, fontSize = 14.sp, color = Color.Gray)
+                    Text("Marley & Leo", fontSize = 14.sp, color = Color.Gray)
+                }
+
+                Button(
+                    onClick = {
+                        onReserveClick(danceClass)
+                    },
+                    enabled = danceClass.availableSpots > 0,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = if (danceClass.availableSpots > 0) Color.Green else Color.Gray
+                    )
+                ) {
+                    Text(if (danceClass.availableSpots > 0) "Reservar" else "Llena")
+                }
             }
         }
     }
