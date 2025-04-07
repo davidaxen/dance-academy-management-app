@@ -1,27 +1,42 @@
 package com.daxen.mydancekmpsharedui.features.reservation.ui
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,10 +49,11 @@ import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 import com.daxen.mydancekmpsharedui.data.classes.models.SpecificClassModel
 import com.daxen.mydancekmpsharedui.data.classes.models.WeeklyClassModel
 import com.daxen.mydancekmpsharedui.features.reservation.ui.components.DanceClassCard
-import com.daxen.mydancekmpsharedui.features.reservation.ui.components.WeekSelector
+import com.daxen.mydancekmpsharedui.features.reservation.ui.components.WeekSelectorSection
 import com.daxen.mydancekmpsharedui.features.reservation.utils.ClassOrigin
 import com.daxen.mydancekmpsharedui.features.reservation.utils.Constants
 import com.daxen.mydancekmpsharedui.features.reservation.utils.DisplayClass
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.koin.compose.viewmodel.koinViewModel
@@ -77,12 +93,9 @@ internal fun ReservationScreen(
             }
 
             is ClassesListUiState.Error -> {
-                ErrorComponent(
-                    message = "Error al cargar las clases",
-                    onRetry = {
-                        viewModel.reloadClasses()
-                    }
-                )
+                ErrorComponent(message = "Error al cargar las clases", onRetry = {
+                    viewModel.reloadClasses()
+                })
             }
         }
 
@@ -99,15 +112,11 @@ private fun ClassScheduleScreen(
     val selectedDate by viewModel.selectedDate.collectAsState()
     val currentWeek by viewModel.currentWeek.collectAsState()
     val canGoBack by viewModel.canGoBack.collectAsState()
-//    val filteredClasses = remember(classes, selectedDate) {
-//        classes.filter { it.day == selectedDate.dayOfWeek.toString() }
-//    }
+    val today = viewModel.today
 
     val filteredClasses = remember(specificClasses, weeklyClasses, selectedDate) {
         val dayOfWeek = selectedDate.dayOfWeek.name
-        val specific = specificClasses
-            .filter { it.date == selectedDate.toString() }
-            .map {
+        val specific = specificClasses.filter { it.date == selectedDate.toString() }.map {
                 DisplayClass(
                     id = it.data.id,
                     hour = it.data.hour,
@@ -119,9 +128,7 @@ private fun ClassScheduleScreen(
                 )
             }
 
-        val weekly = weeklyClasses
-            .filter { it.dayOfWeek == dayOfWeek }
-            .map {
+        val weekly = weeklyClasses.filter { it.dayOfWeek == dayOfWeek }.map {
                 DisplayClass(
                     id = it.data.id,
                     hour = it.data.hour,
@@ -135,13 +142,6 @@ private fun ClassScheduleScreen(
 
         (specific + weekly).sortedBy { LocalTime.parse(it.hour) }
     }
-//    val filteredClasses = remember(specificClasses, weeklyClasses, selectedDate) {
-//        val dayOfWeek = selectedDate.dayOfWeek.name
-//        val weekly = weeklyClasses.filter { it.dayOfWeek == dayOfWeek }
-//        val specific = specificClasses.filter { it.date == selectedDate.toString() }
-//        (specific + weekly).sortedBy { it.hour }
-//    }
-    val today = viewModel.today
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -149,7 +149,8 @@ private fun ClassScheduleScreen(
         Column(
             modifier = Modifier.fillMaxWidth().padding(LocalPadding.current.small)
         ) {
-            TopScheduleSection(selectedDate = selectedDate,
+            TopScheduleSection(
+                selectedDate = selectedDate,
                 today = today,
                 onClickToday = { viewModel.goToToday() })
 
@@ -165,28 +166,30 @@ private fun ClassScheduleScreen(
 
         }
 
-        ClassesListSection(
-            classes = filteredClasses,
-            onReserveClick = { classModel ->
-                viewModel.reserveClass(
-                    academyId = "CJK3TNrlIeIXdKYeI5Ee",
-                    studentId = currentUser.uid,
-                    classId = classModel.id
-                )
-            }
-        )
+        ClassesListSection(classes = filteredClasses, onReserveClick = { classModel ->
+            viewModel.reserveClass(
+                academyId = "CJK3TNrlIeIXdKYeI5Ee",
+                studentId = currentUser.uid,
+                classId = classModel.id
+            )
+        })
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ClassesListSection(
     classes: List<DisplayClass>,
     onReserveClick: (DisplayClass) -> Unit,
 ) {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = LocalPadding.current.tiny)
-        .padding(horizontal = LocalPadding.current.normal)
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var selectedClass by remember { mutableStateOf<DisplayClass?>(null) }
+
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(top = LocalPadding.current.tiny)
+            .padding(horizontal = LocalPadding.current.normal)
     ) {
         if (classes.isEmpty()) {
             Column(
@@ -210,7 +213,49 @@ private fun ClassesListSection(
             // Mostrar la lista de clases si hay
             LazyColumn {
                 items(classes) { danceClass ->
-                    DanceClassCard(danceClass, onReserveClick = onReserveClick)
+                    DanceClassCard(danceClass, onReserveClick = onReserveClick, openBottomSheet = {
+                        showBottomSheet = true
+                        selectedClass = danceClass
+                    })
+                }
+            }
+
+            if (showBottomSheet && selectedClass != null) {
+                ModalBottomSheet(
+//                    modifier = Modifier.fillMaxHeight(),
+                    containerColor = Color.White,
+                    onDismissRequest = {
+                        showBottomSheet = false
+                    },
+                    sheetState = sheetState,
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = LocalPadding.current.big)
+                            .padding(bottom = LocalPadding.current.normal)
+                    ) {
+                        ClassReservationContent(classItem = selectedClass!!, onReserveClick = { })
+
+                        // Botón de reservar
+                        Button(
+                            onClick = {
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        showBottomSheet = false
+                                        selectedClass = null
+                                    }
+                                }
+                            }, colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Blue, contentColor = Color.White
+                            ), modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20)
+                        ) {
+                            Text(
+                                "Reservar clase",
+                                color = Color.White,
+                                modifier = Modifier.padding(vertical = LocalPadding.current.extraTiny)
+                            )
+                        }
+                    }
+
                 }
             }
         }
@@ -218,37 +263,61 @@ private fun ClassesListSection(
 }
 
 @Composable
-private fun WeekSelectorSection(
-    currentWeek: List<LocalDate>,
-    selectedDate: LocalDate,
-    today: LocalDate,
-    canGoBack: Boolean,
-    onDateSelected: (LocalDate) -> Unit,
-    onPreviousWeek: () -> Unit,
-    onNextWeek: () -> Unit
+fun ClassReservationContent(
+    classItem: DisplayClass, onReserveClick: () -> Unit, modifier: Modifier = Modifier
 ) {
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        elevation = 4.dp,
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        modifier = modifier.fillMaxWidth()
     ) {
-        WeekSelector(
-            currentWeek = currentWeek,
-            selectedDate = selectedDate,
-            today = today,
-            onDateSelected = onDateSelected,
-            onPreviousWeek = onPreviousWeek,
-            onNextWeek = onNextWeek,
-            canGoBack = canGoBack
+        // Título
+        Text(
+            text = classItem.name,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
+
+        // Hora + Día
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 6.dp)
+        ) {
+            Icon(
+                Icons.Default.DateRange,
+                contentDescription = "Hora",
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+//                text = "${classItem.hour} · ${classItem.day.lowercase().replaceFirstChar { it.uppercase() }}",
+                text = "${classItem.hour} · ${classItem.origin}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        // Profesor
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 24.dp)
+        ) {
+            Icon(
+                Icons.Default.Person,
+                contentDescription = "Profesor",
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Profesor: Marley & Leo", style = MaterialTheme.typography.bodyMedium
+            )
+        }
     }
 }
+
 
 @Composable
 private fun TopScheduleSection(
     selectedDate: LocalDate, today: LocalDate, onClickToday: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+    Box(modifier = Modifier.fillMaxWidth().padding(vertical = LocalPadding.current.small), contentAlignment = Alignment.CenterEnd) {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             // Nombre del Mes Actual
             Text(
@@ -260,16 +329,13 @@ private fun TopScheduleSection(
 
         // Botón "Hoy"
         val isDisabled = selectedDate == today
-        TextButton(
-            onClick = {
-                onClickToday()
-            }, enabled = !isDisabled
-        ) {
-            Text(
-                text = "Hoy",
-                color = if (isDisabled) Color.Gray.copy(alpha = 0.5f) else Color.Blue,
-                fontWeight = FontWeight.Bold
-            )
-        }
+        Text(text = "Hoy",
+            color = if (isDisabled) Color.Gray.copy(alpha = 0.5f) else Color.Blue,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .clickable(enabled = !isDisabled,
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }) { onClickToday() })
+
     }
 }

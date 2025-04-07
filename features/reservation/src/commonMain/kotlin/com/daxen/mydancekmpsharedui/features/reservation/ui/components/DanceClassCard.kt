@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +22,8 @@ import com.daxen.mydancekmpsharedui.features.reservation.utils.DisplayClass
 @Composable
 internal fun DanceClassCard(
     danceClass: DisplayClass,
-    onReserveClick: (DisplayClass) -> Unit
+    onReserveClick: (DisplayClass) -> Unit,
+    openBottomSheet: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -33,7 +32,7 @@ internal fun DanceClassCard(
         shape = RoundedCornerShape(12.dp),
         elevation = 4.dp
     ) {
-        Box(modifier = Modifier.clickable { /* Ir a detalles */ }) {
+        Box(modifier = Modifier.clickable { openBottomSheet() }) {
             Row(
                 modifier = Modifier.padding(LocalPadding.current.normal),
                 verticalAlignment = Alignment.CenterVertically
@@ -44,28 +43,26 @@ internal fun DanceClassCard(
     //                contentDescription = null,
     //                modifier = Modifier.size(60.dp).clip(CircleShape)
     //            )
-                Column {
-                    Text(danceClass.hour, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                }
+                Text(danceClass.hour, fontWeight = FontWeight.Bold, fontSize = 18.sp)
 
-                Column(modifier = Modifier.weight(1f).padding(start = LocalPadding.current.normal)) {
+                Column(modifier = Modifier.weight(1f).padding(horizontal = LocalPadding.current.normal)) {
                     Text(danceClass.name.uppercase(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
 //                    Text("Dia: ${danceClass.origin.name}", fontSize = 14.sp, color = Color.Gray)
 //                    Text(danceClass.teacherId, fontSize = 14.sp, color = Color.Gray)
                     Text("Marley & Leo", fontSize = 14.sp, color = Color.Gray)
                 }
 
-                Button(
-                    onClick = {
-                        onReserveClick(danceClass)
-                    },
-                    enabled = danceClass.availableSpots > 0,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (danceClass.availableSpots > 0) Color.Green else Color.Gray
-                    )
-                ) {
-                    Text(if (danceClass.availableSpots > 0) "Reservar" else "Llena")
-                }
+//                Button(
+//                    onClick = {
+//                        onReserveClick(danceClass)
+//                    },
+//                    enabled = danceClass.availableSpots > 0,
+//                    colors = ButtonDefaults.buttonColors(
+//                        backgroundColor = if (danceClass.availableSpots > 0) Color.Green else Color.Gray
+//                    )
+//                ) {
+//                    Text(if (danceClass.availableSpots > 0) "Reservar" else "Llena")
+//                }
             }
         }
     }

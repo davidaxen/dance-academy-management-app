@@ -1,18 +1,24 @@
 package com.daxen.mydancekmpsharedui.features.reservation.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +26,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.features.reservation.utils.Constants
 import kotlinx.datetime.LocalDate
+
+@Composable
+internal fun WeekSelectorSection(
+    currentWeek: List<LocalDate>,
+    selectedDate: LocalDate,
+    today: LocalDate,
+    canGoBack: Boolean,
+    onDateSelected: (LocalDate) -> Unit,
+    onPreviousWeek: () -> Unit,
+    onNextWeek: () -> Unit
+) {
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        elevation = 4.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        WeekSelector(
+            currentWeek = currentWeek,
+            selectedDate = selectedDate,
+            today = today,
+            onDateSelected = onDateSelected,
+            onPreviousWeek = onPreviousWeek,
+            onNextWeek = onNextWeek,
+            canGoBack = canGoBack
+        )
+    }
+}
 
 @Composable
 internal fun WeekSelector(
@@ -38,7 +71,8 @@ internal fun WeekSelector(
     ) {
         IconButton(
             onClick = onPreviousWeek,
-            enabled = canGoBack
+            enabled = canGoBack,
+            modifier = Modifier.padding(horizontal = 4.dp)
         ) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
@@ -50,27 +84,41 @@ internal fun WeekSelector(
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.weight(1f)) {
             currentWeek.forEachIndexed { index, date ->
                 val isPast = date < today
-                Column(
+                Box(
                     modifier = Modifier
-                        .padding(4.dp)
-                        .clickable(enabled = !isPast) { onDateSelected(date) },
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .weight(1f)
+                        .clickable(
+                            enabled = !isPast,
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                    ) { onDateSelected(date) }
                 ) {
-                    Text(
-                        text = Constants.weekDaysShort[index], // Inicial en español
-                        fontWeight = if (date == selectedDate) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isPast) Color.Gray else if (date == selectedDate) Color.Blue else Color.Black
-                    )
-                    Text(
-                        text = date.dayOfMonth.toString(),
-                        fontWeight = if (date == selectedDate) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isPast) Color.Gray.copy(alpha = 0.5f) else if (date == selectedDate) Color.Blue else Color.Black
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                            .background(
+                                if (date == selectedDate) Color.Blue.copy(alpha = 0.8f) else Color.Transparent,
+                                shape = RoundedCornerShape(8.dp)
+                            ),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = Constants.weekDaysShort[index], // Inicial en español
+                            fontWeight = if (date == selectedDate) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isPast) Color.Gray.copy(alpha = 0.5f) else if (date == selectedDate) Color.White else Color.Black
+                        )
+                        Text(
+                            text = date.dayOfMonth.toString(),
+                            fontWeight = if (date == selectedDate) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isPast) Color.Gray.copy(alpha = 0.5f) else if (date == selectedDate) Color.White else Color.Black
+                        )
+                    }
                 }
             }
         }
 
-        IconButton(onClick = onNextWeek) {
+        IconButton(onClick = onNextWeek, modifier = Modifier.padding(horizontal = 4.dp)) {
             Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Semana siguiente")
         }
     }
