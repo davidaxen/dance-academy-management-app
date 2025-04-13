@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.calendar.ui.models.CalendarMonth
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -31,7 +32,7 @@ fun CalendarGrid(
                     modifier = Modifier
                         .weight(1f)
                         .aspectRatio(1f)
-                        .padding(4.dp),
+                        .padding(LocalPadding.current.extraTiny),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -43,7 +44,7 @@ fun CalendarGrid(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         // Grid de días
         val firstDayOfMonth = currentMonth.firstDayOfMonth

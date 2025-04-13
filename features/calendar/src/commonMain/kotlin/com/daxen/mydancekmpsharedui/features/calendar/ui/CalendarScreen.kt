@@ -1,10 +1,10 @@
 package com.daxen.mydancekmpsharedui.features.calendar.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.CalendarGrid
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.MonthHeader
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.ReservedClassesList
@@ -44,7 +44,7 @@ fun CalendarScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(LocalPadding.current.normal)
     ) {
         MonthHeader(
             currentMonth = currentMonth,
@@ -56,12 +56,13 @@ fun CalendarScreen() {
             }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         CalendarGrid(
             currentMonth = currentMonth,
             selectedDate = selectedDate,
             onDateSelected = { date ->
+                println("Fecha seleccionada: $date")
                 selectedDate = date
             },
             hasReservations = { date ->
@@ -69,7 +70,7 @@ fun CalendarScreen() {
             }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         ReservedClassesList(
             selectedDate = selectedDate,
