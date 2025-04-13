@@ -2,13 +2,14 @@ package com.daxen.mydancekmpsharedui.features.calendar.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.features.calendar.ui.models.CalendarMonth
@@ -25,8 +26,9 @@ fun MonthHeader(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 2.dp
+        color = Color.White,
+        shadowElevation = 8.dp,
+        tonalElevation = 10.dp
     ) {
         Row(
             modifier = Modifier
@@ -37,9 +39,13 @@ fun MonthHeader(
         ) {
             IconButton(
                 onClick = onPreviousMonthClick,
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Mes anterior"
                 )
             }
@@ -54,9 +60,13 @@ fun MonthHeader(
 
             IconButton(
                 onClick = onNextMonthClick,
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    imageVector = Icons.Default.ArrowForward,
                     contentDescription = "Mes siguiente"
                 )
             }
