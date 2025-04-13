@@ -1,5 +1,6 @@
 package com.daxen.mydancekmpsharedui.features.calendar.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -15,6 +16,7 @@ import kotlinx.datetime.LocalDate
 fun CalendarDay(
     date: LocalDate,
     isSelected: Boolean,
+    hasReservations: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -58,6 +60,16 @@ fun CalendarDay(
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                     )
                 )
+
+                if (hasReservations) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(MaterialTheme.shapes.small)
+                            .background(MaterialTheme.colorScheme.primary)
+                    )
+                }
             }
         }
     }

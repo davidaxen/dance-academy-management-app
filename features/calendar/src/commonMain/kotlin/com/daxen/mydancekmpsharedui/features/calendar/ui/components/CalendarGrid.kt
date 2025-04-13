@@ -15,6 +15,7 @@ fun CalendarGrid(
     currentMonth: CalendarMonth,
     selectedDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
+    hasReservations: (LocalDate) -> Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -50,6 +51,7 @@ fun CalendarGrid(
                         CalendarDay(
                             date = date,
                             isSelected = date == selectedDate,
+                            hasReservations = hasReservations(date),
                             onClick = { onDateSelected(date) },
                             modifier = Modifier.weight(1f)
                         )
