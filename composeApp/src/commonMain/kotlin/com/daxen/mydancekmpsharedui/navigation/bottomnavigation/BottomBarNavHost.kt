@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.navigation.bottomnavigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.daxen.mydancekmpsharedui.features.calendar.calendarNavGraph
 import com.daxen.mydancekmpsharedui.features.reservation.reservationNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userNavGraph
 import com.daxen.mydancekmpsharedui.navigation.CentralAppDestination
@@ -21,5 +22,7 @@ fun BottomBarNavHost(bottomNavController: NavHostController, appNavController: N
         )
 
         reservationNavGraph()
+        
+        calendarNavGraph()
     }
 }
