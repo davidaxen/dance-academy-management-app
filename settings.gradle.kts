@@ -37,6 +37,7 @@ include(":features:reservation")
 include(":data:auth")
 include(":data:user")
 include(":data:classes")
+include(":data:reservation")
 
 include(":core:ui")
 include(":core:firebase")

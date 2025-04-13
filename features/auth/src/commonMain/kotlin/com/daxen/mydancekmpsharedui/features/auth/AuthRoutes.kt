@@ -23,12 +23,12 @@ fun NavGraphBuilder.authNavGraph(
     goToUser: () -> Unit,
 ) {
     navigation<AuthGraph>(startDestination = LoginScreenRoute) {
-        composable<AuthScreenRoute> {
-            AuthScreen(
-//                goToReservation = goToUser,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+//        composable<AuthScreenRoute> {
+//            AuthScreen(
+////                goToReservation = goToUser,
+//                modifier = Modifier.fillMaxSize()
+//            )
+//        }
         composable<LoginScreenRoute> {
             val viewModel: LoginViewModel = koinViewModel()
             LoginScreen(

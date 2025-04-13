@@ -4,6 +4,8 @@ import com.daxen.mydancekmpsharedui.core.firebase.auth.FirebaseAuthService
 import com.daxen.mydancekmpsharedui.core.firebase.auth.FirebaseAuthServiceImpl
 import com.daxen.mydancekmpsharedui.core.firebase.classes.FirebaseClassesService
 import com.daxen.mydancekmpsharedui.core.firebase.classes.FirebaseClassesServiceImpl
+import com.daxen.mydancekmpsharedui.core.firebase.reservations.FirebaseReservationService
+import com.daxen.mydancekmpsharedui.core.firebase.reservations.FirebaseReservationServiceImpl
 import com.daxen.mydancekmpsharedui.core.firebase.user.FirebaseUserService
 import com.daxen.mydancekmpsharedui.core.firebase.user.FirebaseUserServiceImpl
 import dev.gitlive.firebase.Firebase
@@ -25,6 +27,9 @@ val coreFirebaseModule = module {
 
     //Classes
     singleOf(::FirebaseClassesServiceImpl) { bind<FirebaseClassesService>() }
+
+    //Reservations
+    singleOf(::FirebaseReservationServiceImpl) { bind<FirebaseReservationService>() }
 
     //User
     singleOf(::FirebaseUserServiceImpl) { bind<FirebaseUserService>() }
