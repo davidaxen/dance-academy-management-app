@@ -17,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.daxen.mydancekmpsharedui.features.reservation.utils.Constants
 import kotlinx.datetime.LocalDate
 
@@ -77,7 +79,8 @@ internal fun WeekSelector(
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Semana anterior",
-                tint = if (!canGoBack) Color.Gray else Color.Black
+                tint = if (!canGoBack) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f) 
+                       else MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -98,28 +101,44 @@ internal fun WeekSelector(
                             .fillMaxWidth()
                             .padding(4.dp)
                             .background(
-                                if (date == selectedDate) Color.Blue.copy(alpha = 0.8f) else Color.Transparent,
+                                if (date == selectedDate) MaterialTheme.colorScheme.primary else Color.Transparent,
                                 shape = RoundedCornerShape(8.dp)
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = Constants.weekDaysShort[index], // Inicial en español
-                            fontWeight = if (date == selectedDate) FontWeight.Bold else FontWeight.Normal,
-                            color = if (isPast) Color.Gray.copy(alpha = 0.5f) else if (date == selectedDate) Color.White else Color.Black
-                        )
-                        Text(
-                            text = date.dayOfMonth.toString(),
-                            fontWeight = if (date == selectedDate) FontWeight.Bold else FontWeight.Normal,
-                            color = if (isPast) Color.Gray.copy(alpha = 0.5f) else if (date == selectedDate) Color.White else Color.Black
-                        )
+                        Column(
+                            modifier = Modifier.padding(4.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = Constants.weekDaysShort[index],
+                                fontSize = 16.sp,
+                                fontWeight = if (date == selectedDate) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isPast) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                                else if (date == selectedDate) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = date.dayOfMonth.toString(),
+                                fontSize = 18.sp,
+                                fontWeight = if (date == selectedDate) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isPast) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                                else if (date == selectedDate) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
                     }
                 }
             }
         }
 
         IconButton(onClick = onNextWeek, modifier = Modifier.padding(horizontal = 4.dp)) {
-            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Semana siguiente")
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowForward, 
+                contentDescription = "Semana siguiente",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }

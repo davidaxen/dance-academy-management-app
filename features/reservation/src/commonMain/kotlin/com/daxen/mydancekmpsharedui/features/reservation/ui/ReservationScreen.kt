@@ -1,5 +1,6 @@
 package com.daxen.mydancekmpsharedui.features.reservation.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +28,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,7 +38,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -198,22 +199,21 @@ private fun ClassesListSection(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    imageVector = Icons.Default.Info, // Icono de "sin eventos"
+                    imageVector = Icons.Default.Info,
                     contentDescription = "Sin clases",
                     modifier = Modifier.size(64.dp),
-                    tint = Color.Gray
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
                 Text(
                     text = "No hay clases disponibles para este día",
                     fontSize = 16.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             }
         } else {
-            // Mostrar la lista de clases si hay
             LazyColumn {
                 items(classes) { danceClass ->
-                    DanceClassCard(danceClass, onReserveClick = onReserveClick, openBottomSheet = {
+                    DanceClassCard(danceClass, openBottomSheet = {
                         showBottomSheet = true
                         selectedClass = danceClass
                     })
@@ -222,40 +222,98 @@ private fun ClassesListSection(
 
             if (showBottomSheet && selectedClass != null) {
                 ModalBottomSheet(
-//                    modifier = Modifier.fillMaxHeight(),
-                    containerColor = Color.White,
                     onDismissRequest = {
                         showBottomSheet = false
                     },
                     sheetState = sheetState,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 0.dp,
+                    dragHandle = null
                 ) {
                     Column(
                         modifier = Modifier.padding(horizontal = LocalPadding.current.big)
                             .padding(bottom = LocalPadding.current.normal)
                     ) {
-                        ClassReservationContent(classItem = selectedClass!!, onReserveClick = { })
-
-                        // Botón de reservar
-                        Button(
-                            onClick = {
-                                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                    if (!sheetState.isVisible) {
-                                        showBottomSheet = false
-                                        selectedClass = null
-                                    }
-                                }
-                            }, colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Blue, contentColor = Color.White
-                            ), modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20)
+                        // Header con título y hora
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                                .padding(LocalPadding.current.normal)
                         ) {
-                            Text(
-                                "Reservar clase",
-                                color = Color.White,
-                                modifier = Modifier.padding(vertical = LocalPadding.current.extraTiny)
+                            Column {
+                                Text(
+                                    text = selectedClass!!.name,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        Icons.Default.DateRange,
+                                        contentDescription = "Hora",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = selectedClass!!.hour,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+
+                        // Detalles de la clase
+                        Column {
+                            // Profesor
+                            DetailRow(
+                                icon = Icons.Default.Person,
+                                title = "Profesor",
+                                content = "Marley & Leo"
                             )
+
+                            Spacer(modifier = Modifier.height(LocalPadding.current.small))
+
+                            // Tipo de clase
+                            DetailRow(
+                                icon = Icons.Default.Info,
+                                title = "Tipo",
+                                content = if (selectedClass!!.origin == ClassOrigin.WEEKLY) "Clase semanal" else "Clase especial"
+                            )
+
+                            Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+
+                            // Botón de reservar
+                            Button(
+                                onClick = {
+                                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                        if (!sheetState.isVisible) {
+                                            showBottomSheet = false
+                                            selectedClass = null
+                                            onReserveClick(selectedClass!!)
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                )
+                            ) {
+                                Text(
+                                    text = "Reservar clase",
+                                    modifier = Modifier.padding(vertical = LocalPadding.current.extraTiny)
+                                )
+                            }
                         }
                     }
-
                 }
             }
         }
@@ -263,55 +321,37 @@ private fun ClassesListSection(
 }
 
 @Composable
-fun ClassReservationContent(
-    classItem: DisplayClass, onReserveClick: () -> Unit, modifier: Modifier = Modifier
+private fun DetailRow(
+    icon: ImageVector,
+    title: String,
+    content: String,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth()
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        // Título
-        Text(
-            text = classItem.name,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 8.dp)
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            modifier = Modifier.size(20.dp),
+            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
-
-        // Hora + Día
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 6.dp)
-        ) {
-            Icon(
-                Icons.Default.DateRange,
-                contentDescription = "Hora",
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
             Text(
-//                text = "${classItem.hour} · ${classItem.day.lowercase().replaceFirstChar { it.uppercase() }}",
-                text = "${classItem.hour} · ${classItem.origin}",
-                style = MaterialTheme.typography.bodyMedium
+                text = title,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
-        }
-
-        // Profesor
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 24.dp)
-        ) {
-            Icon(
-                Icons.Default.Person,
-                contentDescription = "Profesor",
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Profesor: Marley & Leo", style = MaterialTheme.typography.bodyMedium
+                text = content,
+                style = MaterialTheme.typography.bodyLarge,
+                color = contentColor
             )
         }
     }
 }
-
 
 @Composable
 private fun TopScheduleSection(

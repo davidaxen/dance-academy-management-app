@@ -1,8 +1,8 @@
 package com.daxen.mydancekmpsharedui
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
+import com.daxen.mydancekmpsharedui.core.ui.theme.MyDanceTheme
 import com.daxen.mydancekmpsharedui.navigation.CentralAppNavHost
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
@@ -20,10 +20,10 @@ fun App(
             modules(appModule, platformModule)
         }
     ) {
-        MaterialTheme {
+        MyDanceTheme {
             val isUserLogged = Firebase.auth.currentUser != null
             val navController = rememberNavController()
-            CentralAppNavHost(navController,isUserLogged)
+            CentralAppNavHost(navController, isUserLogged)
         }
     }
 }
