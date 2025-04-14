@@ -9,7 +9,6 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.CalendarGrid
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.MonthHeader
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.ReservedClassesList
-import com.daxen.mydancekmpsharedui.features.calendar.ui.viewmodel.CalendarViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

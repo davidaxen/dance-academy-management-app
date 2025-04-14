@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.calendar.ui.viewmodel
+package com.daxen.mydancekmpsharedui.features.calendar.ui
 
 import androidx.lifecycle.ViewModel
 import com.daxen.mydancekmpsharedui.features.calendar.ui.models.CalendarMonth
