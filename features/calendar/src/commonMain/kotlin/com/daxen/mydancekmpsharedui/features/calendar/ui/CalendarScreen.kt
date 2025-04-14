@@ -8,38 +8,16 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.CalendarGrid
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.MonthHeader
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.ReservedClassesList
-import com.daxen.mydancekmpsharedui.features.calendar.ui.models.CalendarMonth
-import com.daxen.mydancekmpsharedui.features.calendar.ui.models.ReservedClass
-import kotlinx.datetime.*
-import kotlinx.datetime.TimeZone
+import com.daxen.mydancekmpsharedui.features.calendar.ui.viewmodel.CalendarViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun CalendarScreen() {
-    val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-    var selectedDate by remember { mutableStateOf(currentDate) }
-    var currentMonth by remember { mutableStateOf(CalendarMonth(currentDate.year, currentDate.month)) }
-
-    // Datos simulados
-    val reservedClasses = remember {
-        listOf(
-            ReservedClass(
-                id = "1",
-                name = "Bachata Intermedio",
-                date = currentDate,
-                time = LocalTime(20, 0),
-                teacher = "Lucía Gómez",
-                room = "Sala 1"
-            ),
-            ReservedClass(
-                id = "2",
-                name = "Salsa Avanzado",
-                date = currentDate,
-                time = LocalTime(21, 30),
-                teacher = "Carlos Pérez",
-                room = "Sala 2"
-            )
-        )
-    }
+fun CalendarScreen(
+    viewModel: CalendarViewModel = koinViewModel()
+) {
+    val selectedDate by viewModel.selectedDate.collectAsState()
+    val currentMonth by viewModel.currentMonth.collectAsState()
+    val reservedClasses by viewModel.reservedClasses.collectAsState()
 
     Column(
         modifier = Modifier
@@ -48,12 +26,8 @@ fun CalendarScreen() {
     ) {
         MonthHeader(
             currentMonth = currentMonth,
-            onPreviousMonthClick = {
-                currentMonth = currentMonth.previousMonth()
-            },
-            onNextMonthClick = {
-                currentMonth = currentMonth.nextMonth()
-            }
+            onPreviousMonthClick = { viewModel.onPreviousMonthClick() },
+            onNextMonthClick = { viewModel.onNextMonthClick() },
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -61,20 +35,15 @@ fun CalendarScreen() {
         CalendarGrid(
             currentMonth = currentMonth,
             selectedDate = selectedDate,
-            onDateSelected = { date ->
-                println("Fecha seleccionada: $date")
-                selectedDate = date
-            },
-            hasReservations = { date ->
-                reservedClasses.any { it.date == date }
-            }
+            onDateSelected = { viewModel.onDateSelected(it) },
+            hasReservations = { viewModel.hasReservations(it) },
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         ReservedClassesList(
             selectedDate = selectedDate,
-            reservedClasses = reservedClasses.filter { it.date == selectedDate },
+            reservedClasses = viewModel.getReservedClassesForDate(selectedDate),
             modifier = Modifier.weight(1f)
         )
     }

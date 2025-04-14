@@ -70,7 +70,7 @@ fun CalendarGrid(
                             date = currentDate,
                             isSelected = currentDate == selectedDate,
                             hasReservations = hasReservations(currentDate),
-                            onClick = { onDateSelected(currentDate) },
+                            onClick = { onDateSelected(it) },
                             modifier = Modifier.weight(1f)
                         )
                     } else {
