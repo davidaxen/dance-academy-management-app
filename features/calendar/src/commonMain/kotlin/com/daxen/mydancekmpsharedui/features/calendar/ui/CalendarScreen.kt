@@ -1,6 +1,7 @@
 package com.daxen.mydancekmpsharedui.features.calendar.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Divider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,24 +23,32 @@ fun CalendarScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(LocalPadding.current.normal)
     ) {
-        MonthHeader(
-            currentMonth = currentMonth,
-            onPreviousMonthClick = { viewModel.onPreviousMonthClick() },
-            onNextMonthClick = { viewModel.onNextMonthClick() },
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = LocalPadding.current.normal)
+                .padding(top = LocalPadding.current.normal)
+        ) {
+            MonthHeader(
+                currentMonth = currentMonth,
+                onPreviousMonthClick = { viewModel.onPreviousMonthClick() },
+                onNextMonthClick = { viewModel.onNextMonthClick() },
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        CalendarGrid(
-            currentMonth = currentMonth,
-            selectedDate = selectedDate,
-            onDateSelected = { viewModel.onDateSelected(it) },
-            hasReservations = { viewModel.hasReservations(it) },
-        )
+            CalendarGrid(
+                currentMonth = currentMonth,
+                selectedDate = selectedDate,
+                onDateSelected = { viewModel.onDateSelected(it) },
+                hasReservations = { viewModel.hasReservations(it) },
+            )
+        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Divider()
+
+        Spacer(modifier = Modifier.height(4.dp))
 
         ReservedClassesList(
             selectedDate = selectedDate,
