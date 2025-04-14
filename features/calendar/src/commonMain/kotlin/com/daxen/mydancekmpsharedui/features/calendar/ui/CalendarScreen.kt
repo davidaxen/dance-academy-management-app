@@ -6,6 +6,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
+import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
+import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.CalendarGrid
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.MonthHeader
 import com.daxen.mydancekmpsharedui.features.calendar.ui.components.ReservedClassesList
@@ -15,6 +17,30 @@ import org.koin.compose.viewmodel.koinViewModel
 fun CalendarScreen(
     viewModel: CalendarViewModel = koinViewModel()
 ) {
+    val daysWithReservations by viewModel.daysWithReservationsList.collectAsState()
+
+    println(daysWithReservations)
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        when (daysWithReservations) {
+            is CalendarDatesListUiState.Loading -> {
+                LoadingComponent(text = "Cargando calendario...")
+            }
+            is CalendarDatesListUiState.Error -> {
+                ErrorComponent(message = "Error al cargar las clases reservadas en el calendario", onRetry = {
+                    viewModel.loadDaysWithReservations()
+                })
+            }
+            is CalendarDatesListUiState.Success, CalendarDatesListUiState.Empty -> {
+                CalendarScreenSuccess(viewModel = viewModel)
+            }
+        }
+    }
+}
+
+@Composable
+fun CalendarScreenSuccess(viewModel: CalendarViewModel) {
     val selectedDate by viewModel.selectedDate.collectAsState()
     val currentMonth by viewModel.currentMonth.collectAsState()
     val reservedClasses by viewModel.reservedClasses.collectAsState()
@@ -26,8 +52,7 @@ fun CalendarScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = LocalPadding.current.normal)
-                .padding(top = LocalPadding.current.normal)
+                .padding(LocalPadding.current.normal)
         ) {
             MonthHeader(
                 currentMonth = currentMonth,

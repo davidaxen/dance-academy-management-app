@@ -171,7 +171,9 @@ private fun ClassScheduleScreen(
             viewModel.reserveClass(
                 academyId = "CJK3TNrlIeIXdKYeI5Ee",
                 studentId = currentUser.uid,
-                classId = classModel.id
+                classId = classModel.id,
+                name = classModel.name,
+                hour = classModel.hour,
             )
         })
     }
@@ -295,8 +297,10 @@ private fun ClassesListSection(
                                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                                         if (!sheetState.isVisible) {
                                             showBottomSheet = false
+                                            selectedClass?.let {
+                                                onReserveClick(it)
+                                            }
                                             selectedClass = null
-                                            onReserveClick(selectedClass!!)
                                         }
                                     }
                                 },

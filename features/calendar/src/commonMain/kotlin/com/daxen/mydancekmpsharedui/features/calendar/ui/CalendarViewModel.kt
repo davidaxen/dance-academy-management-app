@@ -1,13 +1,22 @@
 package com.daxen.mydancekmpsharedui.features.calendar.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.daxen.mydancekmpsharedui.data.reservation.repository.ReservationRepository
+import com.daxen.mydancekmpsharedui.data.user.model.User
+import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
 import com.daxen.mydancekmpsharedui.features.calendar.ui.models.CalendarMonth
 import com.daxen.mydancekmpsharedui.features.calendar.ui.models.ReservedClass
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 
-class CalendarViewModel : ViewModel() {
+class CalendarViewModel(
+    userRepository: UserRepository,
+    private val repository: ReservationRepository
+) : ViewModel() {
+    private val currentUser: StateFlow<User> = userRepository.currentUser
     private val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
     private val _selectedDate = MutableStateFlow(currentDate)
@@ -15,6 +24,9 @@ class CalendarViewModel : ViewModel() {
 
     private val _currentMonth = MutableStateFlow(CalendarMonth(currentDate.year, currentDate.month))
     val currentMonth: StateFlow<CalendarMonth> = _currentMonth.asStateFlow()
+
+    private val _daysWithReservationsList = MutableStateFlow<CalendarDatesListUiState>(CalendarDatesListUiState.Loading)
+    val daysWithReservationsList: StateFlow<CalendarDatesListUiState> = _daysWithReservationsList.asStateFlow()
 
     // Datos simulados - En el futuro esto vendrá del repositorio
     private val _reservedClasses = MutableStateFlow(
@@ -39,6 +51,38 @@ class CalendarViewModel : ViewModel() {
     )
     val reservedClasses: StateFlow<List<ReservedClass>> = _reservedClasses.asStateFlow()
 
+    init {
+        loadDaysWithReservations()
+    }
+
+    fun loadDaysWithReservations() {
+        _daysWithReservationsList.value = CalendarDatesListUiState.Loading
+
+        viewModelScope.launch {
+            try {
+                repository.getReservationDates(currentUser.value.uid)
+
+                val dateStrings = repository.daysWithReservationsList.value
+
+                if (dateStrings.isEmpty()) {
+                    _daysWithReservationsList.value = CalendarDatesListUiState.Empty
+                } else {
+                    _daysWithReservationsList.value = CalendarDatesListUiState.Success(
+                        dateStrings.map { dateString ->
+                            try {
+                                LocalDate.parse(dateString)
+                            } catch (e: Exception) {
+                                throw IllegalArgumentException("Invalid date format: $dateString", e)
+                            }
+                        }
+                    )
+                }
+            } catch (e: Exception) {
+                _daysWithReservationsList.value = CalendarDatesListUiState.Error
+            }
+        }
+    }
+
     fun onDateSelected(date: LocalDate) {
         _selectedDate.value = date
     }
@@ -52,7 +96,12 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun hasReservations(date: LocalDate): Boolean {
-        return _reservedClasses.value.any { it.date == date }
+        _daysWithReservationsList.value.let { state ->
+            return when (state) {
+                is CalendarDatesListUiState.Success -> state.reservationsDatesList.contains(date)
+                is CalendarDatesListUiState.Error, CalendarDatesListUiState.Loading, CalendarDatesListUiState.Empty -> false
+            }
+        }
     }
 
     fun getReservedClassesForDate(date: LocalDate): List<ReservedClass> {
