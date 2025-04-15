@@ -51,16 +51,13 @@ class CalendarViewModel(
     )
     val reservedClasses: StateFlow<List<ReservedClass>> = _reservedClasses.asStateFlow()
 
-    init {
-        loadDaysWithReservations()
-    }
-
     fun loadDaysWithReservations() {
-        _daysWithReservationsList.value = CalendarDatesListUiState.Loading
-
         viewModelScope.launch {
             try {
-                repository.getReservationDates(currentUser.value.uid)
+                if (repository.daysWithReservationsList.value.isEmpty()) {
+                    _daysWithReservationsList.value = CalendarDatesListUiState.Loading
+                    repository.getReservationDates(currentUser.value.uid)
+                }
 
                 val dateStrings = repository.daysWithReservationsList.value
 

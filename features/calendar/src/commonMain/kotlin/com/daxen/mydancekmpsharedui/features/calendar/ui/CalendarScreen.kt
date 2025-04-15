@@ -19,7 +19,10 @@ fun CalendarScreen(
 ) {
     val daysWithReservations by viewModel.daysWithReservationsList.collectAsState()
 
-    println(daysWithReservations)
+    LaunchedEffect(Unit) {
+        viewModel.loadDaysWithReservations()
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -33,14 +36,14 @@ fun CalendarScreen(
                 })
             }
             is CalendarDatesListUiState.Success, CalendarDatesListUiState.Empty -> {
-                CalendarScreenSuccess(viewModel = viewModel)
+                CalendarScreenSuccess(viewModel = viewModel, daysWithReservations = daysWithReservations)
             }
         }
     }
 }
 
 @Composable
-fun CalendarScreenSuccess(viewModel: CalendarViewModel) {
+fun CalendarScreenSuccess(viewModel: CalendarViewModel, daysWithReservations: CalendarDatesListUiState) {
     val selectedDate by viewModel.selectedDate.collectAsState()
     val currentMonth by viewModel.currentMonth.collectAsState()
     val reservedClasses by viewModel.reservedClasses.collectAsState()
@@ -62,12 +65,14 @@ fun CalendarScreenSuccess(viewModel: CalendarViewModel) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            CalendarGrid(
-                currentMonth = currentMonth,
-                selectedDate = selectedDate,
-                onDateSelected = { viewModel.onDateSelected(it) },
-                hasReservations = { viewModel.hasReservations(it) },
-            )
+            key(daysWithReservations) {
+                CalendarGrid(
+                    currentMonth = currentMonth,
+                    selectedDate = selectedDate,
+                    onDateSelected = { viewModel.onDateSelected(it) },
+                    hasReservations = { viewModel.hasReservations(it) },
+                )
+            }
         }
 
         Divider()
