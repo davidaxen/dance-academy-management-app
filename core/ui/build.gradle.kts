@@ -41,6 +41,7 @@ kotlin {
             api(compose.components.resources)
             api(compose.components.uiToolingPreview)
             api(libs.viewmodel.compose)
+            api(libs.material.icons.extended)
         }
     }
 }

@@ -70,10 +70,10 @@ internal class ReservationViewModel(
         }
     }
 
-    fun reserveClass(academyId: String, studentId: String, classId: String) {
+    fun reserveClass(academyId: String, studentId: String, classId: String, name: String, hour: String) {
         viewModelScope.launch {
             try {
-                reservationRepository.reserveClass(academyId, studentId, classId)
+                reservationRepository.reserveClass(academyId, studentId, classId, name, hour, selectedDate.value.toString())
             } catch (e: Exception) {
                 println("Error al reservar clase: ${e.message}")
             }

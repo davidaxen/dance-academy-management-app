@@ -17,6 +17,7 @@ fun AppBottomNavigation(navController: NavHostController) {
     val bottomScreens = remember {
         listOf(
             BottomBarDestination.Reservation,
+            BottomBarDestination.Calendar,
             BottomBarDestination.User,
         )
     }
