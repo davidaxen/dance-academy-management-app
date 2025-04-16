@@ -1,7 +1,10 @@
 package com.daxen.mydancekmpsharedui.features.calendar.ui.models
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 data class CalendarMonth(
     val year: Int,
@@ -30,6 +33,11 @@ data class CalendarMonth(
     }
 
     fun previousMonth(): CalendarMonth {
+//        val today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+//        if (year - 2 < today.year && month == Month.JANUARY) {
+//            return this
+//        }
+
         return if (month == Month.JANUARY) {
             CalendarMonth(year - 1, Month.DECEMBER)
         } else {
