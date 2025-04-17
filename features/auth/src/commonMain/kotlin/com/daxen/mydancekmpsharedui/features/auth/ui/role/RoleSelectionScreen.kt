@@ -1,5 +1,7 @@
 package com.daxen.mydancekmpsharedui.features.auth.ui.role
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,9 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
-import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlue
-import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlueLight
-import com.daxen.mydancekmpsharedui.core.ui.theme.SecondaryPurple
+import com.daxen.mydancekmpsharedui.core.ui.theme.*
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
 
@@ -33,10 +33,15 @@ fun RoleSelectionScreen(
     modifier: Modifier = Modifier
 ) {
     var showMenu by remember { mutableStateOf(false) }
-
+    var showExpandedBackground by remember { mutableStateOf(false) }
+    
+    LaunchedEffect(Unit) {
+        showExpandedBackground = true
+    }
+    
     Box(modifier = modifier) {
-        CurvedBackground2()
-
+        AnimatedBackground(showExpandedBackground)
+        
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -129,91 +134,110 @@ fun RoleSelectionScreen(
     }
 }
 
-
 @Composable
-fun CurvedBackground2(modifier: Modifier = Modifier) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Canvas(modifier = modifier.fillMaxSize()) {
-            // Primera curva (principal)
-            val mainPath = Path().apply {
-                moveTo(0f, size.height * 0.9f)
-                cubicTo(
-                    size.width * 0.3f, size.height * 0.8f,
-                    size.width * 0.7f, size.height * 1.1f,
-                    size.width, size.height * 0.9f
-                )
-                lineTo(size.width, 0f)
-                lineTo(0f, 0f)
-                close()
-            }
+private fun AnimatedBackground(expanded: Boolean) {
+    val progress by animateFloatAsState(
+        targetValue = if (expanded) 1.5f else 0f,
+        animationSpec = tween(
+            durationMillis = 4000,
+            easing = FastOutSlowInEasing
+        ),
+        label = "backgroundAnimation"
+    )
 
-            // Segunda curva (detalle)
-            val detailPath = Path().apply {
-                moveTo(0f, size.height * 0.5f)
-                cubicTo(
-                    size.width * 0.2f, size.height * 0.2f,
-                    size.width * 0.5f, size.height * 0.8f,
-                    size.width, size.height * 0.4f
-                )
-                lineTo(size.width, 0f)
-                lineTo(0f, 0f)
-                close()
-            }
-
-            // Tercera curva (accent)
-            val accentPath = Path().apply {
-                moveTo(0f, size.height * 0.3f)
-                cubicTo(
-                    size.width * 0.1f, size.height * 0.1f,
-                    size.width * 0.3f, size.height * 0.4f,
-                    size.width, size.height * 0.2f
-                )
-                lineTo(size.width, 0f)
-                lineTo(0f, 0f)
-                close()
-            }
-
-            // Dibujar las curvas con diferentes gradientes
-            drawPath(
-                path = mainPath,
-                brush = Brush.linearGradient(
-                    colors = listOf(PrimaryBlue, SecondaryPurple),
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, size.height * 1.2f)
-                )
+    Canvas(
+        modifier = Modifier.fillMaxSize()
+//            .fillMaxWidth()
+//            .fillMaxHeight(0.5f)
+    ) {
+        // Primera curva (principal)
+        val mainPath = Path().apply {
+            moveTo(0f, size.height * (0.7f + (0.4f * progress)))
+            cubicTo(
+                size.width * 0.3f,
+                size.height * (0.15f + (0.6f * progress)),
+                size.width * 0.7f,
+                size.height * (0.6f + (0.6f * progress)),
+                size.width, 
+                size.height * (0.4f + (0.6f * progress))
             )
-
-            drawPath(
-                path = detailPath,
-                brush = Brush.linearGradient(
-                    colors = listOf(SecondaryPurple.copy(alpha = 0.7f), PrimaryBlueLight.copy(alpha = 0.7f)),
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, size.height * 0.8f)
-                )
-            )
-
-            drawPath(
-                path = accentPath,
-                brush = Brush.linearGradient(
-                    colors = listOf(PrimaryBlueLight.copy(alpha = 0.5f), PrimaryBlue.copy(alpha = 0.5f)),
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, size.height * 0.4f)
-                )
-            )
-
-            // Añadir algunos círculos decorativos
-            drawCircle(
-                color = PrimaryBlue.copy(alpha = 0.2f),
-                radius = size.width * 0.2f,
-                center = Offset(size.width * 0.2f, size.height * 0.3f)
-            )
-
-            drawCircle(
-                color = SecondaryPurple.copy(alpha = 0.2f),
-                radius = size.width * 0.15f,
-                center = Offset(size.width * 0.8f, size.height * 0.2f)
-            )
+            lineTo(size.width, 0f)
+            lineTo(0f, 0f)
+            close()
         }
+
+        // Segunda curva (detalle)
+        val detailPath = Path().apply {
+            moveTo(0f, size.height * (0.2f + (0.5f * progress)))
+            cubicTo(
+                size.width * 0.3f,
+                size.height * (0.05f + (0.15f * progress)),
+                size.width * 0.5f,
+                size.height * (0.3f + (0.5f * progress)),
+                size.width, 
+                size.height * (0.1f + (0.3f * progress))
+            )
+            lineTo(size.width, 0f)
+            lineTo(0f, 0f)
+            close()
+        }
+
+        // Tercera curva (accent)
+        val accentPath = Path().apply {
+            moveTo(0f, size.height * (0.1f + (0.2f * progress)))
+            cubicTo(
+                size.width * 0.1f,
+                size.height * (0.05f + (0.05f * progress)),
+                size.width * 0.3f,
+                size.height * (0.15f + (0.25f * progress)),
+                size.width, 
+                size.height * (0.05f + (0.15f * progress))
+            )
+            lineTo(size.width, 0f)
+            lineTo(0f, 0f)
+            close()
+        }
+
+        // Dibujar las curvas con diferentes gradientes
+        drawPath(
+            path = mainPath,
+            brush = Brush.linearGradient(
+                colors = listOf(PrimaryBlue, SecondaryPurple),
+                start = Offset(0f, 0f),
+                end = Offset(size.width, size.height * (0.5f + (0.7f * progress)))
+            )
+        )
+
+        drawPath(
+            path = detailPath,
+            brush = Brush.linearGradient(
+                colors = listOf(SecondaryPurple.copy(alpha = 0.7f), PrimaryBlueLight.copy(alpha = 0.7f)),
+                start = Offset(0f, 0f),
+                end = Offset(size.width, size.height * (0.3f + (0.5f * progress)))
+            )
+        )
+
+        drawPath(
+            path = accentPath,
+            brush = Brush.linearGradient(
+                colors = listOf(PrimaryBlueLight.copy(alpha = 0.5f), PrimaryBlue.copy(alpha = 0.5f)),
+                start = Offset(0f, 0f),
+                end = Offset(size.width, size.height * (0.2f + (0.2f * progress)))
+            )
+        )
+
+        // Añadir algunos círculos decorativos
+        drawCircle(
+            color = PrimaryBlue.copy(alpha = 0.2f * progress),
+            radius = size.width * (0.2f + (0.1f * progress)),
+            center = Offset(size.width * 0.2f, size.height * (0.1f + (0.2f * progress)))
+        )
+
+        drawCircle(
+            color = SecondaryPurple.copy(alpha = 0.2f * progress),
+            radius = size.width * (0.15f + (0.05f * progress)),
+            center = Offset(size.width * 0.8f, size.height * (0.05f + (0.15f * progress)))
+        )
     }
 }
 
