@@ -43,7 +43,7 @@ internal fun RegisterScreen(
     LaunchedEffect(registerState) {
         if (registerState is RegisterState.Success && !isNavigating) {
             isNavigating = true
-            navigateToLogin()
+            navigateToRoleSelection()
         }
     }
 
