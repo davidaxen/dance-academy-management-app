@@ -30,9 +30,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-//            implementation(projects.domain.auth)
             implementation(projects.core.ui)
             implementation(projects.data.auth)
+            implementation(projects.data.user)
 
 
             implementation(libs.koin.core)

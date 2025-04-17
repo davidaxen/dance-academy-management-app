@@ -24,6 +24,7 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.PasswordField
 internal fun RegisterScreen(
     viewModel: RegisterViewModel,
     navigateToLogin: () -> Unit,
+    navigateToRoleSelection: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val registerState by viewModel.registerState.collectAsState()
