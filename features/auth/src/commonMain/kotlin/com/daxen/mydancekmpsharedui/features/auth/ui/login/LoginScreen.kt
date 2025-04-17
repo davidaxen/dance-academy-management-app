@@ -5,13 +5,14 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,6 +30,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.EmailField
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.LoginButton
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.PasswordField
 
 @Composable
 internal fun LoginScreen(
@@ -37,7 +41,13 @@ internal fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     val loginState by viewModel.loginState.collectAsState()
+    val emailError by viewModel.emailError.collectAsState()
+    val passwordError by viewModel.passwordError.collectAsState()
+    val isLoggingIn by viewModel.isLoggingIn.collectAsState()
     var isNavigating by remember { mutableStateOf(false) }
+    var showPassword by remember { mutableStateOf(false) }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     LaunchedEffect(loginState) {
         if (loginState is LoginState.Success && !isNavigating) {
@@ -73,15 +83,15 @@ internal fun LoginScreen(
             )
             Spacer(modifier = Modifier.height(48.dp))
             
-            androidx.compose.material3.Card(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 32.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = androidx.compose.material3.CardDefaults.cardColors(
+                colors = CardDefaults.cardColors(
                     containerColor = SurfaceLight
                 ),
-                elevation = androidx.compose.material3.CardDefaults.cardElevation(
+                elevation = CardDefaults.cardElevation(
                     defaultElevation = 4.dp
                 )
             ) {
@@ -89,266 +99,70 @@ internal fun LoginScreen(
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    FieldsSection(
-                        viewModel = viewModel,
-                        loginState = loginState,
-                        isNavigating = isNavigating
+                    EmailField(
+                        email = email,
+                        onEmailChange = { 
+                            email = it
+                            viewModel.resetErrors()
+                        },
+                        error = emailError
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    PasswordField(
+                        password = password,
+                        onPasswordChange = { 
+                            password = it
+                            viewModel.resetErrors()
+                        },
+                        showPassword = showPassword,
+                        onShowPasswordToggle = { showPassword = !showPassword },
+                        error = passwordError
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    when (loginState) {
+                        is LoginState.Error -> {
+                            Text(
+                                text = (loginState as LoginState.Error).message,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            LoginButton(
+                                onClick = { viewModel.validateAndLogin(email, password) },
+                                isLoading = false,
+                                isEnabled = true,
+                                text = "Intentar de nuevo"
+                            )
+                        }
+                        else -> {
+                            LoginButton(
+                                onClick = { viewModel.validateAndLogin(email, password) },
+                                isLoading = isLoggingIn,
+                                isEnabled = email.isNotEmpty() && password.isNotEmpty() && !isNavigating && !isLoggingIn,
+                                text = if (isLoggingIn) "Iniciando..." else "Iniciar sesión"
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    TextButton(
+                        onClick = { /* TODO: Implementar registro */ },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "¿No tienes cuenta? Regístrate",
+                            color = PrimaryBlue
+                        )
+                    }
                 }
             }
         }
     }
-}
-
-@Composable
-private fun FieldsSection(
-    viewModel: LoginViewModel,
-    loginState: LoginState,
-    isNavigating: Boolean
-) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var showPassword by remember { mutableStateOf(false) }
-    var showErrors by remember { mutableStateOf(false) }
-    var isLoggingIn by remember { mutableStateOf(false) }
-    
-    val emailError = remember(email, showErrors) {
-        if (!showErrors) null else when {
-            email.isEmpty() -> "Por favor, introduce un correo válido"
-            !isValidEmail(email) -> "El formato del correo no es válido"
-            else -> null
-        }
-    }
-    
-    val passwordError = remember(password, showErrors) {
-        if (!showErrors) null else when {
-            password.isEmpty() -> "Por favor, introduce tu contraseña"
-            else -> null
-        }
-    }
-    
-    val isFormValid = email.isNotEmpty() && password.isNotEmpty()
-    val hasValidationErrors = emailError != null || passwordError != null
-
-    LaunchedEffect(hasValidationErrors) {
-        if (hasValidationErrors) {
-            isLoggingIn = false
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        EmailField(
-            email = email,
-            onEmailChange = { email = it },
-            error = emailError
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        PasswordField(
-            password = password,
-            onPasswordChange = { password = it },
-            showPassword = showPassword,
-            onShowPasswordToggle = { showPassword = !showPassword },
-            error = passwordError
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        when (loginState) {
-            is LoginState.Error -> {
-                Text(
-                    text = loginState.message,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                LoginButton(
-                    onClick = { 
-                        showErrors = true
-                        if (!hasValidationErrors) {
-                            isLoggingIn = true
-                            viewModel.login(email = email, password = password)
-                        }
-                    },
-                    isLoading = false,
-                    isEnabled = true,
-                    text = "Intentar de nuevo"
-                )
-            }
-            else -> {
-                LoginButton(
-                    onClick = { 
-                        showErrors = true
-                        if (!hasValidationErrors) {
-                            isLoggingIn = true
-                            viewModel.login(email = email, password = password)
-                        }
-                    },
-                    isLoading = isLoggingIn && !hasValidationErrors,
-                    isEnabled = isFormValid && !isNavigating && !isLoggingIn,
-                    text = if (isLoggingIn && !hasValidationErrors) "Iniciando..." else "Iniciar sesión"
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        TextButton(
-            onClick = { /* TODO: Implementar registro */ },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "¿No tienes cuenta? Regístrate",
-                color = PrimaryBlue
-            )
-        }
-    }
-}
-
-@Composable
-private fun EmailField(
-    email: String,
-    onEmailChange: (String) -> Unit,
-    error: String?
-) {
-    Column {
-        OutlinedTextField(
-            value = email,
-            onValueChange = onEmailChange,
-            label = { Text("Correo electrónico") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = "Email",
-                    tint = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue
-                )
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue,
-                unfocusedBorderColor = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-            ),
-            isError = error != null
-        )
-        
-        AnimatedVisibility(
-            visible = error != null,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            Text(
-                text = error ?: "",
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun PasswordField(
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    showPassword: Boolean,
-    onShowPasswordToggle: () -> Unit,
-    error: String?
-) {
-    Column {
-        OutlinedTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            label = { Text("Contraseña") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = "Password",
-                    tint = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue
-                )
-            },
-            trailingIcon = {
-                IconButton(onClick = onShowPasswordToggle) {
-                    Icon(
-                        imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = if (showPassword) "Ocultar contraseña" else "Mostrar contraseña",
-                        tint = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue
-                    )
-                }
-            },
-            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue,
-                unfocusedBorderColor = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-            ),
-            isError = error != null
-        )
-        
-        AnimatedVisibility(
-            visible = error != null,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            Text(
-                text = error ?: "",
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun LoginButton(
-    onClick: () -> Unit,
-    isLoading: Boolean,
-    isEnabled: Boolean,
-    text: String
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = PrimaryBlue
-        ),
-        enabled = isEnabled
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = Color.White,
-                    strokeWidth = 2.dp
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-            } else {
-                Text(text)
-            }
-        }
-    }
-}
-
-private fun isValidEmail(email: String): Boolean {
-    val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
-    return emailRegex.matches(email)
 }
 
 @Composable
