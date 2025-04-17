@@ -1,19 +1,10 @@
 package com.daxen.mydancekmpsharedui.features.auth.ui.login
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,10 +13,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -134,16 +121,12 @@ internal fun LoginScreen(
                             LoginButton(
                                 onClick = { viewModel.validateAndLogin(email, password) },
                                 isLoading = false,
-                                isEnabled = true,
-                                text = "Intentar de nuevo"
                             )
                         }
                         else -> {
                             LoginButton(
                                 onClick = { viewModel.validateAndLogin(email, password) },
                                 isLoading = isLoggingIn,
-                                isEnabled = email.isNotEmpty() && password.isNotEmpty() && !isNavigating && !isLoggingIn,
-                                text = if (isLoggingIn) "Iniciando..." else "Iniciar sesión"
                             )
                         }
                     }
@@ -151,6 +134,7 @@ internal fun LoginScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     TextButton(
+                        shape = ButtonDefaults.textShape,
                         onClick = { /* TODO: Implementar registro */ },
                         modifier = Modifier.fillMaxWidth()
                     ) {
