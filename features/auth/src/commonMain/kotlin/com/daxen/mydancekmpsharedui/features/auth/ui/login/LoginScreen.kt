@@ -110,6 +110,7 @@ private fun FieldsSection(
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     var showErrors by remember { mutableStateOf(false) }
+    var isLoggingIn by remember { mutableStateOf(false) }
     
     val emailError = remember(email, showErrors) {
         if (!showErrors) null else when {
@@ -127,6 +128,13 @@ private fun FieldsSection(
     }
     
     val isFormValid = email.isNotEmpty() && password.isNotEmpty()
+    val hasValidationErrors = emailError != null || passwordError != null
+
+    LaunchedEffect(hasValidationErrors) {
+        if (hasValidationErrors) {
+            isLoggingIn = false
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -161,7 +169,10 @@ private fun FieldsSection(
                 LoginButton(
                     onClick = { 
                         showErrors = true
-                        viewModel.login(email = email, password = password)
+                        if (!hasValidationErrors) {
+                            isLoggingIn = true
+                            viewModel.login(email = email, password = password)
+                        }
                     },
                     isLoading = false,
                     isEnabled = true,
@@ -172,11 +183,14 @@ private fun FieldsSection(
                 LoginButton(
                     onClick = { 
                         showErrors = true
-                        viewModel.login(email = email, password = password)
+                        if (!hasValidationErrors) {
+                            isLoggingIn = true
+                            viewModel.login(email = email, password = password)
+                        }
                     },
-                    isLoading = loginState is LoginState.Loading || isNavigating,
-                    isEnabled = isFormValid && !isNavigating && loginState !is LoginState.Loading,
-                    text = if (loginState is LoginState.Loading || isNavigating) "Iniciando..." else "Iniciar sesión"
+                    isLoading = isLoggingIn && !hasValidationErrors,
+                    isEnabled = isFormValid && !isNavigating && !isLoggingIn,
+                    text = if (isLoggingIn && !hasValidationErrors) "Iniciando..." else "Iniciar sesión"
                 )
             }
         }
@@ -325,8 +339,9 @@ private fun LoginButton(
                     strokeWidth = 2.dp
                 )
                 Spacer(modifier = Modifier.width(8.dp))
+            } else {
+                Text(text)
             }
-            Text(text)
         }
     }
 }
