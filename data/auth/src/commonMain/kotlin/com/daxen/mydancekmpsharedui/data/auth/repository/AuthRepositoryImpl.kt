@@ -17,7 +17,8 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun register(email: String, password: String) {
-
+        val currentUserAuthId = firebaseAuthService.register(email, password)
+        _currentUid.value = currentUserAuthId
     }
 
     override suspend fun logout() {

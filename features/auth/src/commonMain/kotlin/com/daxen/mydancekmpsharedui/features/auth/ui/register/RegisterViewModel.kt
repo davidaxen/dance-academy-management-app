@@ -39,7 +39,7 @@ class RegisterViewModel(
         _confirmPasswordError.value = null
     }
 
-    fun validateAndRegister(email: String, password: String, confirmPassword: String) {
+    fun register(email: String, password: String, confirmPassword: String) {
         viewModelScope.launch {
             if (validateInputs(email, password, confirmPassword)) {
                 try {

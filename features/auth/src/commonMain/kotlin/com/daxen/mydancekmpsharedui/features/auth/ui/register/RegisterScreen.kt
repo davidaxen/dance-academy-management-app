@@ -174,7 +174,7 @@ internal fun RegisterScreen(
                             }
                             else -> {
                                 Button(
-                                    onClick = { viewModel.validateAndRegister(email, password, confirmPassword) },
+                                    onClick = { viewModel.register(email, password, confirmPassword) },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(56.dp),

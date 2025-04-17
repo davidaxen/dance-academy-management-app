@@ -18,8 +18,9 @@ class FirebaseAuthServiceImpl(
 //        val user = getUserData(result.user?.uid ?: throw IllegalStateException("Error en autenticación"))
     }
 
-//    override suspend fun register(email: String, password: String): User {
-//        val result = auth.createUserWithEmailAndPassword(email, password).await()
+    override suspend fun register(email: String, password: String): String {
+        return auth.createUserWithEmailAndPassword(email, password).user?.uid
+            ?: throw IllegalStateException("Error creando usuario")
 //        val user = User(
 //            uid = result.user?.uid ?: throw IllegalStateException("Error creando usuario"),
 //            email = email,
@@ -28,7 +29,7 @@ class FirebaseAuthServiceImpl(
 //        )
 //        firestore.collection("users").document(user.uid).set(user).await()
 //        return user
-//    }
+    }
 
 
     override fun getCurrentUserId(): String?{

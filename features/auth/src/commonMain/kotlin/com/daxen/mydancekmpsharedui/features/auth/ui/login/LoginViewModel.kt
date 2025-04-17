@@ -51,32 +51,10 @@ class LoginViewModel(
         }
     }
 
-    fun register(email: String, password: String) {
-        viewModelScope.launch {
-            try {
-                authRepository.register(email.trim(), password.trim())
-            } catch (e: Exception) {
-                println("UserViewModel Error en register $e")
-            }
-        }
-    }
-
     fun resetErrors() {
         _emailError.value = null
         _passwordError.value = null
     }
-
-//    fun getCurrentUser() {
-//        viewModelScope.launch {
-//            try {
-//                val user = authRepository.getCurrentUser()
-//                _userState.value = user
-//            } catch (e: Exception) {
-//                _errorState.value = e.message
-//                Log.e("UserViewModel", "Error obteniendo usuario", e)
-//            }
-//        }
-//    }
 
 //    fun logout() {
 //        viewModelScope.launch {
