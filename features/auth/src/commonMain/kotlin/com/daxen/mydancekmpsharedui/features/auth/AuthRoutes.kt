@@ -8,6 +8,7 @@ import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterScreen
+import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -37,7 +38,9 @@ fun NavGraphBuilder.authNavGraph(
         }
         
         composable<RegisterScreenRoute> {
+            val viewModel: RegisterViewModel = koinViewModel()
             RegisterScreen(
+                viewModel = viewModel,
                 navigateToLogin = goBack,
                 modifier = Modifier.fillMaxSize()
             )

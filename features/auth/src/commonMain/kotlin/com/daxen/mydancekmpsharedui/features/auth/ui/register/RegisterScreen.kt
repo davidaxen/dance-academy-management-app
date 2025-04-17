@@ -25,15 +25,29 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.PasswordField
 
 @Composable
 internal fun RegisterScreen(
+    viewModel: RegisterViewModel,
     navigateToLogin: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val registerState by viewModel.registerState.collectAsState()
+    val emailError by viewModel.emailError.collectAsState()
+    val passwordError by viewModel.passwordError.collectAsState()
+    val confirmPasswordError by viewModel.confirmPasswordError.collectAsState()
+    val isRegistering by viewModel.isRegistering.collectAsState()
+    var isNavigating by remember { mutableStateOf(false) }
+    
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     var showConfirmPassword by remember { mutableStateOf(false) }
+
+    LaunchedEffect(registerState) {
+        if (registerState is RegisterState.Success && !isNavigating) {
+            isNavigating = true
+            navigateToLogin()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -42,11 +56,8 @@ internal fun RegisterScreen(
     ) {
         CurvedBackground(modifier)
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
-
-
             // Top Bar con flecha de navegación
             Row(
                 modifier = Modifier
@@ -70,8 +81,9 @@ internal fun RegisterScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.height(60.dp))
                 Text(
                     text = "Crear cuenta",
                     fontSize = 32.sp,
@@ -102,66 +114,93 @@ internal fun RegisterScreen(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = { Text("Nombre completo") },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = PrimaryBlue,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                focusedLabelColor = PrimaryBlue,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                            )
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
                         EmailField(
                             email = email,
-                            onEmailChange = { email = it },
-                            error = null
+                            onEmailChange = { 
+                                email = it
+                                viewModel.resetErrors()
+                            },
+                            error = emailError
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         PasswordField(
                             password = password,
-                            onPasswordChange = { password = it },
+                            onPasswordChange = { 
+                                password = it
+                                viewModel.resetErrors()
+                            },
                             showPassword = showPassword,
                             onShowPasswordToggle = { showPassword = !showPassword },
-                            error = null
+                            error = passwordError
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         PasswordField(
                             password = confirmPassword,
-                            onPasswordChange = { confirmPassword = it },
+                            onPasswordChange = { 
+                                confirmPassword = it
+                                viewModel.resetErrors()
+                            },
                             showPassword = showConfirmPassword,
                             onShowPasswordToggle = { showConfirmPassword = !showConfirmPassword },
-                            error = null,
-//                        label = "Confirmar contraseña"
+                            error = confirmPasswordError,
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Button(
-                            onClick = { /* TODO: Implementar registro */ },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = PrimaryBlue,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            )
-                        ) {
-                            Text(
-                                text = "Registrarse",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                        when (registerState) {
+                            is RegisterState.Error -> {
+                                Text(
+                                    text = (registerState as RegisterState.Error).message,
+                                    color = MaterialTheme.colorScheme.error,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(
+                                    onClick = { /* TODO: Implementar registro */ },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = PrimaryBlue,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                ) {
+                                    Text(
+                                        text = "Registrarse",
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                }
+                            }
+                            else -> {
+                                Button(
+                                    onClick = { viewModel.validateAndRegister(email, password, confirmPassword) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = PrimaryBlue,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    ),
+                                    enabled = !isRegistering
+                                ) {
+                                    if (isRegistering) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(24.dp),
+                                            color = MaterialTheme.colorScheme.onPrimary,
+                                            strokeWidth = 2.dp
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                    }
+                                    Text(
+                                        text = if (isRegistering) "Registrando..." else "Registrarse",
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                }
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
