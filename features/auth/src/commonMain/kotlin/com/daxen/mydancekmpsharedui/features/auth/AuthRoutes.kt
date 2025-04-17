@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
+import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterScreen
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -17,10 +18,11 @@ data object AuthGraph
 data object LoginScreenRoute
 
 @Serializable
-data object AuthScreenRoute
+data object RegisterScreenRoute
 
 fun NavGraphBuilder.authNavGraph(
     goToUser: () -> Unit,
+    goToRegister: () -> Unit
 ) {
     navigation<AuthGraph>(startDestination = LoginScreenRoute) {
 //        composable<AuthScreenRoute> {
@@ -34,6 +36,14 @@ fun NavGraphBuilder.authNavGraph(
             LoginScreen(
                 viewModel = viewModel,
                 navigateToUserScreen = goToUser,
+                navigateToRegister = goToRegister,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        
+        composable<RegisterScreenRoute> {
+            RegisterScreen(
+                navigateToLogin = { },
                 modifier = Modifier.fillMaxSize()
             )
         }

@@ -2,6 +2,7 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.login
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -25,6 +26,7 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.PasswordField
 internal fun LoginScreen(
     viewModel: LoginViewModel,
     navigateToUserScreen: () -> Unit,
+    navigateToRegister: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val loginState by viewModel.loginState.collectAsState()
@@ -134,12 +136,15 @@ internal fun LoginScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     TextButton(
-                        shape = ButtonDefaults.textShape,
-                        onClick = { /* TODO: Implementar registro */ },
+                        onClick = navigateToRegister,
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = PrimaryBlue
+                        ),
+                        interactionSource = remember { MutableInteractionSource() }
                     ) {
                         Text(
                             text = "¿No tienes cuenta? Regístrate",
-                            color = PrimaryBlue
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
