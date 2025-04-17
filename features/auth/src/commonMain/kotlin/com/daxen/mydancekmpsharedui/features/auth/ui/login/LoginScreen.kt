@@ -136,7 +136,6 @@ internal fun LoginScreen(
                     TextButton(
                         shape = ButtonDefaults.textShape,
                         onClick = { /* TODO: Implementar registro */ },
-                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             text = "¿No tienes cuenta? Regístrate",
