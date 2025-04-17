@@ -1,20 +1,29 @@
 package com.daxen.mydancekmpsharedui.features.auth.ui.role
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
+import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlue
+import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlueLight
+import com.daxen.mydancekmpsharedui.core.ui.theme.SecondaryPurple
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
 
@@ -23,20 +32,55 @@ fun RoleSelectionScreen(
     onRoleSelected: (UserRole) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-    ) {
-        CurvedBackground()
+    var showMenu by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        CurvedBackground2()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
+            // Menú de usuario
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                IconButton(
+                    onClick = { showMenu = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Menú de usuario",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("prueba@gmail.com") },
+                        onClick = { showMenu = false }
+                    )
+                    Divider()
+                    DropdownMenuItem(
+                        text = { Text("Cerrar sesión") },
+                        onClick = { showMenu = false }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
             Text(
-                text = "¿Qué tipo de usuario eres?",
+                text = "¡Bienvenido!",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center,
@@ -46,7 +90,7 @@ fun RoleSelectionScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Elige una opción para continuar",
+                text = "Ya estás a nada de ser parte de la app\n\n Primero necesitamos saber que tipo de usuario serás ",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
@@ -85,6 +129,94 @@ fun RoleSelectionScreen(
     }
 }
 
+
+@Composable
+fun CurvedBackground2(modifier: Modifier = Modifier) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = modifier.fillMaxSize()) {
+            // Primera curva (principal)
+            val mainPath = Path().apply {
+                moveTo(0f, size.height * 0.9f)
+                cubicTo(
+                    size.width * 0.3f, size.height * 0.8f,
+                    size.width * 0.7f, size.height * 1.1f,
+                    size.width, size.height * 0.9f
+                )
+                lineTo(size.width, 0f)
+                lineTo(0f, 0f)
+                close()
+            }
+
+            // Segunda curva (detalle)
+            val detailPath = Path().apply {
+                moveTo(0f, size.height * 0.5f)
+                cubicTo(
+                    size.width * 0.2f, size.height * 0.2f,
+                    size.width * 0.5f, size.height * 0.8f,
+                    size.width, size.height * 0.4f
+                )
+                lineTo(size.width, 0f)
+                lineTo(0f, 0f)
+                close()
+            }
+
+            // Tercera curva (accent)
+            val accentPath = Path().apply {
+                moveTo(0f, size.height * 0.3f)
+                cubicTo(
+                    size.width * 0.1f, size.height * 0.1f,
+                    size.width * 0.3f, size.height * 0.4f,
+                    size.width, size.height * 0.2f
+                )
+                lineTo(size.width, 0f)
+                lineTo(0f, 0f)
+                close()
+            }
+
+            // Dibujar las curvas con diferentes gradientes
+            drawPath(
+                path = mainPath,
+                brush = Brush.linearGradient(
+                    colors = listOf(PrimaryBlue, SecondaryPurple),
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, size.height * 1.2f)
+                )
+            )
+
+            drawPath(
+                path = detailPath,
+                brush = Brush.linearGradient(
+                    colors = listOf(SecondaryPurple.copy(alpha = 0.7f), PrimaryBlueLight.copy(alpha = 0.7f)),
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, size.height * 0.8f)
+                )
+            )
+
+            drawPath(
+                path = accentPath,
+                brush = Brush.linearGradient(
+                    colors = listOf(PrimaryBlueLight.copy(alpha = 0.5f), PrimaryBlue.copy(alpha = 0.5f)),
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, size.height * 0.4f)
+                )
+            )
+
+            // Añadir algunos círculos decorativos
+            drawCircle(
+                color = PrimaryBlue.copy(alpha = 0.2f),
+                radius = size.width * 0.2f,
+                center = Offset(size.width * 0.2f, size.height * 0.3f)
+            )
+
+            drawCircle(
+                color = SecondaryPurple.copy(alpha = 0.2f),
+                radius = size.width * 0.15f,
+                center = Offset(size.width * 0.8f, size.height * 0.2f)
+            )
+        }
+    }
+}
+
 @Composable
 private fun RoleButton(
     title: String,
@@ -106,23 +238,22 @@ private fun RoleButton(
             defaultElevation = 2.dp
         )
     ) {
-       Box(modifier = Modifier.fillMaxWidth().clickable { onClick() }){
+        Box(modifier = Modifier.fillMaxWidth().clickable { onClick() }){
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconColor,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(24.dp)
                 )
 
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column {
+                
+                Column(modifier = Modifier.padding(start = LocalPadding.current.small).weight(1f)){
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleMedium,
@@ -136,9 +267,9 @@ private fun RoleButton(
                 }
 
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                    imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = iconColor,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(32.dp)
                 )
             }
