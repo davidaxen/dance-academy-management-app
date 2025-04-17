@@ -9,8 +9,8 @@ import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.runtime.Composable
-import com.daxen.mydancekmpsharedui.features.calendar.CalendarGraph
-import com.daxen.mydancekmpsharedui.features.reservation.ReservationGraph
+import com.daxen.mydancekmpsharedui.features.student.calendar.CalendarGraph
+import com.daxen.mydancekmpsharedui.features.student.reservation.ReservationGraph
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import kotlinx.serialization.Serializable
 
