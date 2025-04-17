@@ -1,9 +1,9 @@
-package com.daxen.mydancekmpsharedui.features.reservation
+package com.daxen.mydancekmpsharedui.features.student.reservation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.daxen.mydancekmpsharedui.features.reservation.ui.ReservationScreen
+import com.daxen.mydancekmpsharedui.features.student.reservation.ui.ReservationScreen
 import kotlinx.serialization.Serializable
 
 @Serializable

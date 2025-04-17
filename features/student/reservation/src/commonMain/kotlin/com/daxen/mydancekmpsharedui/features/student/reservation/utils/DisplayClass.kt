@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.reservation.utils
+package com.daxen.mydancekmpsharedui.features.student.reservation.utils
 
 data class DisplayClass(
     val id: String,

@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.reservation.ui.components
+package com.daxen.mydancekmpsharedui.features.student.reservation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
-import com.daxen.mydancekmpsharedui.features.reservation.utils.DisplayClass
+import com.daxen.mydancekmpsharedui.features.student.reservation.utils.DisplayClass
 
 @Composable
 internal fun DanceClassCard(

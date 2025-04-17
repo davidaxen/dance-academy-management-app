@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.calendar.ui.components
+package com.daxen.mydancekmpsharedui.features.student.calendar.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

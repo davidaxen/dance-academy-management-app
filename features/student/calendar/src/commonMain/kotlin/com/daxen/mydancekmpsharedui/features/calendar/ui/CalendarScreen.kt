@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.calendar.ui
+package com.daxen.mydancekmpsharedui.features.student.calendar.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -8,9 +8,9 @@ import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
-import com.daxen.mydancekmpsharedui.features.calendar.ui.components.CalendarGrid
-import com.daxen.mydancekmpsharedui.features.calendar.ui.components.MonthHeader
-import com.daxen.mydancekmpsharedui.features.calendar.ui.components.ReservedClassesList
+import com.daxen.mydancekmpsharedui.features.student.calendar.ui.components.CalendarGrid
+import com.daxen.mydancekmpsharedui.features.student.calendar.ui.components.MonthHeader
+import com.daxen.mydancekmpsharedui.features.student.calendar.ui.components.ReservedClassesList
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

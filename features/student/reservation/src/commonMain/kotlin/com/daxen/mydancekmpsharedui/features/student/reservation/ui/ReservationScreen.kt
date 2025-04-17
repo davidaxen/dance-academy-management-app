@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.reservation.ui
+package com.daxen.mydancekmpsharedui.features.student.reservation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,11 +49,11 @@ import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 import com.daxen.mydancekmpsharedui.data.classes.models.SpecificClassModel
 import com.daxen.mydancekmpsharedui.data.classes.models.WeeklyClassModel
-import com.daxen.mydancekmpsharedui.features.reservation.ui.components.DanceClassCard
-import com.daxen.mydancekmpsharedui.features.reservation.ui.components.WeekSelectorSection
-import com.daxen.mydancekmpsharedui.features.reservation.utils.ClassOrigin
-import com.daxen.mydancekmpsharedui.features.reservation.utils.Constants
-import com.daxen.mydancekmpsharedui.features.reservation.utils.DisplayClass
+import com.daxen.mydancekmpsharedui.features.student.reservation.ui.components.DanceClassCard
+import com.daxen.mydancekmpsharedui.features.student.reservation.ui.components.WeekSelectorSection
+import com.daxen.mydancekmpsharedui.features.student.reservation.utils.ClassOrigin
+import com.daxen.mydancekmpsharedui.features.student.reservation.utils.Constants
+import com.daxen.mydancekmpsharedui.features.student.reservation.utils.DisplayClass
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime

@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.reservation.utils
+package com.daxen.mydancekmpsharedui.features.student.reservation.utils
 
 object Constants {
     val weekDaysShort = listOf("L", "M", "X", "J", "V", "S", "D")

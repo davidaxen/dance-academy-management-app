@@ -23,7 +23,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "featuresCalendar"
+            baseName = "featuresStudentCalendar"
             isStatic = true
         }
     }
@@ -49,7 +49,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.daxen.mydancekmpsharedui.features.calendar"
+    namespace = "com.daxen.mydancekmpsharedui.features.student.calendar"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.calendar.ui.components
+package com.daxen.mydancekmpsharedui.features.student.calendar.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
-import com.daxen.mydancekmpsharedui.features.calendar.ui.models.CalendarMonth
+import com.daxen.mydancekmpsharedui.features.student.calendar.ui.models.CalendarMonth
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus

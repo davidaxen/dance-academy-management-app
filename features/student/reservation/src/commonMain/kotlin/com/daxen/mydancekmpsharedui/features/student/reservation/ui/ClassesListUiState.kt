@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.reservation.ui
+package com.daxen.mydancekmpsharedui.features.student.reservation.ui
 
 import com.daxen.mydancekmpsharedui.data.classes.models.SpecificClassModel
 import com.daxen.mydancekmpsharedui.data.classes.models.WeeklyClassModel

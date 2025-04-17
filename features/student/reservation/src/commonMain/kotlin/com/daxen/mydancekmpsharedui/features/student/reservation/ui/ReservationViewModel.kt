@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.reservation.ui
+package com.daxen.mydancekmpsharedui.features.student.reservation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

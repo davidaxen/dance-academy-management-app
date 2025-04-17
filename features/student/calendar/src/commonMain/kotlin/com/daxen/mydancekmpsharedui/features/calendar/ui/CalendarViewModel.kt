@@ -1,12 +1,12 @@
-package com.daxen.mydancekmpsharedui.features.calendar.ui
+package com.daxen.mydancekmpsharedui.features.student.calendar.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daxen.mydancekmpsharedui.data.reservation.repository.ReservationRepository
 import com.daxen.mydancekmpsharedui.data.user.model.User
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
-import com.daxen.mydancekmpsharedui.features.calendar.ui.models.CalendarMonth
-import com.daxen.mydancekmpsharedui.features.calendar.ui.models.ReservedClass
+import com.daxen.mydancekmpsharedui.features.student.calendar.ui.models.CalendarMonth
+import com.daxen.mydancekmpsharedui.features.student.calendar.ui.models.ReservedClass
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*

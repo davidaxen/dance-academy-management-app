@@ -38,7 +38,7 @@ kotlin {
             implementation(projects.features.auth)
             implementation(projects.features.user)
             implementation(projects.features.student.reservation)
-            implementation(projects.features.calendar)
+            implementation(projects.features.student.calendar)
 
             implementation(libs.navigation.compose)
 

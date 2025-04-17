@@ -1,9 +1,9 @@
-package com.daxen.mydancekmpsharedui.features.calendar
+package com.daxen.mydancekmpsharedui.features.student.calendar
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.daxen.mydancekmpsharedui.features.calendar.ui.CalendarScreen
+import com.daxen.mydancekmpsharedui.features.student.calendar.ui.CalendarScreen
 import kotlinx.serialization.Serializable
 
 @Serializable

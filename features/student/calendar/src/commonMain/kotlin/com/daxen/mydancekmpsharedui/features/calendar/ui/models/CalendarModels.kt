@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.calendar.ui.models
+package com.daxen.mydancekmpsharedui.features.student.calendar.ui.models
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate

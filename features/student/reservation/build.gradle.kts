@@ -23,7 +23,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "featuresReservation"
+            baseName = "featuresStudentReservation"
             isStatic = true
         }
     }
@@ -50,7 +50,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.daxen.mydancekmpsharedui.features.reservation"
+    namespace = "com.daxen.mydancekmpsharedui.features.student.reservation"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

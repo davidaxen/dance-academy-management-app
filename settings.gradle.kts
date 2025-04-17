@@ -33,7 +33,7 @@ include(":composeApp")
 include(":features:auth")
 include(":features:user")
 include(":features:student:reservation")
-include(":features:calendar")
+include(":features:student:calendar")
 
 include(":data:auth")
 include(":data:user")
