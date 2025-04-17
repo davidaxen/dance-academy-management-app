@@ -22,10 +22,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
-import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
 
 @Composable
 fun RoleSelectionScreen(
@@ -137,29 +137,31 @@ fun RoleSelectionScreen(
 @Composable
 private fun AnimatedBackground(expanded: Boolean) {
     val progress by animateFloatAsState(
-        targetValue = if (expanded) 1.5f else 0f,
+        targetValue = if (expanded) 1f else 0f,
         animationSpec = tween(
             durationMillis = 4000,
             easing = FastOutSlowInEasing
         ),
-        label = "backgroundAnimation"
     )
 
     Canvas(
-        modifier = Modifier.fillMaxSize()
-//            .fillMaxWidth()
-//            .fillMaxHeight(0.5f)
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.5f + (0.5f * progress))
     ) {
         // Primera curva (principal)
+        val increment = 0.5f * progress
         val mainPath = Path().apply {
-            moveTo(0f, size.height * (0.7f + (0.4f * progress)))
+            val yStart = lerp(start = size.height * 0.7f, stop = size.height, fraction = progress)
+            val controlY1 = lerp(start = size.height * 0.3f, stop = size.height, fraction = progress)
+            val controlY2 = lerp(start = size.height * 1.2f, stop = size.height, fraction = progress)
+            val endY = lerp(start = size.height * 0.8f, stop = size.height, fraction = progress)
+
+            moveTo(0f, yStart)
             cubicTo(
-                size.width * 0.3f,
-                size.height * (0.15f + (0.6f * progress)),
-                size.width * 0.7f,
-                size.height * (0.6f + (0.6f * progress)),
-                size.width, 
-                size.height * (0.4f + (0.6f * progress))
+                size.width * 0.3f, controlY1,
+                size.width * 0.7f, controlY2,
+                size.width, endY
             )
             lineTo(size.width, 0f)
             lineTo(0f, 0f)
@@ -168,14 +170,14 @@ private fun AnimatedBackground(expanded: Boolean) {
 
         // Segunda curva (detalle)
         val detailPath = Path().apply {
-            moveTo(0f, size.height * (0.2f + (0.5f * progress)))
+            moveTo(0f, size.height * (0.5f + (increment * 0.2f)))
             cubicTo(
-                size.width * 0.3f,
-                size.height * (0.05f + (0.15f * progress)),
+                size.width * 0.2f,
+                size.height * (0.2f + (increment * 0.2f)),
                 size.width * 0.5f,
-                size.height * (0.3f + (0.5f * progress)),
+                size.height * (0.8f + (increment * 0.2f)),
                 size.width, 
-                size.height * (0.1f + (0.3f * progress))
+                size.height * (0.4f + (increment * 0.2f))
             )
             lineTo(size.width, 0f)
             lineTo(0f, 0f)
@@ -184,14 +186,14 @@ private fun AnimatedBackground(expanded: Boolean) {
 
         // Tercera curva (accent)
         val accentPath = Path().apply {
-            moveTo(0f, size.height * (0.1f + (0.2f * progress)))
+            moveTo(0f, size.height * (0.3f + (increment * 0.4f)))
             cubicTo(
                 size.width * 0.1f,
-                size.height * (0.05f + (0.05f * progress)),
+                size.height * (0.1f + (increment * 0.4f)),
                 size.width * 0.3f,
-                size.height * (0.15f + (0.25f * progress)),
+                size.height * (0.4f + (increment * 0.4f)),
                 size.width, 
-                size.height * (0.05f + (0.15f * progress))
+                size.height * (0.2f + (increment * 0.4f))
             )
             lineTo(size.width, 0f)
             lineTo(0f, 0f)
@@ -204,7 +206,7 @@ private fun AnimatedBackground(expanded: Boolean) {
             brush = Brush.linearGradient(
                 colors = listOf(PrimaryBlue, SecondaryPurple),
                 start = Offset(0f, 0f),
-                end = Offset(size.width, size.height * (0.5f + (0.7f * progress)))
+                end = Offset(size.width, size.height * (1.2f + increment))
             )
         )
 
@@ -213,7 +215,7 @@ private fun AnimatedBackground(expanded: Boolean) {
             brush = Brush.linearGradient(
                 colors = listOf(SecondaryPurple.copy(alpha = 0.7f), PrimaryBlueLight.copy(alpha = 0.7f)),
                 start = Offset(0f, 0f),
-                end = Offset(size.width, size.height * (0.3f + (0.5f * progress)))
+                end = Offset(size.width, size.height * (0.8f + (increment * 0.2f)))
             )
         )
 
@@ -222,21 +224,21 @@ private fun AnimatedBackground(expanded: Boolean) {
             brush = Brush.linearGradient(
                 colors = listOf(PrimaryBlueLight.copy(alpha = 0.5f), PrimaryBlue.copy(alpha = 0.5f)),
                 start = Offset(0f, 0f),
-                end = Offset(size.width, size.height * (0.2f + (0.2f * progress)))
+                end = Offset(size.width, size.height * (0.4f + (increment * 0.4f)))
             )
         )
 
         // Añadir algunos círculos decorativos
         drawCircle(
             color = PrimaryBlue.copy(alpha = 0.2f * progress),
-            radius = size.width * (0.2f + (0.1f * progress)),
-            center = Offset(size.width * 0.2f, size.height * (0.1f + (0.2f * progress)))
+            radius = size.width * (0.2f + (increment * 0.4f)),
+            center = Offset(size.width * 0.2f, size.height * (0.3f + (increment * 0.4f)))
         )
 
         drawCircle(
             color = SecondaryPurple.copy(alpha = 0.2f * progress),
-            radius = size.width * (0.15f + (0.05f * progress)),
-            center = Offset(size.width * 0.8f, size.height * (0.05f + (0.15f * progress)))
+            radius = size.width * (0.15f + (increment * 0.4f)),
+            center = Offset(size.width * 0.8f, size.height * (0.2f + (increment * 0.4f)))
         )
     }
 }
