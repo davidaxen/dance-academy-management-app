@@ -16,19 +16,17 @@ fun CentralAppNavHost(navController: NavHostController, isUserLogged: Boolean) {
     ) {
         authNavGraph(
             goToUser = {
-            navController.navigate(CentralAppDestination.Main.route) {
-                popUpTo(0) {
-                    inclusive = true
+                navController.navigate(CentralAppDestination.Main.route) {
+                    popUpTo(0) {
+                        inclusive = true
+                    }
                 }
-            }
-        },
+            },
             goToRegister = {
                 navController.navigate(RegisterScreenRoute)
-//                {
-//                    popUpTo(0) {
-//                        inclusive = true
-//                    }
-//                }
+            },
+            goBack = {
+                navController.popBackStack()
             }
         )
 

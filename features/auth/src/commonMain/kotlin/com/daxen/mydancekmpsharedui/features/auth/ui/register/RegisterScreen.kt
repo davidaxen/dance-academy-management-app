@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,115 +44,140 @@ internal fun RegisterScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(100.dp))
-            Text(
-                text = "Crear cuenta",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Text(
-                text = "Regístrate para comenzar",
-                fontSize = 16.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(48.dp))
-            
-            Card(
+
+
+            // Top Bar con flecha de navegación
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 32.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = SurfaceLight
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp
-                )
+                    .padding(top = 8.dp, start = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                IconButton(
+                    onClick = navigateToLogin,
+                    modifier = Modifier.size(48.dp)
                 ) {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Nombre completo") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = PrimaryBlue,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            focusedLabelColor = PrimaryBlue,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Volver",
+                        tint = Color.White
+                    )
+                }
+            }
+            
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text(
+                    text = "Crear cuenta",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = "Regístrate para comenzar",
+                    fontSize = 16.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = SurfaceLight
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 4.dp
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            label = { Text("Nombre completo") },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryBlue,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = PrimaryBlue,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
                         )
-                    )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    EmailField(
-                        email = email,
-                        onEmailChange = { email = it },
-                        error = null
-                    )
+                        EmailField(
+                            email = email,
+                            onEmailChange = { email = it },
+                            error = null
+                        )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    PasswordField(
-                        password = password,
-                        onPasswordChange = { password = it },
-                        showPassword = showPassword,
-                        onShowPasswordToggle = { showPassword = !showPassword },
-                        error = null
-                    )
+                        PasswordField(
+                            password = password,
+                            onPasswordChange = { password = it },
+                            showPassword = showPassword,
+                            onShowPasswordToggle = { showPassword = !showPassword },
+                            error = null
+                        )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    PasswordField(
-                        password = confirmPassword,
-                        onPasswordChange = { confirmPassword = it },
-                        showPassword = showConfirmPassword,
-                        onShowPasswordToggle = { showConfirmPassword = !showConfirmPassword },
-                        error = null,
+                        PasswordField(
+                            password = confirmPassword,
+                            onPasswordChange = { confirmPassword = it },
+                            showPassword = showConfirmPassword,
+                            onShowPasswordToggle = { showConfirmPassword = !showConfirmPassword },
+                            error = null,
 //                        label = "Confirmar contraseña"
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = { /* TODO: Implementar registro */ },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = PrimaryBlue,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
-                    ) {
-                        Text(
-                            text = "Registrarse",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
 
-                    TextButton(
-                        onClick = navigateToLogin,
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = PrimaryBlue
-                        ),
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) {
-                        Text(
-                            text = "¿Ya tienes cuenta? Inicia sesión",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Button(
+                            onClick = { /* TODO: Implementar registro */ },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = PrimaryBlue,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Text(
+                                text = "Registrarse",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        TextButton(
+                            onClick = navigateToLogin,
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = PrimaryBlue
+                            ),
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            Text(
+                                text = "¿Ya tienes cuenta? Inicia sesión",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                     }
                 }
             }
