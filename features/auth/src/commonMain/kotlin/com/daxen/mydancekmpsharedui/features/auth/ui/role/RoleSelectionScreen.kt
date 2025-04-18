@@ -46,7 +46,7 @@ fun RoleSelectionScreen(
         AnimatedVisibility(
             visible = visible,
             enter = slideInVertically(
-                animationSpec = tween(durationMillis = 1500, easing = EaseIn)
+                animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
             )
         ) {
             Column(
@@ -102,7 +102,7 @@ fun RoleSelectionScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Ya estás a nada de ser parte de la app\n\n Primero necesitamos saber que tipo de usuario serás ",
+                    text = "Ya estás a nada de ser parte de la app\n\n Primero necesitamos saber qué tipo de usuario serás ",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center
@@ -122,7 +122,7 @@ fun RoleSelectionScreen(
 
                 RoleButton(
                     title = "Profesor",
-                    description = "Para gestionar clases y compartir contenido con alumnos",
+                    description = "Para gestionar clases y compartir contenido con tus alumnos",
                     icon = Icons.Default.School,
                     iconColor = MaterialTheme.colorScheme.secondary,
                     onClick = { onRoleSelected(UserRole.TEACHER) }
@@ -147,7 +147,7 @@ private fun AnimatedBackground(expanded: Boolean) {
     val progress by animateFloatAsState(
         targetValue = if (expanded) 1f else 0f,
         animationSpec = tween(
-            durationMillis = 4000,
+            durationMillis = 1000,
             easing = FastOutSlowInEasing
         ),
     )

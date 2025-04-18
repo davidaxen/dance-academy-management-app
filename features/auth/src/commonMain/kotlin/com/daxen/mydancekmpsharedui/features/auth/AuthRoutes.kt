@@ -53,7 +53,7 @@ fun NavGraphBuilder.authNavGraph(
         }
 
         composable<RoleSelectionScreenRoute>(
-            enterTransition = { fadeIn(animationSpec = tween(2000, easing = EaseIn)) }
+            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) }
         ) {
             RoleSelectionScreen(
                 onRoleSelected = { role ->
@@ -77,7 +77,7 @@ fun NavGraphBuilder.authNavGraph(
             exitTransition = {
                 slideOutVertically(
                     targetOffsetY = { it },
-                    animationSpec = tween(4000, easing = EaseInQuint)
+                    animationSpec = tween(1000, easing = EaseIn)
                 )
              },
             popEnterTransition = {
