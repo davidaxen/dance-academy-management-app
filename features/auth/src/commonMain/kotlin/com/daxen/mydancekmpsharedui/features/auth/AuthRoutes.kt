@@ -1,12 +1,14 @@
 package com.daxen.mydancekmpsharedui.features.auth
 
 import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseInQuint
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
@@ -39,7 +41,7 @@ fun NavGraphBuilder.authNavGraph(
     goToRoleSelection: () -> Unit,
     goBack: () -> Unit,
 ) {
-    navigation<AuthGraph>(startDestination = LoginScreenRoute) {
+    navigation<AuthGraph>(startDestination = RegisterScreenRoute) {
         composable<LoginScreenRoute> {
             val viewModel: LoginViewModel = koinViewModel()
             LoginScreen(
@@ -50,7 +52,9 @@ fun NavGraphBuilder.authNavGraph(
             )
         }
 
-        composable<RoleSelectionScreenRoute> {
+        composable<RoleSelectionScreenRoute>(
+            enterTransition = { fadeIn(animationSpec = tween(2000, easing = EaseIn)) }
+        ) {
             RoleSelectionScreen(
                 onRoleSelected = { role ->
                     when (role) {
@@ -71,11 +75,11 @@ fun NavGraphBuilder.authNavGraph(
                 ) + fadeIn(animationSpec = tween(500, easing = LinearEasing))
             },
             exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -it },
-                    animationSpec = tween(500)
-                ) + fadeOut(animationSpec = tween(500, easing = EaseIn))
-            },
+                slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween(4000, easing = EaseInQuint)
+                )
+             },
             popEnterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { -it },

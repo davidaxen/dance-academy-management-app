@@ -3,7 +3,6 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.role
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,102 +33,111 @@ fun RoleSelectionScreen(
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var showExpandedBackground by remember { mutableStateOf(false) }
-    
+    var visible by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         showExpandedBackground = true
+        visible = true
     }
     
     Box(modifier = modifier) {
         AnimatedBackground(showExpandedBackground)
-        
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+
+        AnimatedVisibility(
+            visible = visible,
+            enter = slideInVertically(
+                animationSpec = tween(durationMillis = 1500, easing = EaseIn)
+            )
         ) {
-            // Menú de usuario
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                contentAlignment = Alignment.TopEnd
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                IconButton(
-                    onClick = { showMenu = true }
+                // Menú de usuario
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    contentAlignment = Alignment.TopEnd
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Menú de usuario",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(32.dp)
-                    )
+                    IconButton(
+                        onClick = { showMenu = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Menú de usuario",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("prueba@gmail.com") },
+                            onClick = { showMenu = false }
+                        )
+                        Divider()
+                        DropdownMenuItem(
+                            text = { Text("Cerrar sesión") },
+                            onClick = { showMenu = false }
+                        )
+                    }
                 }
 
-                DropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("prueba@gmail.com") },
-                        onClick = { showMenu = false }
-                    )
-                    Divider()
-                    DropdownMenuItem(
-                        text = { Text("Cerrar sesión") },
-                        onClick = { showMenu = false }
-                    )
-                }
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Text(
+                    text = "¡Bienvenido!",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Ya estás a nada de ser parte de la app\n\n Primero necesitamos saber que tipo de usuario serás ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(60.dp))
+
+                RoleButton(
+                    title = "Estudiante",
+                    description = "Para reservar clases y acceder al contenido de tus academias",
+                    icon = Icons.Default.Person,
+                    iconColor = MaterialTheme.colorScheme.primary,
+                    onClick = { onRoleSelected(UserRole.STUDENT) }
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                RoleButton(
+                    title = "Profesor",
+                    description = "Para gestionar clases y compartir contenido con alumnos",
+                    icon = Icons.Default.School,
+                    iconColor = MaterialTheme.colorScheme.secondary,
+                    onClick = { onRoleSelected(UserRole.TEACHER) }
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                RoleButton(
+                    title = "Academia",
+                    description = "Representantes o administradores de academias de baile",
+                    icon = Icons.Default.Business,
+                    iconColor = MaterialTheme.colorScheme.tertiary,
+                    onClick = { onRoleSelected(UserRole.ACADEMY) }
+                )
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                text = "¡Bienvenido!",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Ya estás a nada de ser parte de la app\n\n Primero necesitamos saber que tipo de usuario serás ",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            RoleButton(
-                title = "Estudiante",
-                description = "Para reservar clases y acceder al contenido de tus academias",
-                icon = Icons.Default.Person,
-                iconColor = MaterialTheme.colorScheme.primary,
-                onClick = { onRoleSelected(UserRole.STUDENT) }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            RoleButton(
-                title = "Profesor",
-                description = "Para gestionar clases y compartir contenido con alumnos",
-                icon = Icons.Default.School,
-                iconColor = MaterialTheme.colorScheme.secondary,
-                onClick = { onRoleSelected(UserRole.TEACHER) }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            RoleButton(
-                title = "Academia",
-                description = "Representantes o administradores de academias de baile",
-                icon = Icons.Default.Business,
-                iconColor = MaterialTheme.colorScheme.tertiary,
-                onClick = { onRoleSelected(UserRole.ACADEMY) }
-            )
         }
     }
 }
@@ -170,14 +178,14 @@ private fun AnimatedBackground(expanded: Boolean) {
 
         // Segunda curva (detalle)
         val detailPath = Path().apply {
-            moveTo(0f, size.height * (0.5f + (increment * 0.2f)))
+            moveTo(0f, size.height * (0.5f + (increment * 0.4f)))
             cubicTo(
                 size.width * 0.2f,
-                size.height * (0.2f + (increment * 0.2f)),
+                size.height * (0.2f + (increment * 0.4f)),
                 size.width * 0.5f,
-                size.height * (0.8f + (increment * 0.2f)),
+                size.height * (0.8f + (increment * 0.4f)),
                 size.width, 
-                size.height * (0.4f + (increment * 0.2f))
+                size.height * (0.4f + (increment * 0.4f))
             )
             lineTo(size.width, 0f)
             lineTo(0f, 0f)
@@ -186,14 +194,14 @@ private fun AnimatedBackground(expanded: Boolean) {
 
         // Tercera curva (accent)
         val accentPath = Path().apply {
-            moveTo(0f, size.height * (0.3f + (increment * 0.4f)))
+            moveTo(0f, size.height * (0.3f + (increment * 0.2f)))
             cubicTo(
                 size.width * 0.1f,
-                size.height * (0.1f + (increment * 0.4f)),
+                size.height * (0.1f + (increment * 0.2f)),
                 size.width * 0.3f,
-                size.height * (0.4f + (increment * 0.4f)),
+                size.height * (0.4f + (increment * 0.2f)),
                 size.width, 
-                size.height * (0.2f + (increment * 0.4f))
+                size.height * (0.2f + (increment * 0.2f))
             )
             lineTo(size.width, 0f)
             lineTo(0f, 0f)
@@ -231,14 +239,14 @@ private fun AnimatedBackground(expanded: Boolean) {
         // Añadir algunos círculos decorativos
         drawCircle(
             color = PrimaryBlue.copy(alpha = 0.2f * progress),
-            radius = size.width * (0.2f + (increment * 0.4f)),
-            center = Offset(size.width * 0.2f, size.height * (0.3f + (increment * 0.4f)))
+            radius = size.width * (0.2f + (increment * 0.2f)),
+            center = Offset(size.width * 0.2f, size.height * (0.3f ))
         )
 
         drawCircle(
             color = SecondaryPurple.copy(alpha = 0.2f * progress),
-            radius = size.width * (0.15f + (increment * 0.4f)),
-            center = Offset(size.width * 0.8f, size.height * (0.2f + (increment * 0.4f)))
+            radius = size.width * (0.15f + (increment * 0.2f)),
+            center = Offset(size.width * 0.8f, size.height * (0.2f))
         )
     }
 }
