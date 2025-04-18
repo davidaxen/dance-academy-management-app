@@ -16,7 +16,10 @@ import androidx.compose.ui.unit.sp
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.EmailField
-import com.daxen.mydancekmpsharedui.features.auth.ui.components.LoginButton
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthButton
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthCard
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthTitleAndSubtitle
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.CardTextButton
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.PasswordField
 
 @Composable
@@ -30,10 +33,11 @@ internal fun LoginScreen(
     val emailError by viewModel.emailError.collectAsState()
     val passwordError by viewModel.passwordError.collectAsState()
     val isLoggingIn by viewModel.isLoggingIn.collectAsState()
-    var isNavigating by remember { mutableStateOf(false) }
-    var showPassword by remember { mutableStateOf(false) }
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var showPassword by remember { mutableStateOf(false) }
+    var isNavigating by remember { mutableStateOf(false) }
 
     LaunchedEffect(loginState) {
         if (loginState is LoginState.Success && !isNavigating) {
@@ -55,97 +59,76 @@ internal fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(120.dp))
-            Text(
-                text = "Bienvenido",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
+
+            AuthTitleAndSubtitle(
+                title = "Iniciar sesión",
+                subtitle = "Accede a tu cuenta para continuar"
             )
-            Text(
-                text = "Inicia sesión para continuar",
-                fontSize = 16.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
+
             Spacer(modifier = Modifier.height(48.dp))
             
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = SurfaceLight
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp
+            AuthCard {
+                EmailField(
+                    email = email,
+                    onEmailChange = {
+                        email = it
+                        viewModel.resetErrors()
+                    },
+                    error = emailError
                 )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    EmailField(
-                        email = email,
-                        onEmailChange = { 
-                            email = it
-                            viewModel.resetErrors()
-                        },
-                        error = emailError
-                    )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    PasswordField(
-                        password = password,
-                        onPasswordChange = { 
-                            password = it
-                            viewModel.resetErrors()
-                        },
-                        showPassword = showPassword,
-                        onShowPasswordToggle = { showPassword = !showPassword },
-                        error = passwordError
-                    )
+                PasswordField(
+                    password = password,
+                    onPasswordChange = {
+                        password = it
+                        viewModel.resetErrors()
+                    },
+                    showPassword = showPassword,
+                    onShowPasswordToggle = { showPassword = !showPassword },
+                    error = passwordError
+                )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                    when (loginState) {
-                        is LoginState.Error -> {
-                            Text(
-                                text = (loginState as LoginState.Error).message,
-                                color = MaterialTheme.colorScheme.error,
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            LoginButton(
-                                onClick = { viewModel.validateAndLogin(email, password) },
-                                isLoading = false,
-                            )
-                        }
-                        else -> {
-                            LoginButton(
-                                onClick = { viewModel.validateAndLogin(email, password) },
-                                isLoading = isLoggingIn,
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    TextButton(
-                        onClick = navigateToRegister,
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = PrimaryBlue
-                        ),
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) {
+                when (loginState) {
+                    is LoginState.Error -> {
                         Text(
-                            text = "¿No tienes cuenta? Regístrate",
-                            style = MaterialTheme.typography.bodyMedium
+                            text = (loginState as LoginState.Error).message,
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        AuthButton(
+                            text = "Iniciar sesión",
+                            onClick = { viewModel.validateAndLogin(email, password) },
+                            isLoading = false,
+                        )
+                    }
+                    else -> {
+                        AuthButton(
+                            text = "Iniciar sesión",
+                            onClick = { viewModel.validateAndLogin(email, password) },
+                            isLoading = isLoggingIn,
                         )
                     }
                 }
+                CardTextButton(
+                    text = "¿Olvidaste tu contraseña?",
+                    onClick = {}
+                )
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            CardTextButton(
+                text = "¿No tienes cuenta? Regístrate",
+                onClick = navigateToRegister
+            )
         }
     }
 }
+
+
+
+
+
