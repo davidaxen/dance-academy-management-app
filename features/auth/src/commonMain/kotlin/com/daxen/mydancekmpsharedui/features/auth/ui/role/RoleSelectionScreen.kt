@@ -34,21 +34,19 @@ fun RoleSelectionScreen(
     onLogOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showExpandedBackground by rememberSaveable { mutableStateOf(false) }
-    var visible by rememberSaveable { mutableStateOf(false) }
+    var showAnimation by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        if (!showExpandedBackground || !visible) {
-            showExpandedBackground = true
-            visible = true
+        if (!showAnimation) {
+            showAnimation = true
         }
     }
     
     Box(modifier = modifier) {
-        AnimatedBackground(showExpandedBackground)
+        AnimatedBackground(showAnimation)
 
         AnimatedVisibility(
-            visible = visible,
+            visible = showAnimation,
             enter = slideInVertically(
                 animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
             ),

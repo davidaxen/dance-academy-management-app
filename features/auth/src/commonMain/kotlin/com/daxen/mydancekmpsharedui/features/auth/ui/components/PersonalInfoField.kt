@@ -3,10 +3,14 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun PersonalInfoField(
@@ -17,8 +21,16 @@ fun PersonalInfoField(
     errorMessage: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    prefix: String? = null
 ) {
+    val visualTransformation = if (prefix != null) {
+        PhonePrefixTransformation(prefix)
+    } else {
+        VisualTransformation.None
+    }
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -36,6 +48,8 @@ fun PersonalInfoField(
                 )
             }
         },
+        leadingIcon = leadingIcon,
+        visualTransformation = visualTransformation,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -46,4 +60,22 @@ fun PersonalInfoField(
         ),
         modifier = modifier.fillMaxWidth()
     )
+}
+
+private class PhonePrefixTransformation(private val prefix: String) : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val prefixAnnotated = AnnotatedString(prefix)
+        return TransformedText(
+            text = prefixAnnotated + text,
+            offsetMapping = object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    return offset + prefix.length
+                }
+
+                override fun transformedToOriginal(offset: Int): Int {
+                    return offset - prefix.length
+                }
+            }
+        )
+    }
 } 
