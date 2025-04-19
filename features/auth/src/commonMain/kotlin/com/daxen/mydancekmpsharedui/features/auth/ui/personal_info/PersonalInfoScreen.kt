@@ -53,7 +53,7 @@ internal fun PersonalInfoScreen(
             ) {
                 AuthTitleAndSubtitle(
                     title = "Información",
-                    subtitle = "Completa tus datos para continuar",
+                    subtitle = "Completa tu perfil para seguir adelante",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp)

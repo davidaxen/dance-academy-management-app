@@ -60,8 +60,7 @@ fun RoleSelectionScreen(
             ) {
                 AuthTitleAndSubtitle(
                     title = "¡Bienvenido!",
-//                    subtitle = "Ya estás a nada de ser parte de la app \nPrimero necesitamos saber qué tipo de usuario serás",
-                    subtitle = "Ahora necesitamos saber qué tipo de usuario serás",
+                    subtitle = "¿Cómo vas a usar la app?",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = LocalPadding.current.large)
