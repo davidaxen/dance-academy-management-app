@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,12 +34,14 @@ fun RoleSelectionScreen(
     onLogOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showExpandedBackground by remember { mutableStateOf(false) }
-    var visible by remember { mutableStateOf(false) }
+    var showExpandedBackground by rememberSaveable { mutableStateOf(false) }
+    var visible by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        showExpandedBackground = true
-        visible = true
+        if (!showExpandedBackground || !visible) {
+            showExpandedBackground = true
+            visible = true
+        }
     }
     
     Box(modifier = modifier) {
@@ -58,8 +61,8 @@ fun RoleSelectionScreen(
             ) {
                 AuthTitleAndSubtitle(
                     title = "¡Bienvenido!",
-                    subtitle = "Ya estás a nada de ser parte de la app"
-                            + "\nPrimero necesitamos saber qué tipo de usuario serás",
+//                    subtitle = "Ya estás a nada de ser parte de la app \nPrimero necesitamos saber qué tipo de usuario serás",
+                    subtitle = "Ahora necesitamos saber qué tipo de usuario serás",
                     modifier = Modifier.padding(top = LocalPadding.current.large)
                 )
 

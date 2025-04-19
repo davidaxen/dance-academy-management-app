@@ -35,10 +35,14 @@ data object RegisterScreenRoute
 @Serializable
 data object RoleSelectionScreenRoute
 
+@Serializable
+data object PersonalInfoScreenRoute
+
 fun NavGraphBuilder.authNavGraph(
     goToUser: () -> Unit,
     goToRegister: () -> Unit,
     goToRoleSelection: () -> Unit,
+    goToInfo: () -> Unit,
     goBack: () -> Unit,
 ) {
     navigation<AuthGraph>(startDestination = RegisterScreenRoute) {
@@ -53,18 +57,39 @@ fun NavGraphBuilder.authNavGraph(
         }
 
         composable<RoleSelectionScreenRoute>(
-            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) }
+            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(500)
+                )
+            },
         ) {
             RoleSelectionScreen(
                 onRoleSelected = { role ->
                     when (role) {
-                        UserRole.STUDENT -> {}
+                        UserRole.STUDENT -> { goToInfo() }
                         UserRole.TEACHER -> {}
                         UserRole.ACADEMY -> {}
                     }
                 },
                 onLogOut = goBack,
                 modifier = Modifier.fillMaxSize(),
+            )
+        }
+
+        composable<PersonalInfoScreenRoute>(
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(500)
+                )
+            },
+        ) {
+            PersonalInfoScreen(
+                onNavigateBack = goBack,
+                onNavigateNext = goToUser,
+                modifier = Modifier.fillMaxSize()
             )
         }
         

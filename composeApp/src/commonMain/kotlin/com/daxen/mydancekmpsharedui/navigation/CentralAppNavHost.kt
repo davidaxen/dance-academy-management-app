@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.daxen.mydancekmpsharedui.features.auth.PersonalInfoScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.RegisterScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.RoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
@@ -27,6 +28,7 @@ fun CentralAppNavHost(navController: NavHostController, isUserLogged: Boolean) {
                     popUpTo(0) { inclusive = true }
                 }
             },
+            goToInfo = { navController.navigate(PersonalInfoScreenRoute) },
             goBack = { navController.popBackStack() }
         )
 

@@ -2,13 +2,10 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.register
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
@@ -19,6 +16,7 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.CardTextButton
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.EmailField
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.PasswordField
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.TopBarBackSection
 
 @Composable
 internal fun RegisterScreen(
@@ -144,25 +142,3 @@ internal fun RegisterScreen(
         }
     }
 }
-
-@Composable
-private fun TopBarBackSection(navigateToLogin: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp, start = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(
-            onClick = navigateToLogin,
-            modifier = Modifier.size(48.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
-                tint = Color.White
-            )
-        }
-    }
-}
-
