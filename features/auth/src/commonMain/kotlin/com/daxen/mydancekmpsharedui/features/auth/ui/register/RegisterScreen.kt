@@ -59,10 +59,6 @@ internal fun RegisterScreen(
         ) {
             // Top Bar con flecha de navegación
             TopBarBackSection(navigateToLogin)
-
-            Button(navigateToRoleSelection) {
-                Text("asdasd")
-            }
             
             Column(
                 modifier = Modifier

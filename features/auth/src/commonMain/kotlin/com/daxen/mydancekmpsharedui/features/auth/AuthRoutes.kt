@@ -1,7 +1,6 @@
 package com.daxen.mydancekmpsharedui.features.auth
 
 import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseInQuint
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -15,6 +14,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
+import com.daxen.mydancekmpsharedui.features.auth.ui.personal_info.PersonalInfoScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterScreen
