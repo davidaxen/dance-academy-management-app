@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.role
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,19 +20,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthTitleAndSubtitle
 
 @Composable
 fun RoleSelectionScreen(
     onRoleSelected: (UserRole) -> Unit,
+    onLogOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showMenu by remember { mutableStateOf(false) }
     var showExpandedBackground by remember { mutableStateOf(false) }
     var visible by remember { mutableStateOf(false) }
 
@@ -47,97 +48,100 @@ fun RoleSelectionScreen(
             visible = visible,
             enter = slideInVertically(
                 animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
-            )
+            ),
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // Menú de usuario
-                Box(
+                AuthTitleAndSubtitle(
+                    title = "¡Bienvenido!",
+                    subtitle = "Ya estás a nada de ser parte de la app"
+                            + "\nPrimero necesitamos saber qué tipo de usuario serás",
+                    modifier = Modifier.padding(top = LocalPadding.current.large)
+                )
+
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    IconButton(
-                        onClick = { showMenu = true }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Menú de usuario",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
+                        .padding(horizontal = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ){
+                    RoleButton(
+                        title = "Estudiante",
+                        description = "Para reservar clases y acceder al contenido de tus academias",
+                        icon = Icons.Default.Person,
+                        iconColor = MaterialTheme.colorScheme.primary,
+                        onClick = { onRoleSelected(UserRole.STUDENT) }
+                    )
 
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("prueba@gmail.com") },
-                            onClick = { showMenu = false }
-                        )
-                        Divider()
-                        DropdownMenuItem(
-                            text = { Text("Cerrar sesión") },
-                            onClick = { showMenu = false }
-                        )
-                    }
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    RoleButton(
+                        title = "Profesor",
+                        description = "Para gestionar clases y compartir contenido con tus alumnos",
+                        icon = Icons.Default.School,
+                        iconColor = MaterialTheme.colorScheme.secondary,
+                        onClick = { onRoleSelected(UserRole.TEACHER) }
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    RoleButton(
+                        title = "Academia",
+                        description = "Representantes o administradores de academias de baile",
+                        icon = Icons.Default.Business,
+                        iconColor = MaterialTheme.colorScheme.tertiary,
+                        onClick = { onRoleSelected(UserRole.ACADEMY) }
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Text(
-                    text = "¡Bienvenido!",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Ya estás a nada de ser parte de la app\n\n Primero necesitamos saber qué tipo de usuario serás ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(60.dp))
-
-                RoleButton(
-                    title = "Estudiante",
-                    description = "Para reservar clases y acceder al contenido de tus academias",
-                    icon = Icons.Default.Person,
-                    iconColor = MaterialTheme.colorScheme.primary,
-                    onClick = { onRoleSelected(UserRole.STUDENT) }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                RoleButton(
-                    title = "Profesor",
-                    description = "Para gestionar clases y compartir contenido con tus alumnos",
-                    icon = Icons.Default.School,
-                    iconColor = MaterialTheme.colorScheme.secondary,
-                    onClick = { onRoleSelected(UserRole.TEACHER) }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                RoleButton(
-                    title = "Academia",
-                    description = "Representantes o administradores de academias de baile",
-                    icon = Icons.Default.Business,
-                    iconColor = MaterialTheme.colorScheme.tertiary,
-                    onClick = { onRoleSelected(UserRole.ACADEMY) }
-                )
+                UserMenu(
+                    userEmail = "Pueba@gmail.com",
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    onLogOut()
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun UserMenu(
+    userEmail: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Row(modifier = modifier.background(MaterialTheme.colorScheme.onPrimary).padding(vertical = LocalPadding.current.tiny)) {
+        Column(modifier = Modifier.padding(start = LocalPadding.current.tiny)) {
+            Text(
+                text = "Sesión iniciada como:",
+                style = MaterialTheme.typography.labelSmall
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = userEmail,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+        TextButton(
+            onClick = onClick,
+            shape = RoundedCornerShape(0),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.onError,
+            ),
+        ) {
+            Text(
+                text = "Cerrar sesión",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.error
+            )
         }
     }
 }

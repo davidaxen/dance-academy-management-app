@@ -63,7 +63,8 @@ fun NavGraphBuilder.authNavGraph(
                         UserRole.ACADEMY -> {}
                     }
                 },
-                modifier = Modifier.fillMaxSize()
+                onLogOut = goBack,
+                modifier = Modifier.fillMaxSize(),
             )
         }
         
