@@ -2,6 +2,7 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.personal_info
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,10 @@ internal fun PersonalInfoScreen(
     var birthDate by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 
+    val prefixOptions: List<String> = listOf("+34", "+1", "+58", "+52", "+33")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedPrefix by remember { mutableStateOf(prefixOptions.first()) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -47,11 +53,14 @@ internal fun PersonalInfoScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AuthTitleAndSubtitle(
-                    title = "Información personal",
-                    subtitle = "Completa tus datos para continuar"
+                    title = "Información",
+                    subtitle = "Completa tus datos para continuar",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 AuthCard {
                     PersonalInfoField(
@@ -103,23 +112,88 @@ internal fun PersonalInfoScreen(
                         label = "Teléfono",
                         keyboardType = KeyboardType.Phone,
                         leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Phone,
-                                contentDescription = "Teléfono"
+                            CountryCodeSelectable(
+                                onSelected = { selectedPrefix = it },
+                                onClick = { expanded = true },
+                                onDismiss = { expanded = false },
+                                expanded = expanded,
+                                selectedPrefix = selectedPrefix,
+                                prefixOptions = prefixOptions
                             )
                         },
-                        prefix = "+34"
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     AuthButton(
                         text = "Continuar",
-//                        onClick = onNavigateNext,
                         onClick = {},
                         isLoading = false
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CountryCodeSelectable(
+    onSelected: (String) -> Unit,
+    onClick: () -> Unit,
+    onDismiss: () -> Unit,
+    expanded: Boolean,
+    selectedPrefix: String,
+    prefixOptions: List<String>
+) {
+    var searchQuery by remember { mutableStateOf("") }
+
+    val filteredPrefixes = remember(searchQuery, prefixOptions) {
+        prefixOptions.filter {
+            it.contains(searchQuery) || it.contains(searchQuery, ignoreCase = true)
+        }
+    }
+
+    Box{
+        Row(
+            modifier = Modifier
+                .clickable { onClick() }
+                .padding(start = 8.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = selectedPrefix)
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "Seleccionar prefijo"
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismiss,
+            containerColor = MaterialTheme.colorScheme.background,
+        ) {
+            TextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = { Text("Buscar código") },
+                singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    focusedContainerColor = MaterialTheme.colorScheme.background,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                textStyle = MaterialTheme.typography.bodyMedium,
+            )
+
+            filteredPrefixes.forEach { prefix ->
+                DropdownMenuItem(
+                    text = { Text(prefix, color = MaterialTheme.colorScheme.onBackground) },
+                    onClick = { onSelected(prefix) }
+                )
             }
         }
     }
