@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
@@ -119,16 +120,18 @@ private fun UserMenu(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    Row(modifier = modifier.background(MaterialTheme.colorScheme.onPrimary).padding(vertical = LocalPadding.current.tiny)) {
+    Row(modifier = modifier.background(MaterialTheme.colorScheme.background).padding(vertical = LocalPadding.current.tiny)) {
         Column(modifier = Modifier.padding(start = LocalPadding.current.tiny)) {
             Text(
                 text = "Sesión iniciada como:",
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 text = userEmail,
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -138,7 +141,7 @@ private fun UserMenu(
             onClick = onClick,
             shape = RoundedCornerShape(0),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.onError,
+                containerColor = MaterialTheme.colorScheme.background,
             ),
         ) {
             Text(
@@ -146,6 +149,69 @@ private fun UserMenu(
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.error
             )
+        }
+    }
+}
+@Composable
+private fun RoleButton(
+    title: String,
+    description: String,
+    icon: ImageVector,
+    iconColor: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        )
+    ) {
+        Box(modifier = Modifier.fillMaxWidth().clickable(
+            onClick = dropUnlessResumed {
+                onClick()
+            }
+        )){
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                
+                Column(modifier = Modifier.padding(start = LocalPadding.current.small).weight(1f)){
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
         }
     }
 }
@@ -192,7 +258,7 @@ private fun AnimatedBackground(expanded: Boolean) {
                 size.height * (0.2f + (increment * 0.4f)),
                 size.width * 0.5f,
                 size.height * (0.8f + (increment * 0.4f)),
-                size.width, 
+                size.width,
                 size.height * (0.4f + (increment * 0.4f))
             )
             lineTo(size.width, 0f)
@@ -208,7 +274,7 @@ private fun AnimatedBackground(expanded: Boolean) {
                 size.height * (0.1f + (increment * 0.2f)),
                 size.width * 0.3f,
                 size.height * (0.4f + (increment * 0.2f)),
-                size.width, 
+                size.width,
                 size.height * (0.2f + (increment * 0.2f))
             )
             lineTo(size.width, 0f)
@@ -258,63 +324,3 @@ private fun AnimatedBackground(expanded: Boolean) {
         )
     }
 }
-
-@Composable
-private fun RoleButton(
-    title: String,
-    description: String,
-    icon: ImageVector,
-    iconColor: Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        )
-    ) {
-        Box(modifier = Modifier.fillMaxWidth().clickable { onClick() }){
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = iconColor,
-                    modifier = Modifier.size(24.dp)
-                )
-
-                
-                Column(modifier = Modifier.padding(start = LocalPadding.current.small).weight(1f)){
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                }
-
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        }
-    }
-} 
