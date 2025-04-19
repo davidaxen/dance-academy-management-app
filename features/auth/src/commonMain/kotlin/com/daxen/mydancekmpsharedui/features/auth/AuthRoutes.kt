@@ -45,7 +45,7 @@ fun NavGraphBuilder.authNavGraph(
     goToInfo: () -> Unit,
     goBack: () -> Unit,
 ) {
-    navigation<AuthGraph>(startDestination = RegisterScreenRoute) {
+    navigation<AuthGraph>(startDestination = LoginScreenRoute) {
         composable<LoginScreenRoute> {
             val viewModel: LoginViewModel = koinViewModel()
             LoginScreen(
