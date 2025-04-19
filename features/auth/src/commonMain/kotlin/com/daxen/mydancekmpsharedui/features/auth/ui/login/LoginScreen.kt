@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthButton
@@ -35,7 +36,6 @@ internal fun LoginScreen(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var showPassword by remember { mutableStateOf(false) }
     var isNavigating by remember { mutableStateOf(false) }
 
     LaunchedEffect(loginState) {
@@ -54,10 +54,10 @@ internal fun LoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 32.dp),
+                .padding(horizontal = LocalPadding.current.large),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(120.dp))
+            Spacer(modifier = Modifier.height(116.dp))
 
             AuthTitleAndSubtitle(
                 title = "Iniciar sesión",
@@ -81,8 +81,6 @@ internal fun LoginScreen(
                     imeAction = ImeAction.Next,
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
                 CustomTextField(
                     value = password,
                     onValueChange = {
@@ -96,8 +94,6 @@ internal fun LoginScreen(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done,
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
 
                 when (loginState) {
                     is LoginState.Error -> {

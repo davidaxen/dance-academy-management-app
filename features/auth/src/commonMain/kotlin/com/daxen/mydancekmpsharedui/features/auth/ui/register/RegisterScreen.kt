@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthButton
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthCard
@@ -66,7 +67,7 @@ internal fun RegisterScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 32.dp),
+                    .padding(horizontal = LocalPadding.current.large),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Spacer(modifier = Modifier.height(60.dp))

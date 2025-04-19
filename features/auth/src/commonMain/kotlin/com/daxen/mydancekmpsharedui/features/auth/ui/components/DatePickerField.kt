@@ -91,7 +91,7 @@ fun convertMillisToDate(millis: Long): String {
     val day = date.dayOfMonth.toString().padStart(2, '0')
     val year = date.year.toString()
 
-    return "$month/$day/$year"
+    return "$day-$month-$year"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
