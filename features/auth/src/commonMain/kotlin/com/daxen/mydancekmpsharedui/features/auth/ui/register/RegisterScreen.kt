@@ -19,7 +19,7 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthCard
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthTitleAndSubtitle
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CardTextButton
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
-import com.daxen.mydancekmpsharedui.features.auth.ui.components.PersonalInfoField
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.CustomTextField
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.TopBarBackSection
 
 @Composable
@@ -79,7 +79,7 @@ internal fun RegisterScreen(
                 Spacer(modifier = Modifier.height(48.dp))
 
                 AuthCard {
-                    PersonalInfoField(
+                    CustomTextField(
                         value = email,
                         onValueChange = {
                             email = it
@@ -93,7 +93,7 @@ internal fun RegisterScreen(
                         imeAction = ImeAction.Next,
                     )
 
-                    PersonalInfoField(
+                    CustomTextField(
                         value = password,
                         onValueChange = {
                             password = it
@@ -107,7 +107,7 @@ internal fun RegisterScreen(
                         imeAction = ImeAction.Next,
                     )
 
-                    PersonalInfoField(
+                    CustomTextField(
                         value = confirmPassword,
                         onValueChange = {
                             confirmPassword = it

@@ -63,7 +63,7 @@ internal fun PersonalInfoScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 AuthCard {
-                    PersonalInfoField(
+                    CustomTextField(
                         value = firstName,
                         onValueChange = { firstName = it },
                         label = "Nombre",
@@ -72,7 +72,7 @@ internal fun PersonalInfoScreen(
                         leadingIconDescription = "Nombre"
                     )
 
-                    PersonalInfoField(
+                    CustomTextField(
                         value = lastName1,
                         onValueChange = { lastName1 = it },
                         label = "Primer apellido",
@@ -81,7 +81,7 @@ internal fun PersonalInfoScreen(
                         leadingIconDescription = "Primer apellido"
                     )
 
-                    PersonalInfoField(
+                    CustomTextField(
                         value = lastName2,
                         onValueChange = { lastName2 = it },
                         label = "Segundo apellido",
@@ -94,7 +94,7 @@ internal fun PersonalInfoScreen(
                         onValueChange = { birthDate = it }
                     )
 
-                    PersonalInfoField(
+                    CustomTextField(
                         value = phone,
                         onValueChange = { phone = it },
                         label = "Teléfono",

@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlue
 
 @Composable
-fun PersonalInfoField(
+fun CustomTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,

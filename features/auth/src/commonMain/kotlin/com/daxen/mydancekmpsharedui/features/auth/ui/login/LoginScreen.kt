@@ -2,20 +2,24 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
-import com.daxen.mydancekmpsharedui.features.auth.ui.components.EmailField
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthButton
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthCard
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthTitleAndSubtitle
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CardTextButton
-import com.daxen.mydancekmpsharedui.features.auth.ui.components.PasswordField
+import com.daxen.mydancekmpsharedui.features.auth.ui.components.CustomTextField
 
 @Composable
 internal fun LoginScreen(
@@ -63,26 +67,34 @@ internal fun LoginScreen(
             Spacer(modifier = Modifier.height(48.dp))
             
             AuthCard {
-                EmailField(
-                    email = email,
-                    onEmailChange = {
+                CustomTextField(
+                    value = email,
+                    onValueChange = {
                         email = it
                         viewModel.resetErrors()
                     },
-                    error = emailError
+                    label = "Correo electrónico",
+                    error = emailError,
+                    leadingIcon = Icons.Default.Email,
+                    leadingIconDescription = "Email",
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                PasswordField(
-                    password = password,
-                    onPasswordChange = {
+                CustomTextField(
+                    value = password,
+                    onValueChange = {
                         password = it
                         viewModel.resetErrors()
                     },
-                    showPassword = showPassword,
-                    onShowPasswordToggle = { showPassword = !showPassword },
-                    error = passwordError
+                    label = "Contraseña",
+                    error = passwordError,
+                    leadingIcon = Icons.Default.Lock,
+                    leadingIconDescription = "Contraseña",
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done,
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -114,7 +126,6 @@ internal fun LoginScreen(
                     onClick = {}
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
             CardTextButton(
                 text = "¿No tienes cuenta? Regístrate",
                 onClick = navigateToRegister

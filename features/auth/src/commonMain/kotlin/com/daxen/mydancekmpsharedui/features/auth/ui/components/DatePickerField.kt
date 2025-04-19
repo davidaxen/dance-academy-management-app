@@ -26,8 +26,7 @@ import kotlinx.datetime.*
 @Composable
 fun DatePickerField(
     onValueChange: (String) -> Unit,
-    isError: Boolean = false,
-    errorMessage: String? = null,
+    error: String? = null,
     modifier: Modifier = Modifier
 ) {
     var selectedDate by remember { mutableStateOf<Long?>(null) }
@@ -38,7 +37,7 @@ fun DatePickerField(
         onValueChange = { onValueChange(it) },
         label = { Text("Fecha de nacimiento") },
         placeholder = { Text("MM/DD/YYYY") },
-        isError = isError,
+        isError = error != null,
         readOnly = true,
         leadingIcon = {
             Icon(
@@ -47,20 +46,20 @@ fun DatePickerField(
             )
         },
         supportingText = {
-            if (isError) {
+            if (error != null) {
                 Text(
-                    text = errorMessage ?: "",
+                    text = error,
                     color = MaterialTheme.colorScheme.error
                 )
             }
         },
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+            focusedBorderColor = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
             focusedTextColor = MaterialTheme.colorScheme.onBackground,
             unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            focusedLabelColor = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+            unfocusedLabelColor = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
         ),
         modifier = modifier
             .fillMaxWidth()
