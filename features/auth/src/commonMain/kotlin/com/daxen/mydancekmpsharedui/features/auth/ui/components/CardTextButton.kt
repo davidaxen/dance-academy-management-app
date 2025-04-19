@@ -1,29 +1,28 @@
 package com.daxen.mydancekmpsharedui.features.auth.ui.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlue
+import androidx.compose.ui.Modifier
 
 @Composable
 fun CardTextButton(
     text: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     TextButton(
         onClick = onClick,
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = PrimaryBlue
-        ),
-        interactionSource = remember { MutableInteractionSource() }
+        interactionSource = remember { MutableInteractionSource() },
+        modifier = modifier,
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }

@@ -24,7 +24,7 @@ fun AuthCard(
         modifier = modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-            .padding(top = LocalPadding.current.big),
+            .padding(top = LocalPadding.current.big, bottom = LocalPadding.current.tiny),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = SurfaceLight

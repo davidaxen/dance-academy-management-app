@@ -68,12 +68,8 @@ internal fun PersonalInfoScreen(
                         onValueChange = { firstName = it },
                         label = "Nombre",
                         keyboardType = KeyboardType.Text,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Nombre"
-                            )
-                        }
+                        leadingIcon = Icons.Default.Person,
+                        leadingIconDescription = "Nombre"
                     )
 
                     PersonalInfoField(
@@ -81,12 +77,8 @@ internal fun PersonalInfoScreen(
                         onValueChange = { lastName1 = it },
                         label = "Primer apellido",
                         keyboardType = KeyboardType.Text,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Primer apellido"
-                            )
-                        }
+                        leadingIcon = Icons.Default.Person,
+                        leadingIconDescription = "Primer apellido"
                     )
 
                     PersonalInfoField(
@@ -94,12 +86,8 @@ internal fun PersonalInfoScreen(
                         onValueChange = { lastName2 = it },
                         label = "Segundo apellido",
                         keyboardType = KeyboardType.Text,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Segundo apellido"
-                            )
-                        }
+                        leadingIcon = Icons.Default.Person,
+                        leadingIconDescription = "Segundo apellido"
                     )
 
                     DatePickerField(
@@ -111,7 +99,7 @@ internal fun PersonalInfoScreen(
                         onValueChange = { phone = it },
                         label = "Teléfono",
                         keyboardType = KeyboardType.Phone,
-                        leadingIcon = {
+                        customLeadingIcon = {
                             CountryCodeSelectable(
                                 onSelected = { selectedPrefix = it },
                                 onClick = { expanded = true },
