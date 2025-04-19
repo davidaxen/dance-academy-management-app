@@ -149,8 +149,7 @@ internal fun RegisterScreen(
                 }
                 CardTextButton(
                     text = "¿Ya tienes cuenta? Inicia sesión",
-//                    onClick = navigateToLogin
-                    onClick = {},
+                    onClick = navigateToLogin
                 )
             }
         }
