@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,7 +39,8 @@ fun DatePickerField(
         label = { Text("Fecha de nacimiento") },
         placeholder = { Text("MM/DD/YYYY") },
         isError = isError,
-        trailingIcon = {
+        readOnly = true,
+        leadingIcon = {
             Icon(
                 imageVector = Icons.Default.CalendarToday,
                 contentDescription = "Seleccionar fecha"
@@ -103,6 +105,9 @@ fun DatePickerModal(
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
+        colors = DatePickerDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+        ),
         confirmButton = {
             TextButton(onClick = {
                 onDateSelected(datePickerState.selectedDateMillis)
@@ -117,6 +122,12 @@ fun DatePickerModal(
             }
         }
     ) {
-        DatePicker(state = datePickerState)
+        DatePicker(
+            colors = DatePickerDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.onPrimary,
+            ),
+            showModeToggle = false,
+            state = datePickerState
+        )
     }
 }

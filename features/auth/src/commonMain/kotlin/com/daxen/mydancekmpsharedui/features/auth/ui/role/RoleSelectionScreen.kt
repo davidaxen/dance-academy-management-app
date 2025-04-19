@@ -61,7 +61,10 @@ fun RoleSelectionScreen(
                     title = "¡Bienvenido!",
 //                    subtitle = "Ya estás a nada de ser parte de la app \nPrimero necesitamos saber qué tipo de usuario serás",
                     subtitle = "Ahora necesitamos saber qué tipo de usuario serás",
-                    modifier = Modifier.padding(top = LocalPadding.current.large)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = LocalPadding.current.large)
+                        .padding(horizontal = LocalPadding.current.normal)
                 )
 
                 Column(

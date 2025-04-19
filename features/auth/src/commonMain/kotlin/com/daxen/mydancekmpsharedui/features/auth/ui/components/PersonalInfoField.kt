@@ -65,15 +65,21 @@ fun PersonalInfoField(
 private class PhonePrefixTransformation(private val prefix: String) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val prefixAnnotated = AnnotatedString(prefix)
+        val transformed = if (text.isEmpty()) {
+            prefixAnnotated
+        } else {
+            prefixAnnotated + text
+        }
+        
         return TransformedText(
-            text = prefixAnnotated + text,
+            text = transformed,
             offsetMapping = object : OffsetMapping {
                 override fun originalToTransformed(offset: Int): Int {
                     return offset + prefix.length
                 }
 
                 override fun transformedToOriginal(offset: Int): Int {
-                    return offset - prefix.length
+                    return if (offset <= prefix.length) 0 else offset - prefix.length
                 }
             }
         )
