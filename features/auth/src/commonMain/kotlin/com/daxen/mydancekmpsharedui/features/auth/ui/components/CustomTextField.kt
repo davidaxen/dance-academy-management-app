@@ -43,11 +43,24 @@ fun CustomTextField(
             PasswordVisualTransformation()
         }
     }
+    val trailingIcon: (@Composable (() -> Unit))? =
+        if (keyboardType == KeyboardType.Password) {
+            {
+                IconButton(onClick = { showPassword = !showPassword }) {
+                    Icon(
+                        imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = leadingIconDescription,
+                        tint = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue
+                    )
+                }
+            }
+        } else null
+
     Column {
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            label = { Text(label) },
+            label = { Text(label, maxLines = 1) },
             leadingIcon = {
                 if (leadingIcon != null) {
                     Icon(
@@ -59,23 +72,14 @@ fun CustomTextField(
                     customLeadingIcon()
                 }
             },
-            trailingIcon = {
-                if (keyboardType == KeyboardType.Password) {
-                    IconButton(onClick = { showPassword = !showPassword }) {
-                        Icon(
-                            imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (showPassword) "Ocultar contraseña" else "Mostrar contraseña",
-                            tint = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue
-                        )
-                    }
-                }
-            },
+            trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType,
                 imeAction = imeAction
             ),
             singleLine = true,
+            maxLines = 1,
             supportingText = {
                 if (error != null) {
                     Text(

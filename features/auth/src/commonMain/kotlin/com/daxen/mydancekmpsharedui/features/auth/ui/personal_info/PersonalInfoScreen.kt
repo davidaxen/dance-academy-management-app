@@ -29,7 +29,6 @@ internal fun PersonalInfoScreen(
 ) {
     var firstName by remember { mutableStateOf("") }
     var lastName1 by remember { mutableStateOf("") }
-    var lastName2 by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 
@@ -75,19 +74,10 @@ internal fun PersonalInfoScreen(
                     CustomTextField(
                         value = lastName1,
                         onValueChange = { lastName1 = it },
-                        label = "Primer apellido",
+                        label = "Apellidos",
                         keyboardType = KeyboardType.Text,
                         leadingIcon = Icons.Default.Person,
-                        leadingIconDescription = "Primer apellido"
-                    )
-
-                    CustomTextField(
-                        value = lastName2,
-                        onValueChange = { lastName2 = it },
-                        label = "Segundo apellido",
-                        keyboardType = KeyboardType.Text,
-                        leadingIcon = Icons.Default.Person,
-                        leadingIconDescription = "Segundo apellido"
+                        leadingIconDescription = "Apellidos"
                     )
 
                     DatePickerField(

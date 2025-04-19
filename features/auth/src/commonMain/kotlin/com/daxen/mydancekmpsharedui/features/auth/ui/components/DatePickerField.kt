@@ -42,7 +42,8 @@ fun DatePickerField(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.CalendarToday,
-                contentDescription = "Seleccionar fecha"
+                contentDescription = "Seleccionar fecha",
+                tint = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         },
         supportingText = {
