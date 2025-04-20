@@ -21,6 +21,7 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.role.RoleSelectionScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.role_selection.DanceRoleSelectionScreen
+import com.daxen.mydancekmpsharedui.features.auth.ui.role_selection.DanceRoleSelectionViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -111,7 +112,9 @@ fun NavGraphBuilder.authNavGraph(
                 )
             },
         ) {
+            val viewModel: DanceRoleSelectionViewModel = koinViewModel()
             DanceRoleSelectionScreen(
+                viewModel = viewModel,
                 onNavigateBack = goBack,
                 onNavigateNext = goToRoleSelection,
                 modifier = Modifier.fillMaxSize()

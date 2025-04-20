@@ -7,5 +7,6 @@ data class UserResponse(
     val uid: String = "",
     val email: String = "",
     val role: String = "" , // Rol como String desde Firebase
+    val danceRole: String = "" , // Rol como String desde Firebase
     val name: String = "",
 )

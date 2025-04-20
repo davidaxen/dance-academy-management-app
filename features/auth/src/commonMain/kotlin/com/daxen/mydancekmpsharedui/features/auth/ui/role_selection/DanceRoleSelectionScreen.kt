@@ -22,6 +22,7 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.*
 
 @Composable
 internal fun DanceRoleSelectionScreen(
+    viewModel: DanceRoleSelectionViewModel,
     onNavigateBack: () -> Unit,
     onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier
@@ -109,6 +110,7 @@ internal fun DanceRoleSelectionScreen(
                     onClick = {
                         if (selectedRole != null) {
 //                            onNavigateNext()
+                            viewModel.selectDanceRole(selectedRole!!)
                         }
                     },
                     isLoading = false,

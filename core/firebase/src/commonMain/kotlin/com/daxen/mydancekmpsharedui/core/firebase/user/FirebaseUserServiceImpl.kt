@@ -14,15 +14,14 @@ class FirebaseUserServiceImpl(
             ?: throw IllegalStateException("ID de usuario nulo")
 
         val document = firestore.collection("users")
-            .document(userId)
+            .document(userId+"a")
             .get()
 
-        if (!document.exists) {
-            throw IllegalStateException("No se encontraron datos del usuario")
+
+        return if (document.exists) {
+            document.data(UserResponse.serializer()).copy(uid = userId)
+        } else {
+            UserResponse( uid = userId)
         }
-
-        return document.data(UserResponse.serializer()).copy(uid = userId)
-
     }
-
 }
