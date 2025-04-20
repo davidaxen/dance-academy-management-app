@@ -20,6 +20,7 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.role.RoleSelectionScreen
+import com.daxen.mydancekmpsharedui.features.auth.ui.role_selection.DanceRoleSelectionScreen
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -37,6 +38,9 @@ data object RoleSelectionScreenRoute
 
 @Serializable
 data object PersonalInfoScreenRoute
+
+@Serializable
+data object DanceRoleSelectionScreenRoute
 
 fun NavGraphBuilder.authNavGraph(
     goToUser: () -> Unit,
@@ -85,6 +89,12 @@ fun NavGraphBuilder.authNavGraph(
                     animationSpec = tween(500)
                 )
             },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(500)
+                )
+            },
         ) {
             PersonalInfoScreen(
                 onNavigateBack = goBack,
@@ -92,7 +102,21 @@ fun NavGraphBuilder.authNavGraph(
                 modifier = Modifier.fillMaxSize()
             )
         }
-        
+
+        composable<DanceRoleSelectionScreenRoute>(
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(500)
+                )
+            },
+        ) {
+            DanceRoleSelectionScreen(
+                onNavigateBack = goBack,
+                onNavigateNext = goToRoleSelection,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
         composable<RegisterScreenRoute>(
             enterTransition = {
                 slideInHorizontally(

@@ -18,7 +18,7 @@ fun AuthButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = LocalPadding.current.normal),
+            .padding(top = LocalPadding.current.normal),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
