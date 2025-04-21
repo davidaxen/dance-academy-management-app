@@ -67,7 +67,16 @@ class PersonalInfoViewModel(
 
     private fun onInfoSubmitted() {
         _personalInfoState.value = PersonalInfoState.Loading
+        println("Submitting personal info: ${_firstName.value}, ${_lastName.value}, ${_birthDate.value}, ${_phone.value}, ${_selectedPrefix.value}")
+        userRepository.setPersonalInfo(
+            firstName = _firstName.value,
+            lastName = _lastName.value,
+            birthDate = _birthDate.value,
+            phone = _phone.value,
+            prefix = _selectedPrefix.value
+        )
         _personalInfoState.value = PersonalInfoState.Success
+        _isSubmitting.value = false
     }
 
     fun updateFirstName(value: String) {

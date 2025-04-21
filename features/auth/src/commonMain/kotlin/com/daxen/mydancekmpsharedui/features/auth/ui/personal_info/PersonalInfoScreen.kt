@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -77,6 +78,7 @@ internal fun PersonalInfoScreen(
                         label = "Nombre",
                         error = firstNameError,
                         keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
                         leadingIcon = Icons.Default.Person,
                         leadingIconDescription = "Nombre"
                     )
@@ -87,15 +89,13 @@ internal fun PersonalInfoScreen(
                         label = "Apellidos",
                         error = lastNameError,
                         keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
                         leadingIcon = Icons.Default.Person,
                         leadingIconDescription = "Apellidos"
                     )
 
                     DatePickerField(
-                        onValueChange = {
-                            viewModel.updateBirthDate(it)
-                            print(birthDateError)
-                                        },
+                        onValueChange = { viewModel.updateBirthDate(it) },
                         error = birthDateError,
                     )
 
@@ -105,6 +105,7 @@ internal fun PersonalInfoScreen(
                         label = "Teléfono",
                         error = phoneError,
                         keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Done,
                         customLeadingIcon = {
                             CountryCodeSelectable(
                                 onSelected = { viewModel.updateSelectedPrefix(it) },
