@@ -27,8 +27,8 @@ internal fun DanceRoleSelectionScreen(
     onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedRole by remember { mutableStateOf<String?>(null) }
-    
+    val selectedRole by viewModel.selectedRole.collectAsState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -65,8 +65,7 @@ internal fun DanceRoleSelectionScreen(
                     icon = Icons.Default.Star,
                     isSelected = selectedRole == "Leader",
                     onClick = {
-                        selectedRole = "Leader"
-//                        onNavigateNext()
+                        viewModel.onRoleSelected("Leader")
                     }
                 )
 
@@ -100,18 +99,14 @@ internal fun DanceRoleSelectionScreen(
                     icon = Icons.Default.Favorite,
                     isSelected = selectedRole == "Follower",
                     onClick = {
-                        selectedRole = "Follower"
-//                        onNavigateNext()
+                        viewModel.onRoleSelected("Follower")
                     }
                 )
 
                 AuthButton(
                     text = "Continuar",
                     onClick = {
-                        if (selectedRole != null) {
-//                            onNavigateNext()
-                            viewModel.selectDanceRole(selectedRole!!)
-                        }
+                        viewModel.saveDanceRole()
                     },
                     isLoading = false,
                     modifier = Modifier
