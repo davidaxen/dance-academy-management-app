@@ -29,4 +29,33 @@ object Validations {
             else -> null
         }
     }
+
+    fun validateFirstName(value: String): String? {
+        return when {
+            value.isBlank() -> "El nombre no puede estar vacío"
+            else -> null
+        }
+    }
+
+    fun validateLastName(value: String): String? {
+        return when {
+            value.isBlank() -> "El apellido no puede estar vacío"
+            else -> null
+        }
+    }
+
+    fun validateBirthDate(value: String): String? {
+        return when {
+            value.isBlank() -> "La fecha de nacimiento no puede estar vacía"
+            else -> null
+        }
+    }
+
+    fun validatePhone(value: String): String? {
+        return when {
+            value.isBlank() -> "El teléfono no puede estar vacío"
+            value.length < 9 -> "El teléfono debe tener al menos 9 dígitos"
+            else -> null
+        }
+    }
 } 

@@ -34,9 +34,9 @@ fun DatePickerField(
 
     OutlinedTextField(
         value = selectedDate?.let { convertMillisToDate(it) } ?: "",
-        onValueChange = { onValueChange(it) },
+        onValueChange = { },
         label = { Text("Fecha de nacimiento") },
-        placeholder = { Text("MM/DD/YYYY") },
+        placeholder = { Text("DD/MM/YYYY") },
         isError = error != null,
         readOnly = true,
         leadingIcon = {
@@ -77,7 +77,12 @@ fun DatePickerField(
 
     if (showModal) {
         DatePickerModal(
-            onDateSelected = { selectedDate = it },
+            onDateSelected = {
+                selectedDate = it
+                it?.let {
+                    onValueChange(convertMillisToDate(it))
+                }
+             },
             onDismiss = { showModal = false }
         )
     }

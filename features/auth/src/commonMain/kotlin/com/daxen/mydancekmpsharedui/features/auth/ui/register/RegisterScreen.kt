@@ -118,7 +118,7 @@ internal fun RegisterScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             AuthButton(
                                 text = "Registrarse",
-                                onClick = {  },
+                                onClick = { viewModel.validateAndRegister() },
                                 isLoading = false,
                             )
                         }

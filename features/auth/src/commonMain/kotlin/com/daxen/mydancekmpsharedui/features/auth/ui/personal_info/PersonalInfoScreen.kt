@@ -1,6 +1,5 @@
 package com.daxen.mydancekmpsharedui.features.auth.ui.personal_info
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
@@ -19,18 +19,31 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.*
 
 @Composable
 internal fun PersonalInfoScreen(
+    viewModel: PersonalInfoViewModel,
     onNavigateBack: () -> Unit,
     onNavigateNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var firstName by remember { mutableStateOf("") }
-    var lastName1 by remember { mutableStateOf("") }
-    var birthDate by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
+    val state by viewModel.personalInfoState.collectAsState()
+    val firstName by viewModel.firstName.collectAsState()
+    val firstNameError by viewModel.firstNameError.collectAsState()
+    val lastName by viewModel.lastName.collectAsState()
+    val lastNameError by viewModel.lastNameError.collectAsState()
+    val birthDateError by viewModel.birthDateError.collectAsState()
+    val phone by viewModel.phone.collectAsState()
+    val phoneError by viewModel.phoneError.collectAsState()
+    val selectedPrefix by viewModel.selectedPrefix.collectAsState()
+    val isSubmitting by viewModel.isSubmitting.collectAsState()
 
-    val prefixOptions: List<String> = listOf("+34", "+1", "+58", "+52", "+33")
     var expanded by remember { mutableStateOf(false) }
-    var selectedPrefix by remember { mutableStateOf(prefixOptions.first()) }
+    var isNavigating by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state) {
+        if (state is PersonalInfoState.Success && !isNavigating) {
+            isNavigating = true
+//            onNavigateNext()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -60,50 +73,75 @@ internal fun PersonalInfoScreen(
                 AuthCard {
                     CustomTextField(
                         value = firstName,
-                        onValueChange = { firstName = it },
+                        onValueChange = { viewModel.updateFirstName(it) },
                         label = "Nombre",
+                        error = firstNameError,
                         keyboardType = KeyboardType.Text,
                         leadingIcon = Icons.Default.Person,
                         leadingIconDescription = "Nombre"
                     )
 
                     CustomTextField(
-                        value = lastName1,
-                        onValueChange = { lastName1 = it },
+                        value = lastName,
+                        onValueChange = { viewModel.updateLastName(it) },
                         label = "Apellidos",
+                        error = lastNameError,
                         keyboardType = KeyboardType.Text,
                         leadingIcon = Icons.Default.Person,
                         leadingIconDescription = "Apellidos"
                     )
 
                     DatePickerField(
-                        onValueChange = { birthDate = it }
+                        onValueChange = {
+                            viewModel.updateBirthDate(it)
+                            print(birthDateError)
+                                        },
+                        error = birthDateError,
                     )
 
                     CustomTextField(
                         value = phone,
-                        onValueChange = { phone = it },
+                        onValueChange = { viewModel.updatePhone(it) },
                         label = "Teléfono",
+                        error = phoneError,
                         keyboardType = KeyboardType.Phone,
                         customLeadingIcon = {
                             CountryCodeSelectable(
-                                onSelected = { selectedPrefix = it },
+                                onSelected = { viewModel.updateSelectedPrefix(it) },
                                 onClick = { expanded = true },
                                 onDismiss = { expanded = false },
+                                error = phoneError,
                                 expanded = expanded,
                                 selectedPrefix = selectedPrefix,
-                                prefixOptions = prefixOptions
+                                prefixOptions = viewModel.prefixOptions
                             )
                         },
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    AuthButton(
-                        text = "Continuar",
-                        onClick = {},
-                        isLoading = false
-                    )
+                    when (state) {
+                        is PersonalInfoState.Error -> {
+                            Text(
+                                text = (state as PersonalInfoState.Error).message,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            AuthButton(
+                                text = "Continuar",
+                                onClick = { viewModel.validateAndSubmit() },
+                                isLoading = false
+                            )
+                        }
+                        else -> {
+                            AuthButton(
+                                text = "Continuar",
+                                onClick = { viewModel.validateAndSubmit() },
+                                isLoading = isSubmitting
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -115,6 +153,7 @@ private fun CountryCodeSelectable(
     onSelected: (String) -> Unit,
     onClick: () -> Unit,
     onDismiss: () -> Unit,
+    error: String?,
     expanded: Boolean,
     selectedPrefix: String,
     prefixOptions: List<String>
@@ -134,10 +173,14 @@ private fun CountryCodeSelectable(
                 .padding(start = 8.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = selectedPrefix)
+            Text(
+                text = selectedPrefix,
+                color = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer
+            )
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Seleccionar prefijo"
+                contentDescription = "Seleccionar prefijo",
+                tint = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
 
