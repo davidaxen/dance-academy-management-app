@@ -8,7 +8,7 @@ object Validations {
 
     fun validateEmail(email: String): String? {
         return when {
-            email.isEmpty() -> "Por favor, introduce un correo válido"
+            email.isEmpty() -> "Por favor, introduce un correo electrónico"
             !isValidEmail(email) -> "El formato del correo no es válido"
             else -> null
         }
@@ -17,6 +17,15 @@ object Validations {
     fun validatePassword(password: String): String? {
         return when {
             password.isEmpty() -> "Por favor, introduce tu contraseña"
+            password.length < 6 -> "La contraseña debe tener al menos 6 caracteres"
+            else -> null
+        }
+    }
+
+    fun validateConfirmPassword(password1: String, password2: String): String? {
+        return when {
+            password2.isEmpty() -> "Debes confirmar la contraseña"
+            password2 != password1 -> "Las contraseñas no coinciden"
             else -> null
         }
     }

@@ -36,9 +36,6 @@ internal fun RegisterScreen(
     val confirmPasswordError by viewModel.confirmPasswordError.collectAsState()
     val isRegistering by viewModel.isRegistering.collectAsState()
 
-    var email by remember { mutableStateOf("DA@gmail.com") }
-    var password by remember { mutableStateOf("123456") }
-    var confirmPassword by remember { mutableStateOf("123456") }
     var isNavigating by remember { mutableStateOf(false) }
 
     LaunchedEffect(registerState) {
@@ -77,11 +74,8 @@ internal fun RegisterScreen(
 
                 AuthCard {
                     CustomTextField(
-                        value = email,
-                        onValueChange = {
-                            email = it
-                            viewModel.resetErrors()
-                        },
+                        value = viewModel.email,
+                        onValueChange = { viewModel.updateEmail(it) },
                         label = "Correo electrónico",
                         error = emailError,
                         leadingIcon = Icons.Default.Email,
@@ -91,11 +85,8 @@ internal fun RegisterScreen(
                     )
 
                     CustomTextField(
-                        value = password,
-                        onValueChange = {
-                            password = it
-                            viewModel.resetErrors()
-                        },
+                        value = viewModel.password,
+                        onValueChange = { viewModel.updatePassword(it) },
                         label = "Contraseña",
                         error = passwordError,
                         leadingIcon = Icons.Default.Lock,
@@ -105,11 +96,8 @@ internal fun RegisterScreen(
                     )
 
                     CustomTextField(
-                        value = confirmPassword,
-                        onValueChange = {
-                            confirmPassword = it
-                            viewModel.resetErrors()
-                        },
+                        value = viewModel.confirmPassword,
+                        onValueChange = { viewModel.updateConfirmPassword(it) } ,
                         label = "Repetir contraseña",
                         error = confirmPasswordError,
                         leadingIcon = Icons.Default.Lock,
@@ -129,7 +117,7 @@ internal fun RegisterScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             AuthButton(
-                                text = "Reintentar registro",
+                                text = "Registrarse",
                                 onClick = {  },
                                 isLoading = false,
                             )
@@ -137,7 +125,7 @@ internal fun RegisterScreen(
                         else -> {
                             AuthButton(
                                 text = "Registrarse",
-                                onClick = { viewModel.register(email, password, confirmPassword) },
+                                onClick = { viewModel.validateAndRegister() },
                                 isLoading = isRegistering,
                             )
                         }
