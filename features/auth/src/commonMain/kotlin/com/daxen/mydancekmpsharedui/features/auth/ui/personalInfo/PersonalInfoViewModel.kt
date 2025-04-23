@@ -7,13 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-sealed class PersonalInfoState {
-    data object Idle : PersonalInfoState()
-    data object Loading : PersonalInfoState()
-    data object Success : PersonalInfoState()
-    data class Error(val message: String) : PersonalInfoState()
-}
-
 class PersonalInfoViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {

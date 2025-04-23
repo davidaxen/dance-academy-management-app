@@ -12,13 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-sealed class RegisterState {
-    data object Idle : RegisterState()
-    data object Loading : RegisterState()
-    data object Success : RegisterState()
-    data class Error(val message: String) : RegisterState()
-}
-
 class RegisterViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
