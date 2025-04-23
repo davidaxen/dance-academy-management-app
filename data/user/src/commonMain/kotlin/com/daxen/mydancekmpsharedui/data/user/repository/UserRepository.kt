@@ -1,6 +1,8 @@
 package com.daxen.mydancekmpsharedui.data.user.repository
 
+import com.daxen.mydancekmpsharedui.data.user.model.DanceRole
 import com.daxen.mydancekmpsharedui.data.user.model.User
+import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 import kotlinx.coroutines.flow.StateFlow
 
 interface UserRepository {
@@ -13,5 +15,6 @@ interface UserRepository {
         phone: String,
         prefix: String
     )
-    fun setDanceRole(role: String)
+    fun setDanceRole(role: DanceRole)
+    fun setRole(role: UserRole)
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
+import com.daxen.mydancekmpsharedui.data.user.model.DanceRole
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.*
 
 @Composable
@@ -63,9 +64,9 @@ internal fun DanceRoleSelectionScreen(
                     title = "Leader",
                     description = "Guía los pasos y marca el ritmo",
                     icon = Icons.Default.Star,
-                    isSelected = selectedRole == "Leader",
+                    isSelected = selectedRole == DanceRole.LEADER,
                     onClick = {
-                        viewModel.onRoleSelected("Leader")
+                        viewModel.onRoleSelected(DanceRole.LEADER)
                     }
                 )
 
@@ -97,9 +98,9 @@ internal fun DanceRoleSelectionScreen(
                     title = "Follower",
                     description = "Sigue la guía y responde con estilo",
                     icon = Icons.Default.Favorite,
-                    isSelected = selectedRole == "Follower",
+                    isSelected = selectedRole == DanceRole.FOLLOWER,
                     onClick = {
-                        viewModel.onRoleSelected("Follower")
+                        viewModel.onRoleSelected(DanceRole.FOLLOWER)
                     }
                 )
 

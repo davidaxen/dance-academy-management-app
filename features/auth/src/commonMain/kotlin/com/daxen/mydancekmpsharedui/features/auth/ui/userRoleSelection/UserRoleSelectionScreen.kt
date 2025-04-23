@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.auth.ui.roleSelection
+package com.daxen.mydancekmpsharedui.features.auth.ui.userRoleSelection
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -30,7 +30,8 @@ import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthTitleAndSubtitle
 
 @Composable
-fun RoleSelectionScreen(
+fun UserRoleSelectionScreen(
+    viewModel: UserRoleSelectionViewModel,
     onRoleSelected: (UserRole) -> Unit,
     onLogOut: () -> Unit,
     modifier: Modifier = Modifier
@@ -79,7 +80,10 @@ fun RoleSelectionScreen(
                         description = "Para reservar clases y acceder al contenido de tus academias",
                         icon = Icons.Default.Person,
                         iconColor = MaterialTheme.colorScheme.primary,
-                        onClick = { onRoleSelected(UserRole.STUDENT) }
+                        onClick = {
+                            viewModel.onRoleSelected(UserRole.STUDENT)
+                            onRoleSelected(UserRole.STUDENT)
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -89,7 +93,10 @@ fun RoleSelectionScreen(
                         description = "Para gestionar clases y compartir contenido con tus alumnos",
                         icon = Icons.Default.School,
                         iconColor = MaterialTheme.colorScheme.secondary,
-                        onClick = { onRoleSelected(UserRole.TEACHER) }
+                        onClick = {
+                            viewModel.onRoleSelected(UserRole.TEACHER)
+                            onRoleSelected(UserRole.TEACHER)
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -99,7 +106,10 @@ fun RoleSelectionScreen(
                         description = "Representantes o administradores de academias de baile",
                         icon = Icons.Default.Business,
                         iconColor = MaterialTheme.colorScheme.tertiary,
-                        onClick = { onRoleSelected(UserRole.ACADEMY) }
+                        onClick = {
+                            viewModel.onRoleSelected(UserRole.ACADEMY)
+                            onRoleSelected(UserRole.ACADEMY)
+                        }
                     )
                 }
                 UserMenu(
