@@ -36,6 +36,7 @@ fun UserRoleSelectionScreen(
     onLogOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val currentEmail by viewModel.currentEmail.collectAsState()
     var showAnimation by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -113,7 +114,7 @@ fun UserRoleSelectionScreen(
                     )
                 }
                 UserMenu(
-                    userEmail = "Pueba@gmail.com",
+                    userEmail = currentEmail ?: "",
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     onLogOut()

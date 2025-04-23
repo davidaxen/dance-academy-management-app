@@ -6,5 +6,5 @@ interface FirebaseAuthService {
     suspend fun register(email: String, password: String): String
     suspend fun logout()
     fun getCurrentUserId(): String?
-
+    fun getCurrentUserEmail(): String?
 }

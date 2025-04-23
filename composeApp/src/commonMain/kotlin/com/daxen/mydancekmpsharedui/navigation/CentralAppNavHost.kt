@@ -3,9 +3,11 @@ package com.daxen.mydancekmpsharedui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.daxen.mydancekmpsharedui.features.auth.DanceRoleSelectionScreenRoute
+import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.PersonalInfoScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.RegisterScreenRoute
-import com.daxen.mydancekmpsharedui.features.auth.RoleSelectionScreenRoute
+import com.daxen.mydancekmpsharedui.features.auth.UserRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userOptionsNavGraph
 import com.daxen.mydancekmpsharedui.main.mainNavGraph
@@ -22,13 +24,15 @@ fun CentralAppNavHost(navController: NavHostController, isUserLogged: Boolean) {
                     popUpTo(0) { inclusive = true}
                 }
             },
+            goToLogin = { navController.navigate(LoginScreenRoute) },
             goToRegister = { navController.navigate(RegisterScreenRoute) },
             goToRoleSelection = {
-                navController.navigate(RoleSelectionScreenRoute) {
+                navController.navigate(UserRoleSelectionScreenRoute) {
                     popUpTo(0) { inclusive = true }
                 }
             },
             goToInfo = { navController.navigate(PersonalInfoScreenRoute) },
+            goToDanceRoleSelection = { navController.navigate(DanceRoleSelectionScreenRoute) },
             goBack = { navController.popBackStack() }
         )
 

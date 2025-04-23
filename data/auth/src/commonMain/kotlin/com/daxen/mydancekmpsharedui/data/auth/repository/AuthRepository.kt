@@ -7,5 +7,5 @@ interface AuthRepository {
     suspend fun register(email: String, password: String)
     suspend fun logout()
     val currentUid: StateFlow<String?>
-
+    val currentEmail: StateFlow<String?>
 }

@@ -61,8 +61,8 @@ class PersonalInfoViewModel(
     private fun onInfoSubmitted() {
         _personalInfoState.value = PersonalInfoState.Loading
         userRepository.setPersonalInfo(
-            firstName = _firstName.value,
-            lastName = _lastName.value,
+            firstName = _firstName.value.trim(),
+            lastName = _lastName.value.trim(),
             birthDate = _birthDate.value,
             phone = _phone.value,
             prefix = _selectedPrefix.value

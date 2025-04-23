@@ -14,14 +14,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
-import com.daxen.mydancekmpsharedui.features.auth.ui.personal_info.PersonalInfoScreen
+import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
+import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterViewModel
-import com.daxen.mydancekmpsharedui.features.auth.ui.role.RoleSelectionScreen
-import com.daxen.mydancekmpsharedui.features.auth.ui.role_selection.DanceRoleSelectionScreen
-import com.daxen.mydancekmpsharedui.features.auth.ui.role_selection.DanceRoleSelectionViewModel
+import com.daxen.mydancekmpsharedui.features.auth.ui.userRoleSelection.UserRoleSelectionScreen
+import com.daxen.mydancekmpsharedui.features.auth.ui.danceRoleSelection.DanceRoleSelectionScreen
+import com.daxen.mydancekmpsharedui.features.auth.ui.danceRoleSelection.DanceRoleSelectionViewModel
+import com.daxen.mydancekmpsharedui.features.auth.ui.userRoleSelection.UserRoleSelectionViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -35,7 +37,7 @@ data object LoginScreenRoute
 data object RegisterScreenRoute
 
 @Serializable
-data object RoleSelectionScreenRoute
+data object UserRoleSelectionScreenRoute
 
 @Serializable
 data object PersonalInfoScreenRoute
@@ -45,9 +47,11 @@ data object DanceRoleSelectionScreenRoute
 
 fun NavGraphBuilder.authNavGraph(
     goToUser: () -> Unit,
+    goToLogin: () -> Unit,
     goToRegister: () -> Unit,
     goToRoleSelection: () -> Unit,
     goToInfo: () -> Unit,
+    goToDanceRoleSelection: () -> Unit,
     goBack: () -> Unit,
 ) {
     navigation<AuthGraph>(startDestination = LoginScreenRoute) {
@@ -61,7 +65,7 @@ fun NavGraphBuilder.authNavGraph(
             )
         }
 
-        composable<RoleSelectionScreenRoute>(
+        composable<UserRoleSelectionScreenRoute>(
             enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
             popEnterTransition = {
                 slideInHorizontally(
@@ -70,7 +74,9 @@ fun NavGraphBuilder.authNavGraph(
                 )
             },
         ) {
-            RoleSelectionScreen(
+            val viewModel: UserRoleSelectionViewModel = koinViewModel()
+            UserRoleSelectionScreen(
+                viewModel = viewModel,
                 onRoleSelected = { role ->
                     when (role) {
                         UserRole.STUDENT -> { goToInfo() }
@@ -78,7 +84,7 @@ fun NavGraphBuilder.authNavGraph(
                         UserRole.ACADEMY -> {}
                     }
                 },
-                onLogOut = goBack,
+                onLogOut = goToLogin,
                 modifier = Modifier.fillMaxSize(),
             )
         }
@@ -97,9 +103,11 @@ fun NavGraphBuilder.authNavGraph(
                 )
             },
         ) {
+            val viewModel: PersonalInfoViewModel = koinViewModel()
             PersonalInfoScreen(
+                viewModel = viewModel,
                 onNavigateBack = goBack,
-                onNavigateNext = goToUser,
+                onNavigateNext = goToDanceRoleSelection,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -116,7 +124,7 @@ fun NavGraphBuilder.authNavGraph(
             DanceRoleSelectionScreen(
                 viewModel = viewModel,
                 onNavigateBack = goBack,
-                onNavigateNext = goToRoleSelection,
+                onNavigateNext = {},
                 modifier = Modifier.fillMaxSize()
             )
         }

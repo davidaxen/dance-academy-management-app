@@ -11,6 +11,9 @@ class AuthRepositoryImpl(
     private val _currentUid = MutableStateFlow(firebaseAuthService.getCurrentUserId())
     override val currentUid: StateFlow<String?> get() = _currentUid
 
+    private val _currentEmail = MutableStateFlow(firebaseAuthService.getCurrentUserEmail())
+    override val currentEmail: StateFlow<String?> get() = _currentEmail
+
     override suspend fun login(email: String, password: String) {
         val currentUserAuthId = firebaseAuthService.login(email, password)
         _currentUid.value = currentUserAuthId
@@ -24,5 +27,6 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         firebaseAuthService.logout()
         _currentUid.value = null
+        _currentEmail.value = null
     }
 }

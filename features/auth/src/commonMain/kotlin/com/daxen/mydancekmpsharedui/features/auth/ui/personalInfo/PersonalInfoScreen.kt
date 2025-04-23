@@ -42,7 +42,7 @@ internal fun PersonalInfoScreen(
     LaunchedEffect(state) {
         if (state is PersonalInfoState.Success && !isNavigating) {
             isNavigating = true
-//            onNavigateNext()
+            onNavigateNext()
         }
     }
 
