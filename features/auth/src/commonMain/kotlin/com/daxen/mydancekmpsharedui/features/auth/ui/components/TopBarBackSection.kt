@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 
 @Composable
 internal fun TopBarBackSection(navigateBack: () -> Unit) {
@@ -23,7 +24,9 @@ internal fun TopBarBackSection(navigateBack: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
-            onClick = navigateBack,
+            onClick = dropUnlessResumed {
+                navigateBack()
+            },
             modifier = Modifier.size(48.dp)
         ) {
             Icon(

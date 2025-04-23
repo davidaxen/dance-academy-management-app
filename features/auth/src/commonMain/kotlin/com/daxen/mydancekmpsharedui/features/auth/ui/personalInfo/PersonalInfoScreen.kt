@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.auth.ui.personal_info
+package com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

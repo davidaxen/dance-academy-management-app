@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.auth.ui.role_selection
+package com.daxen.mydancekmpsharedui.features.auth.ui.danceRoleSelection
 
 import androidx.lifecycle.ViewModel
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository

@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.auth.ui.role
+package com.daxen.mydancekmpsharedui.features.auth.ui.roleSelection
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*

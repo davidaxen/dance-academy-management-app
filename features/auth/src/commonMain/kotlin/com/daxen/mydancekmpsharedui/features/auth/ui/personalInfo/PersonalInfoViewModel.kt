@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.auth.ui.personal_info
+package com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo
 
 import androidx.lifecycle.ViewModel
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
@@ -67,7 +67,6 @@ class PersonalInfoViewModel(
 
     private fun onInfoSubmitted() {
         _personalInfoState.value = PersonalInfoState.Loading
-        println("Submitting personal info: ${_firstName.value}, ${_lastName.value}, ${_birthDate.value}, ${_phone.value}, ${_selectedPrefix.value}")
         userRepository.setPersonalInfo(
             firstName = _firstName.value,
             lastName = _lastName.value,
