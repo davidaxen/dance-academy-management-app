@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.selectAcademy
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -104,7 +105,7 @@ fun SelectAcademyScreen(
                     }
                 }
             }
-
+        }
     }
 
 }
@@ -116,7 +117,7 @@ private fun RadioButtonOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    androidx.compose.foundation.layout.Row(
+    Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
