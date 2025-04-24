@@ -11,6 +11,7 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 fun AuthButton(
     text: String,
     isLoading: Boolean,
+    isDisabled: Boolean = false,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -23,7 +24,7 @@ fun AuthButton(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
         ),
-        enabled = !isLoading
+        enabled = !isLoading && !isDisabled,
     ) {
         if (isLoading) {
             CircularProgressIndicator(

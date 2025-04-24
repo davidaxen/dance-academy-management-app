@@ -106,6 +106,7 @@ internal fun DanceRoleSelectionScreen(
                     text = "Continuar",
                     onClick = { viewModel.saveDanceRole() },
                     isLoading = false,
+                    isDisabled = selectedRole == null,
                     modifier = Modifier
                         .fillMaxWidth(0.7f),
                 )
