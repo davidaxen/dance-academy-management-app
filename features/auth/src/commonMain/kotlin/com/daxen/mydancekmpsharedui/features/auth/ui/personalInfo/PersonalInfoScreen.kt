@@ -43,6 +43,7 @@ internal fun PersonalInfoScreen(
         if (state is PersonalInfoState.Success && !isNavigating) {
             isNavigating = true
             onNavigateNext()
+            viewModel.onBackClicked()
         }
     }
 

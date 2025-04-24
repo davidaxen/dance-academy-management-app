@@ -44,6 +44,10 @@ class PersonalInfoViewModel(
     private val _isSubmitting = MutableStateFlow(false)
     val isSubmitting: StateFlow<Boolean> = _isSubmitting.asStateFlow()
 
+    fun onBackClicked() {
+        _personalInfoState.value = PersonalInfoState.Idle
+    }
+
     fun validateAndSubmit() {
         _firstNameError.value = Validations.validateFirstName(_firstName.value)
         _lastNameError.value = Validations.validateLastName(_lastName.value)
