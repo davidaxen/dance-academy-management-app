@@ -1,6 +1,5 @@
 package com.daxen.mydancekmpsharedui.features.auth.ui.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -27,6 +26,7 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     label: String,
     error: String? = null,
+    readOnly: Boolean = false,
     leadingIcon: ImageVector? = null,
     customLeadingIcon: @Composable (() -> Unit)? = null,
     leadingIconDescription: String = "",
@@ -77,6 +77,7 @@ fun CustomTextField(
             keyboardType = keyboardType,
             imeAction = imeAction
         ),
+        readOnly = readOnly,
         singleLine = true,
         maxLines = 1,
         supportingText = {

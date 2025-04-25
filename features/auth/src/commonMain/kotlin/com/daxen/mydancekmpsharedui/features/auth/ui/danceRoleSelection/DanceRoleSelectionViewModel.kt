@@ -2,7 +2,6 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.danceRoleSelection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.daxen.mydancekmpsharedui.data.user.model.DanceRole
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow

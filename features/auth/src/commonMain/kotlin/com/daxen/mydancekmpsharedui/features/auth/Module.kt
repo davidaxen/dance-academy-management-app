@@ -6,6 +6,7 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.danceRoleSelection.DanceRoleSelectionViewModel
+import com.daxen.mydancekmpsharedui.features.auth.ui.selectAcademy.SelectAcademyViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.userRoleSelection.UserRoleSelectionViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -17,6 +18,7 @@ val authModule = module {
     viewModelOf(::LoginViewModel)
     viewModelOf(::RegisterViewModel)
     viewModelOf(::UserRoleSelectionViewModel)
+    viewModelOf(::SelectAcademyViewModel)
     viewModelOf(::PersonalInfoViewModel)
     viewModelOf(::DanceRoleSelectionViewModel)
 }
