@@ -15,6 +15,8 @@ import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.features.user.ui.sections.personalData.PersonalDataScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserViewModel
+import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.AcademySelectionScreen
+import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.AcademySelectionViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -35,6 +37,9 @@ sealed class ProfileAction {
     data object LogOut : ProfileAction()
 }
 
+@Serializable
+data object AcademySelectionGraph
+
 fun NavGraphBuilder.userNavGraph(navigateToLogin: () -> Unit, appNavController: NavController) {
     navigation<UserGraph>(startDestination = UserScreenRoute) {
         composable<UserScreenRoute> {
@@ -54,6 +59,33 @@ fun NavGraphBuilder.userNavGraph(navigateToLogin: () -> Unit, appNavController: 
                         }
                     }
                 }
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.academySelectionNavGraph(
+    navController: NavController,
+//    navigateToLogin: () -> Unit
+) {
+    navigation<AcademySelectionGraph>(startDestination = UserScreenRoute) {
+        composable<UserScreenRoute> {
+            val viewModel: AcademySelectionViewModel = koinViewModel()
+            AcademySelectionScreen(
+                viewModel = viewModel,
+//                navigateToLogin = navigateToLogin,
+//                modifier = Modifier.fillMaxSize(),
+//                navigateToSection = { action ->
+//                    when (action) {
+//                        is ProfileAction.PersonalInfoRoute -> {
+//                            appNavController.navigate(ProfileAction.PersonalInfoRoute)
+//                        }
+//                        is ProfileAction.LogOut -> {
+//                            viewModel.signOut()
+//                            navigateToLogin()
+//                        }
+//                    }
+//                }
             )
         }
     }

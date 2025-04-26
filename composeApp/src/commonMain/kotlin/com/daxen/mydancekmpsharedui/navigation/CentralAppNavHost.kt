@@ -9,6 +9,8 @@ import com.daxen.mydancekmpsharedui.features.auth.PersonalInfoScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.RegisterScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.UserRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
+import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph
+import com.daxen.mydancekmpsharedui.features.user.academySelectionNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userOptionsNavGraph
 import com.daxen.mydancekmpsharedui.main.mainNavGraph
 
@@ -37,6 +39,8 @@ fun CentralAppNavHost(navController: NavHostController, isUserLogged: Boolean) {
         )
 
         mainNavGraph(navController = navController)
+
+        academySelectionNavGraph(navController = navController)
 
         userOptionsNavGraph(appNavController = navController)
     }
