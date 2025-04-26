@@ -27,6 +27,7 @@ internal fun DanceRoleSelectionScreen(
     modifier: Modifier = Modifier
 ) {
     val selectedRole by viewModel.selectedRole.collectAsState()
+    val danceRoleSelectionState by viewModel.danceRoleSelectionState.collectAsState()
 
     Box(
         modifier = Modifier
@@ -102,14 +103,38 @@ internal fun DanceRoleSelectionScreen(
                     }
                 )
 
-                AuthButton(
-                    text = "Continuar",
-                    onClick = { viewModel.saveDanceRole() },
-                    isLoading = false,
-                    isDisabled = selectedRole == null,
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f),
-                )
+                when (danceRoleSelectionState) {
+                    is DanceRoleSelectionState.Error -> {
+                        Text(
+                            text = (danceRoleSelectionState as DanceRoleSelectionState.Error).message,
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        AuthButton(
+                            text = "Continuar",
+                            onClick = {
+                                viewModel.saveDanceRole()
+                                onNavigateNext()
+                            },
+                            isLoading = false,
+                            isDisabled = selectedRole == null,
+                            modifier = Modifier.fillMaxWidth(0.8f),
+                        )
+                    }
+                    else -> {
+                        AuthButton(
+                            text = "Continuar",
+                            onClick = {
+                                viewModel.saveDanceRole()
+                                onNavigateNext()
+                            },
+                            isLoading = danceRoleSelectionState == DanceRoleSelectionState.Loading,
+                            isDisabled = selectedRole == null,
+                            modifier = Modifier.fillMaxWidth(0.8f),
+                        )
+                    }
+                }
             }
         }
     }

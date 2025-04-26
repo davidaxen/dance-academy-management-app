@@ -117,6 +117,7 @@ fun UserRoleSelectionScreen(
                     userEmail = currentEmail ?: "",
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    viewModel.logout()
                     onLogOut()
                 }
             }
