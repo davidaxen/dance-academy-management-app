@@ -112,26 +112,24 @@ internal fun DanceRoleSelectionScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         AuthButton(
-                            text = "Continuar",
+                            text = "Terminar registro",
                             onClick = {
                                 viewModel.saveDanceRole()
                                 onNavigateNext()
                             },
                             isLoading = false,
                             isDisabled = selectedRole == null,
-                            modifier = Modifier.fillMaxWidth(0.8f),
                         )
                     }
                     else -> {
                         AuthButton(
-                            text = "Continuar",
+                            text = "Terminar registro",
                             onClick = {
                                 viewModel.saveDanceRole()
                                 onNavigateNext()
                             },
                             isLoading = danceRoleSelectionState == DanceRoleSelectionState.Loading,
                             isDisabled = selectedRole == null,
-                            modifier = Modifier.fillMaxWidth(0.8f),
                         )
                     }
                 }
