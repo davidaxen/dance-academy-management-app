@@ -23,8 +23,6 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.userRoleSelection.UserRoleSelectionScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.danceRoleSelection.DanceRoleSelectionScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.danceRoleSelection.DanceRoleSelectionViewModel
-import com.daxen.mydancekmpsharedui.features.auth.ui.selectAcademy.SelectAcademyScreen
-import com.daxen.mydancekmpsharedui.features.auth.ui.selectAcademy.SelectAcademyViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.userRoleSelection.UserRoleSelectionViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
@@ -47,8 +45,6 @@ data object PersonalInfoScreenRoute
 @Serializable
 data object DanceRoleSelectionScreenRoute
 
-@Serializable
-data object SelectAcademyScreenRoute
 
 fun NavGraphBuilder.authNavGraph(
     goToUser: () -> Unit,
@@ -91,13 +87,6 @@ fun NavGraphBuilder.authNavGraph(
                 },
                 onLogOut = goToLogin,
                 modifier = Modifier.fillMaxSize(),
-            )
-        }
-
-        composable<SelectAcademyScreenRoute> {
-            val viewModel: SelectAcademyViewModel = koinViewModel()
-            SelectAcademyScreen(
-                viewModel = viewModel
             )
         }
 
