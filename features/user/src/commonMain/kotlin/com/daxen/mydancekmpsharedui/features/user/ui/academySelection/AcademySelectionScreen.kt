@@ -98,9 +98,14 @@ fun AcademySelectionScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(listOf("Academia 1", "Academia 2")) { academy ->
+                    items(listOf(
+                        Triple("Academia de Salsa", "https://rickandmortyapi.com/api/character/avatar/813.jpeg", "15/04/2024"),
+                        Triple("Dance Studio", "https://rickandmortyapi.com/api/character/avatar/23.jpeg", "16/04/2024")
+                    )) { (name, imageUrl, date) ->
                         InvitationCard(
-                            academyName = academy,
+                            academyName = name,
+                            academyImage = imageUrl,
+                            invitationDate = date,
                             onAccept = { /* TODO: Aceptar invitación */ },
                             onReject = { /* TODO: Rechazar invitación */ }
                         )
