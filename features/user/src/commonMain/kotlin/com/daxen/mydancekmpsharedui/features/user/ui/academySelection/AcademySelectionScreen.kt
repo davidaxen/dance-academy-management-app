@@ -1,6 +1,7 @@
 package com.daxen.mydancekmpsharedui.features.user.ui.academySelection
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,11 +22,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.components.AcademyCard
 import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.components.InvitationCard
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 
 @Composable
 fun AcademySelectionScreen(
@@ -57,7 +62,6 @@ fun AcademySelectionScreen(
                     color = MaterialTheme.colorScheme.onSecondary
                 )
             },
-            modifier = Modifier.padding(bottom = LocalPadding.current.small)
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -82,33 +86,87 @@ fun AcademySelectionScreen(
         when (selectedTab) {
             0 -> {
                 // Lista de academias
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(academies) { academy ->
-                        AcademyCard(
-                            name = academy.name,
-                            location = academy.location,
-                            imageUrl = academy.imageUrl,
-                            schedule = academy.schedule,
-                            onClick = { /* TODO: Navegar a la academia */ }
+                if (academies.isEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(LocalPadding.current.normal),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Home,
+                            contentDescription = "No hay academias",
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.primary
                         )
+                        Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+                        Text(
+                            text = "No tienes academias disponibles",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(LocalPadding.current.small))
+                        Text(
+                            text = "Cuando te inviten a una academia, aparecerá aquí",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize().padding(top = LocalPadding.current.small)
+                    ) {
+                        items(academies) { academy ->
+                            AcademyCard(
+                                name = academy.name,
+                                location = academy.location,
+                                imageUrl = academy.imageUrl,
+                                schedule = academy.schedule,
+                                onClick = { /* TODO: Navegar a la academia */ }
+                            )
+                        }
                     }
                 }
             }
             1 -> {
                 // Lista de invitaciones
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(invitations) { invitation ->
-                        InvitationCard(
-                            academyName = invitation.name,
-                            academyImage = invitation.imageUrl,
-                            invitationDate = invitation.date,
-                            onAccept = { viewModel.acceptInvitation(invitation) },
-                            onReject = { viewModel.rejectInvitation(invitation) }
+                if (invitations.isEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "No hay invitaciones",
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.primary
                         )
+                        Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+                        Text(
+                            text = "No tienes invitaciones pendientes",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(LocalPadding.current.small))
+                        Text(
+                            text = "Cuando una academia te invite, aparecerá aquí",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize().padding(top = LocalPadding.current.small)
+                    ) {
+                        items(invitations) { invitation ->
+                            InvitationCard(
+                                academyName = invitation.name,
+                                academyImage = invitation.imageUrl,
+                                invitationDate = invitation.date,
+                                onAccept = { viewModel.acceptInvitation(invitation) },
+                                onReject = { viewModel.rejectInvitation(invitation) }
+                            )
+                        }
                     }
                 }
             }
