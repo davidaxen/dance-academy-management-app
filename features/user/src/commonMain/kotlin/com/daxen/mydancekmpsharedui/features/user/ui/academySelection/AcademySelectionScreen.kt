@@ -123,6 +123,7 @@ fun AcademySelectionScreen(
                                 location = academy.location,
                                 imageUrl = academy.imageUrl,
                                 schedule = academy.schedule,
+                                role = academy.role.toSpanishText(),
                                 onClick = { /* TODO: Navegar a la academia */ }
                             )
                         }
@@ -163,7 +164,7 @@ fun AcademySelectionScreen(
                             InvitationCard(
                                 academyName = invitation.name,
                                 academyImage = invitation.imageUrl,
-                                invitationDate = invitation.date,
+                                role = invitation.role.toSpanishText(),
                                 onAccept = { viewModel.acceptInvitation(invitation) },
                                 onReject = { viewModel.rejectInvitation(invitation) },
                                 isLoading = loadingInvitations.contains(invitation)

@@ -20,7 +20,7 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 fun InvitationCard(
     academyName: String,
     academyImage: String,
-    invitationDate: String,
+    role: String,
     onAccept: () -> Unit,
     onReject: () -> Unit,
     isLoading: Boolean = false,
@@ -79,7 +79,7 @@ fun InvitationCard(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Invitación recibida el $invitationDate",
+                            text = "Entra como ${role.lowercase()}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }

@@ -23,6 +23,7 @@ fun AcademyCard(
     location: String,
     imageUrl: String,
     schedule: String,
+    role: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -119,6 +120,14 @@ fun AcademyCard(
                             )
                         )
                     }
+
+                    Text(
+                        text = role,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
                 }
             }
         }
