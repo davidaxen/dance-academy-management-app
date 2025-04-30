@@ -18,6 +18,8 @@ import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,10 @@ import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.components
 fun AcademySelectionScreen(
     viewModel: AcademySelectionViewModel,
 ) {
+    val selectedTab by viewModel.selectedTab.collectAsState()
+    val academies by viewModel.academies.collectAsState()
+    val invitations by viewModel.invitations.collectAsState()
+
     val tabs = remember {
         listOf("Academias", "Invitaciones", "Perfil")
     }
@@ -41,11 +47,11 @@ fun AcademySelectionScreen(
         TabRow(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
-            selectedTabIndex = viewModel.selectedTab,
+            selectedTabIndex = selectedTab,
             indicator = { tabPositions ->
                 SecondaryIndicator(
                     modifier = Modifier
-                        .tabIndicatorOffset(tabPositions[viewModel.selectedTab]),
+                        .tabIndicatorOffset(tabPositions[selectedTab]),
                     height = 2.dp,
                     color = MaterialTheme.colorScheme.onSecondary
                 )
@@ -55,14 +61,14 @@ fun AcademySelectionScreen(
                 Tab(
                     text = { Text(title) },
                     icon = { Icon(tabIcons[index], contentDescription = title) },
-                    selected = viewModel.selectedTab == index,
+                    selected = selectedTab == index,
                     onClick = { viewModel.onTabSelected(index) },
-                    selectedContentColor = if (viewModel.selectedTab == index)
+                    selectedContentColor = if (selectedTab == index)
                         MaterialTheme.colorScheme.onBackground
                     else
                         MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.background(
-                        if (viewModel.selectedTab == index)
+                        if (selectedTab == index)
                             MaterialTheme.colorScheme.background
                         else
                             MaterialTheme.colorScheme.primary
@@ -71,23 +77,19 @@ fun AcademySelectionScreen(
             }
         }
 
-        when (viewModel.selectedTab) {
+        when (selectedTab) {
             0 -> {
                 // Lista de academias
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(listOf(
-                        Triple("Academia de Salsa", "Calle Mayor 123, Madrid", "https://rickandmortyapi.com/api/character/avatar/813.jpeg"),
-                        Triple("Dance Studio", "Avenida Libertad 45, Barcelona", "https://rickandmortyapi.com/api/character/avatar/23.jpeg"),
-                        Triple("Ritmo y Baile", "Plaza Central 7, Valencia", "https://rickandmortyapi.com/api/character/avatar/43.jpeg")
-                    )) { (name, location, imageUrl) ->
+                    items(academies) { academy ->
                         AcademyCard(
-                            name = name,
-                            location = location,
-                            imageUrl = imageUrl,
-                            rating = 4.5f,
-                            classCount = 12,
+                            name = academy.name,
+                            location = academy.location,
+                            imageUrl = academy.imageUrl,
+                            rating = academy.rating,
+                            classCount = academy.classCount,
                             onClick = { /* TODO: Navegar a la academia */ }
                         )
                     }
@@ -98,16 +100,13 @@ fun AcademySelectionScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(listOf(
-                        Triple("Academia de Salsa", "https://rickandmortyapi.com/api/character/avatar/813.jpeg", "15/04/2024"),
-                        Triple("Dance Studio", "https://rickandmortyapi.com/api/character/avatar/23.jpeg", "16/04/2024")
-                    )) { (name, imageUrl, date) ->
+                    items(invitations) { invitation ->
                         InvitationCard(
-                            academyName = name,
-                            academyImage = imageUrl,
-                            invitationDate = date,
-                            onAccept = { /* TODO: Aceptar invitación */ },
-                            onReject = { /* TODO: Rechazar invitación */ }
+                            academyName = invitation.academyName,
+                            academyImage = invitation.academyImage,
+                            invitationDate = invitation.invitationDate,
+                            onAccept = { viewModel.acceptInvitation(invitation) },
+                            onReject = { viewModel.rejectInvitation(invitation) }
                         )
                     }
                 }
@@ -122,5 +121,4 @@ fun AcademySelectionScreen(
             }
         }
     }
-
 }
