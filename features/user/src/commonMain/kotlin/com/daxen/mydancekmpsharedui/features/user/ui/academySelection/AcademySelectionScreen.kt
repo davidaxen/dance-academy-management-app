@@ -77,10 +77,17 @@ fun AcademySelectionScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(listOf("Academia 1", "Academia 2", "Academia 3")) { academy ->
+                    items(listOf(
+                        Triple("Academia de Salsa", "Calle Mayor 123, Madrid", "https://rickandmortyapi.com/api/character/avatar/813.jpeg"),
+                        Triple("Dance Studio", "Avenida Libertad 45, Barcelona", "https://rickandmortyapi.com/api/character/avatar/23.jpeg"),
+                        Triple("Ritmo y Baile", "Plaza Central 7, Valencia", "https://rickandmortyapi.com/api/character/avatar/43.jpeg")
+                    )) { (name, location, imageUrl) ->
                         AcademyCard(
-                            name = academy,
-                            location = "Ubicación de $academy",
+                            name = name,
+                            location = location,
+                            imageUrl = imageUrl,
+                            rating = 4.5f,
+                            classCount = 12,
                             onClick = { /* TODO: Navegar a la academia */ }
                         )
                     }
