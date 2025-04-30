@@ -1,10 +1,10 @@
 package com.daxen.mydancekmpsharedui.features.user.ui.academySelection
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -55,30 +55,30 @@ class AcademySelectionViewModel: ViewModel() {
     ))
     val invitations: StateFlow<List<AcademyInvitation>> = _invitations.asStateFlow()
 
-    private val _loadingInvitation = MutableStateFlow<AcademyInvitation?>(null)
-    val loadingInvitation: StateFlow<AcademyInvitation?> = _loadingInvitation.asStateFlow()
+    private val _loadingInvitations = MutableStateFlow<Set<AcademyInvitation>>(emptySet())
+    val loadingInvitations: StateFlow<Set<AcademyInvitation>> = _loadingInvitations.asStateFlow()
 
     fun onTabSelected(index: Int) {
         _selectedTab.value = index
     }
 
     fun acceptInvitation(academyInvitation: AcademyInvitation) {
-        _loadingInvitation.value = academyInvitation
+        _loadingInvitations.value += academyInvitation
         // Simulamos una carga
-        MainScope().launch {
+        viewModelScope.launch {
             delay(2000) // Simulamos una operación de red
             _invitations.value = _invitations.value.filter { it != academyInvitation }
-            _loadingInvitation.value = null
+            _loadingInvitations.value -= academyInvitation
         }
     }
 
     fun rejectInvitation(academyInvitation: AcademyInvitation) {
-        _loadingInvitation.value = academyInvitation
+        _loadingInvitations.value += academyInvitation
         // Simulamos una carga
-        MainScope().launch {
+        viewModelScope.launch {
             delay(2000) // Simulamos una operación de red
             _invitations.value = _invitations.value.filter { it != academyInvitation }
-            _loadingInvitation.value = null
+            _loadingInvitations.value -= academyInvitation
         }
     }
 }
