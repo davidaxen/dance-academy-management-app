@@ -103,12 +103,12 @@ fun AcademySelectionScreen(
                         )
                         Spacer(modifier = Modifier.height(LocalPadding.current.normal))
                         Text(
-                            text = "No tienes academias disponibles",
+                            text = "No estás matriculado en ninguna academia",
                             style = MaterialTheme.typography.titleMedium
                         )
                         Spacer(modifier = Modifier.height(LocalPadding.current.small))
                         Text(
-                            text = "Cuando te inviten a una academia, aparecerá aquí",
+                            text = "Cuando te matricules en la academia, aparecerá aquí",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
