@@ -39,6 +39,7 @@ fun AcademySelectionScreen(
     val selectedTab by viewModel.selectedTab.collectAsState()
     val academies by viewModel.academies.collectAsState()
     val invitations by viewModel.invitations.collectAsState()
+    val loadingInvitation by viewModel.loadingInvitation.collectAsState()
 
     val tabs = remember {
         listOf("Academias", "Invitaciones", "Perfil")
@@ -164,7 +165,8 @@ fun AcademySelectionScreen(
                                 academyImage = invitation.imageUrl,
                                 invitationDate = invitation.date,
                                 onAccept = { viewModel.acceptInvitation(invitation) },
-                                onReject = { viewModel.rejectInvitation(invitation) }
+                                onReject = { viewModel.rejectInvitation(invitation) },
+                                isLoading = loadingInvitation == invitation
                             )
                         }
                     }
