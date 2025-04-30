@@ -2,7 +2,9 @@ package com.daxen.mydancekmpsharedui.features.user.ui.academySelection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daxen.mydancekmpsharedui.data.user.model.User
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
+import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +25,11 @@ data class AcademyInvitation(
     val role: UserRole,
 )
 
-class AcademySelectionViewModel: ViewModel() {
+class AcademySelectionViewModel(
+    userRepository: UserRepository
+): ViewModel() {
+    val currentUser: StateFlow<User> = userRepository.currentUser
+
     private val _selectedTab = MutableStateFlow(0)
     val selectedTab: StateFlow<Int> = _selectedTab.asStateFlow()
 
