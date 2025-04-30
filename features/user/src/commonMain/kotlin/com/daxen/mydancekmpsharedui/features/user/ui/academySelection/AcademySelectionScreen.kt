@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.components.AcademyCard
 import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.components.InvitationCard
 
@@ -55,7 +56,8 @@ fun AcademySelectionScreen(
                     height = 2.dp,
                     color = MaterialTheme.colorScheme.onSecondary
                 )
-            }
+            },
+            modifier = Modifier.padding(bottom = LocalPadding.current.small)
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -88,8 +90,7 @@ fun AcademySelectionScreen(
                             name = academy.name,
                             location = academy.location,
                             imageUrl = academy.imageUrl,
-                            rating = academy.rating,
-                            classCount = academy.classCount,
+                            schedule = academy.schedule,
                             onClick = { /* TODO: Navegar a la academia */ }
                         )
                     }
@@ -102,9 +103,9 @@ fun AcademySelectionScreen(
                 ) {
                     items(invitations) { invitation ->
                         InvitationCard(
-                            academyName = invitation.academyName,
-                            academyImage = invitation.academyImage,
-                            invitationDate = invitation.invitationDate,
+                            academyName = invitation.name,
+                            academyImage = invitation.imageUrl,
+                            invitationDate = invitation.date,
                             onAccept = { viewModel.acceptInvitation(invitation) },
                             onReject = { viewModel.rejectInvitation(invitation) }
                         )

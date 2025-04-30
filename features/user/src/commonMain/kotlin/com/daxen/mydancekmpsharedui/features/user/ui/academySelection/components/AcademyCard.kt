@@ -3,10 +3,9 @@ package com.daxen.mydancekmpsharedui.features.user.ui.academySelection.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,8 +22,7 @@ fun AcademyCard(
     name: String,
     location: String,
     imageUrl: String,
-    rating: Float,
-    classCount: Int,
+    schedule: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -56,7 +54,7 @@ fun AcademyCard(
                 modifier = Modifier
                     .matchParentSize()
                     .background(
-                        Color.Black.copy(alpha = 0.7f)
+                        Color.Black.copy(alpha = 0.5f)
                     )
             )
 
@@ -107,33 +105,18 @@ fun AcademyCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = "Rating",
-                            tint = Color(0xFFFFD700),
+                            imageVector = Icons.Default.Schedule,
+                            contentDescription = "Schedule",
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${rating.toInt()}.${((rating % 1) * 10).toInt()}",
+                            text = schedule,
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold
                             )
-                        )
-                    }
-
-                    // Número de clases
-                    Surface(
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Text(
-                            text = "$classCount clases",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color.White,
-                                fontWeight = FontWeight.Medium
-                            ),
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                         )
                     }
                 }
