@@ -14,6 +14,7 @@ val authModule = module {
     includes(dataAuthModule)
     includes(dataUserModule)
 
+    viewModelOf(::AuthViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::RegisterViewModel)
     viewModelOf(::UserRoleSelectionViewModel)

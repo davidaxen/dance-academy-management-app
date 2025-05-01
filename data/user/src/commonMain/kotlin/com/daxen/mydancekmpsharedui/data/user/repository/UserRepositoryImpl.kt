@@ -33,6 +33,10 @@ class UserRepositoryImpl(
         _currentUser.value =  userResponse.toUser()
     }
 
+    override suspend fun isUserInfoComplete(): Boolean {
+        return firebaseUserService.isUserInfoComplete()
+    }
+
     override fun setPersonalInfo(
         firstName: String,
         lastName: String,

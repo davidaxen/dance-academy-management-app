@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface UserRepository {
     val currentUser: StateFlow<User>
     suspend fun updateCurrentUser()
+    suspend fun isUserInfoComplete(): Boolean
     fun setPersonalInfo(
         firstName: String,
         lastName: String,

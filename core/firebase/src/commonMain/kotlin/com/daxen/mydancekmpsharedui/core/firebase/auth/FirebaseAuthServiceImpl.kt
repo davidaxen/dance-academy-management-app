@@ -28,5 +28,7 @@ class FirebaseAuthServiceImpl(
         auth.signOut()
     }
 
-
+    override suspend fun isUserLoggedIn(): Boolean {
+        return auth.currentUser != null
+    }
 }

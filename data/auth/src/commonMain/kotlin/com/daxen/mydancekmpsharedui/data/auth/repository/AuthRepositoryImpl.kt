@@ -29,4 +29,8 @@ class AuthRepositoryImpl(
         _currentUid.value = null
         _currentEmail.value = null
     }
+
+    override suspend fun isUserLoggedIn(): Boolean {
+        return firebaseAuthService.isUserLoggedIn()
+    }
 }

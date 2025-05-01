@@ -22,7 +22,7 @@ class FirebaseUserServiceImpl(
         return if (document.exists) {
             document.data(UserModel.serializer()).copy(uid = userId)
         } else {
-            UserModel( uid = userId)
+            UserModel(uid = userId)
         }
     }
 
@@ -42,5 +42,15 @@ class FirebaseUserServiceImpl(
         firestore.collection("users")
             .document(userModel.uid)
             .set(userModel)
+    }
+
+    override suspend fun isUserInfoComplete(): Boolean {
+        val userId = firebaseAuthService.getCurrentUserId()
+            ?: throw IllegalStateException("ID de usuario nulo")
+
+        return firestore.collection("users")
+            .document(userId)
+            .get()
+            .exists
     }
 }

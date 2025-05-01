@@ -50,6 +50,7 @@ fun AcademySelectionScreen(
 
     Column(
         modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         TabRow(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -60,7 +61,7 @@ fun AcademySelectionScreen(
                     modifier = Modifier
                         .tabIndicatorOffset(tabPositions[selectedTab]),
                     height = 2.dp,
-                    color = MaterialTheme.colorScheme.onSecondary
+                    color = MaterialTheme.colorScheme.background
                 )
             },
         ) {
@@ -73,7 +74,7 @@ fun AcademySelectionScreen(
                     selectedContentColor = if (selectedTab == index)
                         MaterialTheme.colorScheme.onBackground
                     else
-                        MaterialTheme.colorScheme.onPrimary,
+                        MaterialTheme.colorScheme.background,
                     modifier = Modifier.background(
                         if (selectedTab == index)
                             MaterialTheme.colorScheme.background
