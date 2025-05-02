@@ -1,7 +1,7 @@
 package com.daxen.mydancekmpsharedui.features.user.utils
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
@@ -29,12 +29,12 @@ object Constants {
 
         ProfileItem.Section("Preferencias"),
         ProfileItem.Option("Notificaciones", Icons.Default.Notifications),
+        ProfileItem.Option("Idioma", Icons.Default.Edit),
 //        ProfileItem.Option("WhatsApp", Icons.Default.Chat, "whatsapp"),
 
         ProfileItem.Section("Ajustes"),
 //        ProfileItem.Option("Ayuda", Icons.Default.Info, "help"),
-        ProfileItem.Option("Idioma", Icons.Default.Edit),
-        ProfileItem.Option("Cerrar sesión", Icons.AutoMirrored.Filled.ExitToApp, ProfileAction.LogOut, color = Color.Red),
+        ProfileItem.Option("Borrar cuenta (Permanente)", Icons.Default.DeleteForever, ProfileAction.DeleteAccount, color = Color.Red),
     )
 
 }

@@ -3,27 +3,15 @@ package com.daxen.mydancekmpsharedui
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.daxen.mydancekmpsharedui.core.ui.theme.MyDanceTheme
+import com.daxen.mydancekmpsharedui.features.auth.PostSplashDestination
 import com.daxen.mydancekmpsharedui.navigation.CentralAppNavHost
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.auth.auth
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplication
-import org.koin.core.module.Module
 
 @Composable
 @Preview
-fun App(
-    platformModule: Module = Module()
-) {
-    KoinApplication(
-        application = {
-            modules(appModule, platformModule)
-        }
-    ) {
-        MyDanceTheme {
-            val isUserLogged = Firebase.auth.currentUser != null
-            val navController = rememberNavController()
-            CentralAppNavHost(navController, isUserLogged)
-        }
+fun App(destination: PostSplashDestination) {
+    MyDanceTheme {
+        val navController = rememberNavController()
+        CentralAppNavHost(navController, destination)
     }
 }

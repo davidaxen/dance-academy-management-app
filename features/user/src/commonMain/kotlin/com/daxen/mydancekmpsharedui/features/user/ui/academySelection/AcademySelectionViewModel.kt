@@ -2,6 +2,7 @@ package com.daxen.mydancekmpsharedui.features.user.ui.academySelection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daxen.mydancekmpsharedui.data.auth.repository.AuthRepository
 import com.daxen.mydancekmpsharedui.data.user.model.User
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
@@ -26,7 +27,8 @@ data class AcademyInvitation(
 )
 
 class AcademySelectionViewModel(
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    private val authRepository: AuthRepository,
 ): ViewModel() {
     val currentUser: StateFlow<User> = userRepository.currentUser
 
@@ -89,6 +91,16 @@ class AcademySelectionViewModel(
             delay(2000) // Simulamos una operación de red
             _invitations.value = _invitations.value.filter { it != academyInvitation }
             _loadingInvitations.value -= academyInvitation
+        }
+    }
+
+    fun signOut() {
+        viewModelScope.launch {
+            try {
+                authRepository.logout()
+            }catch (e: Exception) {
+                println("UserViewModel Error en logOut $e")
+            }
         }
     }
 }

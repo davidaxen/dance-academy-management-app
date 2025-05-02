@@ -31,10 +31,17 @@ import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.components
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import com.daxen.mydancekmpsharedui.features.user.ProfileAction
+import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
+import com.daxen.mydancekmpsharedui.features.user.ui.UserViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AcademySelectionScreen(
     viewModel: AcademySelectionViewModel,
+    modifier: Modifier = Modifier,
+    navigateToLogin: () -> Unit,
+    navigateToSection: (ProfileAction) -> Unit
 ) {
     val selectedTab by viewModel.selectedTab.collectAsState()
     val academies by viewModel.academies.collectAsState()
@@ -49,7 +56,7 @@ fun AcademySelectionScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
         TabRow(
@@ -175,11 +182,11 @@ fun AcademySelectionScreen(
                 }
             }
             2 -> {
-                // Perfil (por ahora vacío)
-                Text(
-                    text = "Perfil del usuario",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.titleLarge
+                val userViewModel: UserViewModel = koinViewModel()
+                UserScreen(
+                    viewModel = userViewModel,
+                    navigateToLogin = navigateToLogin,
+                    navigateToSection = navigateToSection
                 )
             }
         }
