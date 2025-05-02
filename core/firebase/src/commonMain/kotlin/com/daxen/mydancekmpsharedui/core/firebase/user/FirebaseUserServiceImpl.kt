@@ -12,18 +12,20 @@ class FirebaseUserServiceImpl(
 
     override suspend fun getCurrentUserData(): UserModel {
         val userId = firebaseAuthService.getCurrentUserId()
-            ?: throw IllegalStateException("ID de usuario nulo")
 
-        val document = firestore.collection("users")
-            .document(userId)
-            .get()
+        if (userId != null) {
+            val document = firestore.collection("users")
+                .document(userId)
+                .get()
 
-
-        return if (document.exists) {
-            document.data(UserModel.serializer()).copy(uid = userId)
-        } else {
-            UserModel(uid = userId)
+            return if (document.exists) {
+                document.data(UserModel.serializer()).copy(uid = userId)
+            } else {
+                UserModel(uid = userId)
+            }
         }
+
+        return UserModel()
     }
 
     override suspend fun saveUserToDatabase(userModel: UserModel) {
@@ -46,11 +48,14 @@ class FirebaseUserServiceImpl(
 
     override suspend fun isUserInfoComplete(): Boolean {
         val userId = firebaseAuthService.getCurrentUserId()
-            ?: throw IllegalStateException("ID de usuario nulo")
 
-        return firestore.collection("users")
-            .document(userId)
-            .get()
-            .exists
+        if (userId != null) {
+            return firestore.collection("users")
+                .document(userId)
+                .get()
+                .exists
+        }
+
+        return false
     }
 }
