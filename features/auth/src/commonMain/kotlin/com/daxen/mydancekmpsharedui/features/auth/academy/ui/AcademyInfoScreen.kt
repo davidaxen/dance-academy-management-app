@@ -112,7 +112,7 @@ fun AcademyInfoScreen(
                         TimePickerField(
                             value = openingTime,
                             onValueChange = { viewModel.updateOpeningTime(it) },
-                            label = "Hora de apertura",
+                            label = "Apertura",
                             error = openingTimeError,
                             modifier = Modifier.weight(1f)
                         )
@@ -120,7 +120,7 @@ fun AcademyInfoScreen(
                         TimePickerField(
                             value = closingTime,
                             onValueChange = { viewModel.updateClosingTime(it) },
-                            label = "Hora de cierre",
+                            label = "Cierre",
                             error = closingTimeError,
                             modifier = Modifier.weight(1f)
                         )

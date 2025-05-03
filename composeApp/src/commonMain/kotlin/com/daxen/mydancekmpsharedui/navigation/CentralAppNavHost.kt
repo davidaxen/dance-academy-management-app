@@ -3,12 +3,14 @@ package com.daxen.mydancekmpsharedui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.daxen.mydancekmpsharedui.features.auth.AcademyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.DanceRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.PersonalInfoScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.PostSplashDestination
 import com.daxen.mydancekmpsharedui.features.auth.RegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.RegisterScreenRoute
+import com.daxen.mydancekmpsharedui.features.auth.academyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.registerProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph

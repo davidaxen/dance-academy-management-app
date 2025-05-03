@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlue
 import kotlinx.datetime.LocalTime
 
@@ -28,7 +29,9 @@ fun TimePickerField(
         }
     }
 
-    Box {
+    Box(
+        modifier = modifier
+    ) {
         OutlinedTextField(
             value = value,
             onValueChange = {},
@@ -41,7 +44,7 @@ fun TimePickerField(
                     tint = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue
                 )
             },
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .clickable { expanded = true },
             colors = OutlinedTextFieldDefaults.colors(
@@ -65,8 +68,7 @@ fun TimePickerField(
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
+            onDismissRequest = { expanded = false }
         ) {
             timeOptions.forEach { time ->
                 DropdownMenuItem(
