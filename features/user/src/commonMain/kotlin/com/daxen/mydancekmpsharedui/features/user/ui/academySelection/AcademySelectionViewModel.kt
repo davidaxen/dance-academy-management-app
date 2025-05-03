@@ -27,7 +27,7 @@ data class AcademyInvitation(
 )
 
 class AcademySelectionViewModel(
-    userRepository: UserRepository,
+    private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
 ): ViewModel() {
     val currentUser: StateFlow<User> = userRepository.currentUser
@@ -98,6 +98,7 @@ class AcademySelectionViewModel(
         viewModelScope.launch {
             try {
                 authRepository.logout()
+                userRepository.logOut()
             }catch (e: Exception) {
                 println("UserViewModel Error en logOut $e")
             }

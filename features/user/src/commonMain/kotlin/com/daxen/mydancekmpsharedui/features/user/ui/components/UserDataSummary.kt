@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -38,7 +39,9 @@ fun UserDataSummary(user: User, navigateToLogin: () -> Unit) {
                 .fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier
+                    .padding(start = LocalPadding.current.tiny)
+                    .fillMaxWidth(0.7f)
             ) {
                 Text(
                     text = user.name,
@@ -51,6 +54,8 @@ fun UserDataSummary(user: User, navigateToLogin: () -> Unit) {
                 )
             }
 
+            Spacer(modifier = Modifier.width(18.dp))
+
             IconButton(
                 onClick = navigateToLogin,
                 modifier = Modifier.size(24.dp)
@@ -59,6 +64,7 @@ fun UserDataSummary(user: User, navigateToLogin: () -> Unit) {
                     imageVector = Icons.AutoMirrored.Filled.Logout,
                     contentDescription = "Cerrar sesión",
                     tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }

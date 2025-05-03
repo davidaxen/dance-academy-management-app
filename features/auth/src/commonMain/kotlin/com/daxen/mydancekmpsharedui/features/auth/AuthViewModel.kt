@@ -12,19 +12,32 @@ class AuthViewModel(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository
 ): ViewModel() {
-    private val _destination = MutableStateFlow<PostSplashDestination?>(null)
-    val destination: StateFlow<PostSplashDestination?> = _destination
+    private val _startingDestination = MutableStateFlow<PostSplashDestination?>(null)
+    val startingDestination: StateFlow<PostSplashDestination?> = _startingDestination
 
-    fun checkUserState() {
+    private val _afterLoginDestination = MutableStateFlow<PostSplashDestination?>(null)
+    val afterLoginDestination: StateFlow<PostSplashDestination?> = _afterLoginDestination
+
+    fun checkStartingUserState() {
         viewModelScope.launch {
             if (!authRepository.isUserLoggedIn()) {
-                _destination.value = PostSplashDestination.Login
+                _startingDestination.value = PostSplashDestination.Login
             } else {
                 if (!userRepository.isUserInfoComplete()) {
-                    _destination.value = PostSplashDestination.CompleteProfile
+                    _startingDestination.value = PostSplashDestination.CompleteProfile
                 } else {
-                    _destination.value = PostSplashDestination.AcademySelection
+                    _startingDestination.value = PostSplashDestination.AcademySelection
                 }
+            }
+        }
+    }
+
+    fun checkUserStateAfterLogin() {
+        viewModelScope.launch {
+            if (!userRepository.isUserInfoComplete()) {
+                _afterLoginDestination.value = PostSplashDestination.CompleteProfile
+            } else {
+                _afterLoginDestination.value = PostSplashDestination.AcademySelection
             }
         }
     }

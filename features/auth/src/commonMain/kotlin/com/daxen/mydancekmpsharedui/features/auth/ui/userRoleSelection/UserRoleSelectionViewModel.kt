@@ -21,6 +21,7 @@ class UserRoleSelectionViewModel(
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
+            userRepository.logOut()
         }
     }
 }

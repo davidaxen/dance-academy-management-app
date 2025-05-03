@@ -16,14 +16,14 @@ fun MainViewController() = ComposeUIViewController {
         }
     }
     val authViewModel: AuthViewModel = getKoin().get()
-    authViewModel.checkUserState()
+    authViewModel.checkStartingUserState()
 
     ShowScreen(authViewModel)
 }
 
 @Composable
 fun ShowScreen(viewModel: AuthViewModel) {
-    val destination by viewModel.destination.collectAsState()
+    val destination by viewModel.startingDestination.collectAsState()
     when (destination) {
         null -> IosSplashScreen()
         else -> App(destination = destination!!)

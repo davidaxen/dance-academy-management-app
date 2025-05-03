@@ -32,15 +32,15 @@ class MainActivity : ComponentActivity() {
                 }
             )
         }
-        authViewModel.checkUserState()
+        authViewModel.checkStartingUserState()
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                authViewModel.destination.value == null
+                authViewModel.startingDestination.value == null
             }
         }
 
         setContent {
-            val destination by authViewModel.destination.collectAsState()
+            val destination by authViewModel.startingDestination.collectAsState()
 
             destination?.let {
                 App(destination = it)

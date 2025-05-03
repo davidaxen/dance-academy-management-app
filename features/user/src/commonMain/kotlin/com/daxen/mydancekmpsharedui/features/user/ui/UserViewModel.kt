@@ -45,6 +45,7 @@ internal class UserViewModel(
         viewModelScope.launch {
             try {
                 authRepository.logout()
+                userRepository.logOut()
             }catch (e: Exception) {
                 println("UserViewModel Error en register $e")
             }

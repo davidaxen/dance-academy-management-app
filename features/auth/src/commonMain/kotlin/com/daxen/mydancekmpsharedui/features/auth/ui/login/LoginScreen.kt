@@ -15,6 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.*
+import com.daxen.mydancekmpsharedui.features.auth.AuthViewModel
+import com.daxen.mydancekmpsharedui.features.auth.PostSplashDestination
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.CurvedBackground
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthButton
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.AuthCard
@@ -25,7 +27,9 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.CustomTextField
 @Composable
 internal fun LoginScreen(
     viewModel: LoginViewModel,
-    navigateToUserScreen: () -> Unit,
+    checkerViewModel: AuthViewModel,
+    navigateToAcademySelection: () -> Unit,
+    navigateToRoleSelection: () -> Unit,
     navigateToRegister: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -33,6 +37,7 @@ internal fun LoginScreen(
     val emailError by viewModel.emailError.collectAsState()
     val passwordError by viewModel.passwordError.collectAsState()
     val isLoggingIn by viewModel.isLoggingIn.collectAsState()
+    val afterLoginDestination by checkerViewModel.afterLoginDestination.collectAsState()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -41,7 +46,22 @@ internal fun LoginScreen(
     LaunchedEffect(loginState) {
         if (loginState is LoginState.Success && !isNavigating) {
             isNavigating = true
-            navigateToUserScreen()
+            checkerViewModel.checkUserStateAfterLogin()
+        }
+    }
+
+    LaunchedEffect(afterLoginDestination) {
+        when (afterLoginDestination) {
+            PostSplashDestination.CompleteProfile -> {
+                navigateToRoleSelection()
+            }
+            PostSplashDestination.AcademySelection -> {
+                navigateToAcademySelection()
+            }
+            else -> {
+                isNavigating = false
+                return@LaunchedEffect
+            }
         }
     }
 

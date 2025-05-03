@@ -31,8 +31,8 @@ fun CentralAppNavHost(
         startDestination = startDestination
     ) {
         authNavGraph(
-            goToUser = {
-                navController.navigate(CentralAppDestination.Main.route) {
+            goToAcademySelection = {
+                navController.navigate(AcademySelectionGraph) {
                     popUpTo(0) { inclusive = true}
                 }
             },

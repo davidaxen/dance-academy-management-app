@@ -47,7 +47,7 @@ data object DanceRoleSelectionScreenRoute
 
 
 fun NavGraphBuilder.authNavGraph(
-    goToUser: () -> Unit,
+    goToAcademySelection: () -> Unit,
     goToLogin: () -> Unit,
     goToRegister: () -> Unit,
     goToRoleSelection: () -> Unit,
@@ -57,10 +57,13 @@ fun NavGraphBuilder.authNavGraph(
 ) {
     navigation<AuthGraph>(startDestination = LoginScreenRoute) {
         composable<LoginScreenRoute> {
+            val checkerViewModel: AuthViewModel = koinViewModel()
             val viewModel: LoginViewModel = koinViewModel()
             LoginScreen(
                 viewModel = viewModel,
-                navigateToUserScreen = goToUser,
+                checkerViewModel = checkerViewModel,
+                navigateToRoleSelection = goToRoleSelection,
+                navigateToAcademySelection = goToAcademySelection,
                 navigateToRegister = goToRegister,
                 modifier = Modifier.fillMaxSize()
             )
