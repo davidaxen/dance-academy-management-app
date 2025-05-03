@@ -15,7 +15,7 @@ import com.daxen.mydancekmpsharedui.features.user.ui.components.MainUserSection
 @Composable
 internal fun UserScreen(
     viewModel: UserViewModel,
-    modifier: Modifier = Modifier,
+    showTopSection: Boolean = false,
     navigateToLogin: () -> Unit,
     navigateToSection: (ProfileAction) -> Unit
 ) {
@@ -35,6 +35,8 @@ internal fun UserScreen(
                 val user = (userState as UserUiState.Success).user
                 MainUserSection(
                     user,
+                    showTopSection = showTopSection,
+                    navigateToLogin = navigateToLogin,
                     navigateToSection = navigateToSection
                 )
             }
