@@ -10,7 +10,7 @@ data class User(
     var phoneNumberPrefix: String = "",
     var role: UserRole = UserRole.STUDENT,
     var danceRole: DanceRole = DanceRole.LEADER,
-    var academies: Map<String, UserAcademyInfo> = emptyMap()
+//    var academies: Map<String, UserAcademyInfo> = emptyMap()
 ) {
     companion object {
         val EMPTY = User()
