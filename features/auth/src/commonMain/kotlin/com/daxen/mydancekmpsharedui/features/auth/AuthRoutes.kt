@@ -45,30 +45,18 @@ data object PersonalInfoScreenRoute
 @Serializable
 data object DanceRoleSelectionScreenRoute
 
+@Serializable
+data object RegisterProcessNavGraph
 
-fun NavGraphBuilder.authNavGraph(
-    goToAcademySelection: () -> Unit,
+
+fun NavGraphBuilder.registerProcessNavGraph(
     goToLogin: () -> Unit,
-    goToRegister: () -> Unit,
-    goToRoleSelection: () -> Unit,
     goToInfo: () -> Unit,
     goToDanceRoleSelection: () -> Unit,
+    goToAcademySelection: () -> Unit,
     goBack: () -> Unit,
 ) {
-    navigation<AuthGraph>(startDestination = LoginScreenRoute) {
-        composable<LoginScreenRoute> {
-            val checkerViewModel: AuthViewModel = koinViewModel()
-            val viewModel: LoginViewModel = koinViewModel()
-            LoginScreen(
-                viewModel = viewModel,
-                checkerViewModel = checkerViewModel,
-                navigateToRoleSelection = goToRoleSelection,
-                navigateToAcademySelection = goToAcademySelection,
-                navigateToRegister = goToRegister,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
+    navigation<RegisterProcessNavGraph>(startDestination = UserRoleSelectionScreenRoute) {
         composable<UserRoleSelectionScreenRoute>(
             enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
             popEnterTransition = {
@@ -128,10 +116,33 @@ fun NavGraphBuilder.authNavGraph(
             DanceRoleSelectionScreen(
                 viewModel = viewModel,
                 onNavigateBack = goBack,
-                onNavigateNext = {},
+                onNavigateNext = goToAcademySelection,
                 modifier = Modifier.fillMaxSize()
             )
         }
+    }
+}
+
+fun NavGraphBuilder.authNavGraph(
+    goToAcademySelection: () -> Unit,
+    goToRegister: () -> Unit,
+    goToRoleSelection: () -> Unit,
+    goBack: () -> Unit,
+) {
+    navigation<AuthGraph>(startDestination = LoginScreenRoute) {
+        composable<LoginScreenRoute> {
+            val checkerViewModel: AuthViewModel = koinViewModel()
+            val viewModel: LoginViewModel = koinViewModel()
+            LoginScreen(
+                viewModel = viewModel,
+                checkerViewModel = checkerViewModel,
+                navigateToRoleSelection = goToRoleSelection,
+                navigateToAcademySelection = goToAcademySelection,
+                navigateToRegister = goToRegister,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
         composable<RegisterScreenRoute>(
             enterTransition = {
                 slideInHorizontally(

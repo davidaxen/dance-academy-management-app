@@ -7,9 +7,10 @@ import com.daxen.mydancekmpsharedui.features.auth.DanceRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.PersonalInfoScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.PostSplashDestination
+import com.daxen.mydancekmpsharedui.features.auth.RegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.RegisterScreenRoute
-import com.daxen.mydancekmpsharedui.features.auth.UserRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
+import com.daxen.mydancekmpsharedui.features.auth.registerProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph
 import com.daxen.mydancekmpsharedui.features.user.academySelectionNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userOptionsNavGraph
@@ -24,7 +25,7 @@ fun CentralAppNavHost(
     val startDestination = when (destination) {
         PostSplashDestination.Login -> CentralAppDestination.Auth.route
         PostSplashDestination.AcademySelection -> AcademySelectionGraph
-        PostSplashDestination.CompleteProfile -> UserRoleSelectionScreenRoute
+        PostSplashDestination.CompleteProfile -> RegisterProcessNavGraph
     }
     NavHost(
         navController = navController,
@@ -36,15 +37,24 @@ fun CentralAppNavHost(
                     popUpTo(0) { inclusive = true}
                 }
             },
-            goToLogin = { navController.navigate(LoginScreenRoute) },
             goToRegister = { navController.navigate(RegisterScreenRoute) },
             goToRoleSelection = {
-                navController.navigate(UserRoleSelectionScreenRoute) {
+                navController.navigate(RegisterProcessNavGraph) {
                     popUpTo(0) { inclusive = true }
                 }
             },
+           goBack = { navController.popBackStack() }
+        )
+
+        registerProcessNavGraph(
+            goToLogin = { navController.navigate(LoginScreenRoute) },
             goToInfo = { navController.navigate(PersonalInfoScreenRoute) },
             goToDanceRoleSelection = { navController.navigate(DanceRoleSelectionScreenRoute) },
+            goToAcademySelection = {
+                navController.navigate(AcademySelectionGraph) {
+                    popUpTo(0) { inclusive = true}
+                }
+            },
             goBack = { navController.popBackStack() }
         )
 

@@ -44,7 +44,7 @@ fun UserDataSummary(user: User, navigateToLogin: () -> Unit) {
                     .fillMaxWidth(0.7f)
             ) {
                 Text(
-                    text = user.name,
+                    text = user.name + " " + user.lastName,
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))

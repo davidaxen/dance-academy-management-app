@@ -60,9 +60,11 @@ internal fun LoginScreen(
             }
             else -> {
                 isNavigating = false
+                viewModel.resetIsLogginIn()
                 return@LaunchedEffect
             }
         }
+        viewModel.resetIsLogginIn()
     }
 
     Box(

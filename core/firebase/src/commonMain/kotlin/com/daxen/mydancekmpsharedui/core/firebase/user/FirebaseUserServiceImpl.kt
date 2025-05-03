@@ -1,7 +1,6 @@
 package com.daxen.mydancekmpsharedui.core.firebase.user
 
 import com.daxen.mydancekmpsharedui.core.firebase.auth.FirebaseAuthService
-import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyUserModel
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.UserModel
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 
@@ -29,17 +28,17 @@ class FirebaseUserServiceImpl(
     }
 
     override suspend fun saveUserToDatabase(userModel: UserModel) {
-        val academyUserModel = AcademyUserModel(
-            uid = userModel.uid,
-            email = userModel.email,
-            name = userModel.name,
-            role = userModel.role
-        )
-        firestore.collection("academies")
-            .document(userModel.academies.keys.first())
-            .collection("students")
-            .document(academyUserModel.uid)
-            .set(academyUserModel)
+//        val academyUserModel = AcademyUserModel(
+//            uid = userModel.uid,
+//            email = userModel.email,
+//            name = userModel.name,
+//            role = userModel.role
+//        )
+//        firestore.collection("academies")
+//            .document(userModel.academies.keys.first())
+//            .collection("students")
+//            .document(academyUserModel.uid)
+//            .set(academyUserModel)
 
         firestore.collection("users")
             .document(userModel.uid)

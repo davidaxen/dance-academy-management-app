@@ -33,7 +33,7 @@ class LoginViewModel(
             _isLoggingIn.value = true
             login(email, password)
         } else {
-            _isLoggingIn.value = false
+            resetIsLogginIn()
         }
     }
 
@@ -47,8 +47,11 @@ class LoginViewModel(
                 println("LoginViewModel Error en login $e")
                 _loginState.value = LoginState.Error(e.message ?: "Error desconocido")
             }
-            _isLoggingIn.value = false
         }
+    }
+
+    fun resetIsLogginIn() {
+        _isLoggingIn.value = false
     }
 
     fun resetErrors() {
