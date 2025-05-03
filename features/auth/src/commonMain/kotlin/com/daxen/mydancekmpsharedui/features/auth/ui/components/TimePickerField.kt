@@ -1,16 +1,12 @@
 package com.daxen.mydancekmpsharedui.features.auth.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlue
 import kotlinx.datetime.LocalTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerField(
     value: String,
@@ -29,25 +25,20 @@ fun TimePickerField(
         }
     }
 
-    Box(
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
         modifier = modifier
     ) {
         OutlinedTextField(
             value = value,
             onValueChange = {},
-            label = { Text(label) },
             readOnly = true,
+            label = { Text(label) },
             trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Seleccionar hora",
-                    tint = if (error != null) MaterialTheme.colorScheme.error else PrimaryBlue
-                )
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = true },
-            colors = OutlinedTextFieldDefaults.colors(
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
                 focusedBorderColor = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
                 focusedTextColor = MaterialTheme.colorScheme.onBackground,
@@ -63,10 +54,13 @@ fun TimePickerField(
                         color = MaterialTheme.colorScheme.error
                     )
                 }
-            }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
         )
 
-        DropdownMenu(
+        ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
