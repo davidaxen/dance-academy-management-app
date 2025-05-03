@@ -14,6 +14,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.AcademyInfoScreen
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.AcademyInfoViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
@@ -48,6 +50,34 @@ data object DanceRoleSelectionScreenRoute
 @Serializable
 data object RegisterProcessNavGraph
 
+@Serializable
+data object AcademyRegisterProcessNavGraph
+
+@Serializable
+data object AcademyInfoScreenRoute
+
+fun NavGraphBuilder.academyRegisterProcessNavGraph(
+) {
+    navigation<AcademyRegisterProcessNavGraph>(startDestination = AcademyInfoScreenRoute) {
+        composable<AcademyInfoScreenRoute>(
+            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(500)
+                )
+            },
+        ) {
+            val viewModel: AcademyInfoViewModel = koinViewModel()
+            AcademyInfoScreen(
+                viewModel = viewModel,
+                onNavigateBack = {},
+                onNavigateNext = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
 
 fun NavGraphBuilder.registerProcessNavGraph(
     goToLogin: () -> Unit,

@@ -29,7 +29,8 @@ fun CentralAppNavHost(
     }
     NavHost(
         navController = navController,
-        startDestination = startDestination
+//        startDestination = startDestination
+        startDestination = AcademyRegisterProcessNavGraph
     ) {
         authNavGraph(
             goToAcademySelection = {
@@ -44,6 +45,10 @@ fun CentralAppNavHost(
                 }
             },
            goBack = { navController.popBackStack() }
+        )
+
+        academyRegisterProcessNavGraph(
+
         )
 
         registerProcessNavGraph(
