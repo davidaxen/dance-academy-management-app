@@ -72,7 +72,6 @@ object AcademyValidations {
     fun validateNif(nif: String): String? {
         return when {
             nif.isBlank() -> "El NIF es obligatorio"
-            !nif.matches(Regex("^[A-Z]\\d{8}$")) -> "El NIF debe tener el formato correcto (ej: A12345678)"
             else -> null
         }
     }
