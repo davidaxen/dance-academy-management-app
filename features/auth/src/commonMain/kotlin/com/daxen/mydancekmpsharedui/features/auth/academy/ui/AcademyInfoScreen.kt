@@ -19,15 +19,15 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.*
 @Composable
 fun AcademyInfoScreen(
     viewModel: AcademyInfoViewModel,
-    onNavigateBack: () -> Unit,
     onNavigateNext: () -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.academyInfoState.collectAsState()
     val name by viewModel.name.collectAsState()
     val nameError by viewModel.nameError.collectAsState()
-    val legalName by viewModel.legalName.collectAsState()
-    val legalNameError by viewModel.legalNameError.collectAsState()
+    val nif by viewModel.nif.collectAsState()
+    val nifError by viewModel.nifError.collectAsState()
     val address by viewModel.address.collectAsState()
     val addressError by viewModel.addressError.collectAsState()
     val openingTime by viewModel.openingTime.collectAsState()
@@ -53,20 +53,17 @@ fun AcademyInfoScreen(
     ) {
         CurvedBackgroundFull()
         Column(modifier = Modifier.fillMaxSize()) {
-//            TopBarBackSection(onNavigateBack)
-            
+            TopBarBackSection(onNavigateBack)
+
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = LocalPadding.current.large),
+                modifier = Modifier.fillMaxSize()
+                        .padding(horizontal = LocalPadding.current.large),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AuthTitleAndSubtitle(
                     title = "Información de la Academia",
                     subtitle = "Completa la información de tu academia para seguir adelante",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -84,10 +81,10 @@ fun AcademyInfoScreen(
                     )
 
                     CustomTextField(
-                        value = legalName,
+                        value = nif,
                         onValueChange = { viewModel.updateLegalName(it) },
-                        label = "Nombre legal",
-                        error = legalNameError,
+                        label = "NIF",
+                        error = nifError,
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next,
                         leadingIcon = Icons.Default.Description,

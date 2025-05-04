@@ -57,16 +57,19 @@ fun TimePickerField(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor()
+                .menuAnchor(MenuAnchorType.PrimaryEditable, true)
         )
 
         ExposedDropdownMenu(
             expanded = expanded,
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = { expanded = false }
         ) {
             timeOptions.forEach { time ->
                 DropdownMenuItem(
-                    text = { Text(time) },
+                    text = {
+                        Text(time, color = MaterialTheme.colorScheme.onBackground)
+                    },
                     onClick = {
                         onValueChange(time)
                         expanded = false

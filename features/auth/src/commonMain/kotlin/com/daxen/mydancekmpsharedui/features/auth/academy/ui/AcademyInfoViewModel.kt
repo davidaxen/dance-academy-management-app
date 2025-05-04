@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 sealed class AcademyInfoState {
-    object Initial : AcademyInfoState()
-    object Loading : AcademyInfoState()
-    object Success : AcademyInfoState()
+    data object Initial : AcademyInfoState()
+    data object Loading : AcademyInfoState()
+    data object Success : AcademyInfoState()
     data class Error(val message: String) : AcademyInfoState()
 }
 
@@ -26,10 +26,11 @@ class AcademyInfoViewModel(
     private val _nameError = MutableStateFlow<String?>(null)
     val nameError: StateFlow<String?> = _nameError.asStateFlow()
 
-    private val _legalName = MutableStateFlow("")
-    val legalName: StateFlow<String> = _legalName.asStateFlow()
-    private val _legalNameError = MutableStateFlow<String?>(null)
-    val legalNameError: StateFlow<String?> = _legalNameError.asStateFlow()
+    private val _nif = MutableStateFlow("")
+    val nif: StateFlow<String> = _nif.asStateFlow()
+
+    private val _nifError = MutableStateFlow<String?>(null)
+    val nifError: StateFlow<String?> = _nifError.asStateFlow()
 
     private val _address = MutableStateFlow("")
     val address: StateFlow<String> = _address.asStateFlow()
@@ -55,8 +56,8 @@ class AcademyInfoViewModel(
     }
 
     fun updateLegalName(legalName: String) {
-        _legalName.value = legalName
-        _legalNameError.value = null
+        _nif.value = legalName
+        _nifError.value = null
     }
 
     fun updateAddress(address: String) {
@@ -82,8 +83,8 @@ class AcademyInfoViewModel(
             isValid = false
         }
 
-        if (_legalName.value.isBlank()) {
-            _legalNameError.value = "El nombre legal es obligatorio"
+        if (_nif.value.isBlank()) {
+            _nifError.value = "El NIF es obligatorio"
             isValid = false
         }
 
