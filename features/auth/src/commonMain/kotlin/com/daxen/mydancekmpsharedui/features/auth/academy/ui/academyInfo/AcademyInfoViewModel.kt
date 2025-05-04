@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.auth.academy.ui
+package com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

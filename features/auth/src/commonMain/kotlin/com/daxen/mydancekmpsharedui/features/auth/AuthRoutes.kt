@@ -14,8 +14,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
-import com.daxen.mydancekmpsharedui.features.auth.academy.ui.AcademyInfoScreen
-import com.daxen.mydancekmpsharedui.features.auth.academy.ui.AcademyInfoViewModel
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.AcademyInfoScreen
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.AcademyInfoViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel

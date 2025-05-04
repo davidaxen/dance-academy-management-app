@@ -2,7 +2,7 @@ package com.daxen.mydancekmpsharedui.features.auth
 
 import com.daxen.mydancekmpsharedui.data.auth.dataAuthModule
 import com.daxen.mydancekmpsharedui.data.user.dataUserModule
-import com.daxen.mydancekmpsharedui.features.auth.academy.ui.AcademyInfoViewModel
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.AcademyInfoViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.register.RegisterViewModel

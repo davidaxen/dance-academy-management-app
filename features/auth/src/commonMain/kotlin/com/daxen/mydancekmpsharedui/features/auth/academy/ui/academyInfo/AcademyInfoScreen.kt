@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.auth.academy.ui
+package com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
