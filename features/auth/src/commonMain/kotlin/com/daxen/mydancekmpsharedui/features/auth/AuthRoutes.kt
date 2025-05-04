@@ -16,6 +16,8 @@ import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.AcademyInfoScreen
 import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.AcademyInfoViewModel
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.logoUploader.LogoUploaderScreen
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.logoUploader.LogoUploaderViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
@@ -56,9 +58,12 @@ data object AcademyRegisterProcessNavGraph
 @Serializable
 data object AcademyInfoScreenRoute
 
+@Serializable
+data object LogoUploaderScreenRoute
+
 fun NavGraphBuilder.academyRegisterProcessNavGraph(
 ) {
-    navigation<AcademyRegisterProcessNavGraph>(startDestination = AcademyInfoScreenRoute) {
+    navigation<AcademyRegisterProcessNavGraph>(startDestination = LogoUploaderScreenRoute) {
         composable<AcademyInfoScreenRoute>(
             enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
             popEnterTransition = {
@@ -70,6 +75,24 @@ fun NavGraphBuilder.academyRegisterProcessNavGraph(
         ) {
             val viewModel: AcademyInfoViewModel = koinViewModel()
             AcademyInfoScreen(
+                viewModel = viewModel,
+                onNavigateBack = {},
+                onNavigateNext = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        composable<LogoUploaderScreenRoute>(
+            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(500)
+                )
+            },
+        ) {
+            val viewModel: LogoUploaderViewModel = koinViewModel()
+            LogoUploaderScreen(
                 viewModel = viewModel,
                 onNavigateBack = {},
                 onNavigateNext = {},
