@@ -42,7 +42,6 @@ fun SubscriptionScreen(
             "Reservas de alumnos",
             "Sin subida de vídeos",
             "Sin gestión de pagos",
-            "Estadísticas básicas",
             "Soporte email (48h)",
         ),
         PlanType.PRO to listOf(
