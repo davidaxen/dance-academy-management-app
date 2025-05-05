@@ -19,6 +19,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 
 @Composable
 fun SubscriptionScreen(
@@ -140,6 +143,7 @@ fun SubscriptionScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
+                                        .verticalScroll(rememberScrollState())
                                         .padding(bottom = 80.dp, top = 28.dp, start = 28.dp, end = 28.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
@@ -191,22 +195,17 @@ fun SubscriptionScreen(
                                         }
                                     }
                                     Spacer(modifier = Modifier.height(24.dp))
-                                    Text(
-                                        text = "Precio total: ${calculatePrice(subscription.copy(plan = plan, addons = if (subscription.plan == plan) subscription.addons else emptyList()))} €/mes",
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
                                 }
                             }
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
                                     .fillMaxWidth()
-                                    .padding(28.dp)
+                                    .padding(vertical = LocalPadding.current.normal, horizontal = LocalPadding.current.big)
                             ) {
+                                val priceText = "${calculatePrice(subscription.copy(plan = plan, addons = if (subscription.plan == plan) subscription.addons else emptyList()))} €/mes"
                                 AuthButton(
-                                    text = "Seleccionar plan",
+                                    text = "Seleccionar plan ($priceText)",
                                     isLoading = isSubmitting && subscription.plan == plan,
                                     onClick = {
                                         viewModel.selectPlan(plan)
