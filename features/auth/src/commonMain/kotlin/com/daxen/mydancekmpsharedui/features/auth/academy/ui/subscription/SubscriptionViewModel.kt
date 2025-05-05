@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 // Modelos de datos
-
 data class Subscription(
     val plan: PlanType,
     val addons: List<AddOnType>
@@ -20,9 +19,6 @@ enum class AddOnType {
     EXTRA_PROFESSOR,
     EXTRA_ALUMNOS_50,
     EXTRA_STORAGE_50GB,
-    CUSTOM_DOMAIN,
-    REMOVE_BRANDING,
-    APPSTORE_PUBLISH
 }
 
 fun calculatePrice(subscription: Subscription): Int {
@@ -37,9 +33,6 @@ fun calculatePrice(subscription: Subscription): Int {
             AddOnType.EXTRA_PROFESSOR -> 2
             AddOnType.EXTRA_ALUMNOS_50 -> 3
             AddOnType.EXTRA_STORAGE_50GB -> 5
-            AddOnType.CUSTOM_DOMAIN -> 4
-            AddOnType.REMOVE_BRANDING -> 10
-            AddOnType.APPSTORE_PUBLISH -> 10
         }
     }.sum()
 
