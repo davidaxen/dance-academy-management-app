@@ -18,6 +18,8 @@ import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.Academy
 import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.AcademyInfoViewModel
 import com.daxen.mydancekmpsharedui.features.auth.academy.ui.logoUploader.LogoUploaderScreen
 import com.daxen.mydancekmpsharedui.features.auth.academy.ui.logoUploader.LogoUploaderViewModel
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.subscription.SubscriptionScreen
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.subscription.SubscriptionViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
@@ -61,10 +63,13 @@ data object AcademyInfoScreenRoute
 @Serializable
 data object LogoUploaderScreenRoute
 
+@Serializable
+data object SubscriptionScreenRoute
+
 fun NavGraphBuilder.academyRegisterProcessNavGraph(
     goBack: () -> Unit,
 ) {
-    navigation<AcademyRegisterProcessNavGraph>(startDestination = LogoUploaderScreenRoute) {
+    navigation<AcademyRegisterProcessNavGraph>(startDestination = SubscriptionScreenRoute) {
         composable<AcademyInfoScreenRoute>(
             enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
             popEnterTransition = {
@@ -98,6 +103,23 @@ fun NavGraphBuilder.academyRegisterProcessNavGraph(
                 onNavigateBack = {},
                 onNavigateNext = {},
                 modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        composable<SubscriptionScreenRoute>(
+            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(500)
+                )
+            },
+        ) {
+            val viewModel: SubscriptionViewModel = koinViewModel()
+            SubscriptionScreen(
+                viewModel = viewModel,
+                onNavigateBack = {},
+                onNavigateNext = {},
             )
         }
     }
