@@ -62,6 +62,7 @@ data object AcademyInfoScreenRoute
 data object LogoUploaderScreenRoute
 
 fun NavGraphBuilder.academyRegisterProcessNavGraph(
+    goBack: () -> Unit,
 ) {
     navigation<AcademyRegisterProcessNavGraph>(startDestination = LogoUploaderScreenRoute) {
         composable<AcademyInfoScreenRoute>(
@@ -76,7 +77,7 @@ fun NavGraphBuilder.academyRegisterProcessNavGraph(
             val viewModel: AcademyInfoViewModel = koinViewModel()
             AcademyInfoScreen(
                 viewModel = viewModel,
-                onNavigateBack = {},
+                onNavigateBack = goBack,
                 onNavigateNext = {},
                 modifier = Modifier.fillMaxSize()
             )

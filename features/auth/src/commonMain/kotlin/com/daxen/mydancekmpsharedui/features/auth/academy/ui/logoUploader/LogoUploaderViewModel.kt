@@ -38,6 +38,11 @@ class LogoUploaderViewModel(
     }
 
     fun validateAndSubmit() {
+        if (_selectedImage.value == null) {
+            _logoUploaderState.value = LogoUploaderState.Error("Debes seleccionar una imagen")
+            return
+        }
+
         viewModelScope.launch {
             try {
                 _isSubmitting.value = true

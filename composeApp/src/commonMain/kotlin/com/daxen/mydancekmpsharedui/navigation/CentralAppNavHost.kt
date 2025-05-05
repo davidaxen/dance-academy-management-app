@@ -50,7 +50,7 @@ fun CentralAppNavHost(
         )
 
         academyRegisterProcessNavGraph(
-
+            goBack = { navController.popBackStack() }
         )
 
         registerProcessNavGraph(
