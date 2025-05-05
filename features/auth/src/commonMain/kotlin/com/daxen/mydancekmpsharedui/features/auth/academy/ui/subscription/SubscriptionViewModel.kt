@@ -65,14 +65,13 @@ class SubscriptionViewModel(
         _subscription.value = _subscription.value.copy(addons = currentAddons)
     }
 
-    fun submitSubscription(onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun submitSubscription() {
         // Aquí iría la lógica para guardar la suscripción
         // Por ahora, solo simula éxito
         _isSubmitting.value = true
         try {
-            onSuccess()
         } catch (e: Exception) {
-            onError(e.message ?: "Error desconocido")
+            println("Error al guardar la suscripción: $e")
         } finally {
             _isSubmitting.value = false
         }

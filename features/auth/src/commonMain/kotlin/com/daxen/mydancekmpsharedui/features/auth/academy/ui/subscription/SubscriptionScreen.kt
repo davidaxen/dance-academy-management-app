@@ -244,6 +244,7 @@ fun SubscriptionScreen(
                                     isLoading = isSubmitting && subscription.plan == plan,
                                     onClick = {
                                         viewModel.selectPlan(plan)
+                                        viewModel.submitSubscription()
                                         onNavigateNext()
                                     },
                                     isDisabled = isSubmitting
