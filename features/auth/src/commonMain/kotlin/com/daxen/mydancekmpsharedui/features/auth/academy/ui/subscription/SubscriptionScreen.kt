@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.theme.BackgroundLight
 import com.daxen.mydancekmpsharedui.features.auth.ui.components.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -132,81 +131,93 @@ fun SubscriptionScreen(
                     horizontalArrangement = Arrangement.spacedBy(cardSpacing)
                 ) {
                     itemsIndexed(plans) { index, plan ->
-                        val isSelected = subscription.plan == plan
-                        Card(
+                        Box(
                             modifier = Modifier
-                                .width(cardWidth)
-                                .height(540.dp),
-                            shape = RoundedCornerShape(32.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color.White
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 4.dp
-                            )
+                                .fillParentMaxWidth()
+                                .fillParentMaxHeight(0.9f)
                         ) {
-                            Column(
-                                modifier = Modifier.padding(28.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = planDescriptions[plan] ?: "",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                shape = RoundedCornerShape(32.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color.White
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 4.dp
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
-                                planDetails[plan]?.forEach {
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(bottom = 80.dp, top = 28.dp, start = 28.dp, end = 28.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     Text(
-                                        text = it,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        textAlign = TextAlign.Center
+                                        text = planDescriptions[plan] ?: "",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
                                     )
-                                }
-                                Spacer(modifier = Modifier.height(20.dp))
-                                if (plan != PlanType.STARTER) {
-                                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-                                    Text(
-                                        text = "Add-ons opcionales",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    availableAddons.forEach { (addon, label) ->
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 6.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Checkbox(
-                                                checked = isSelected && subscription.addons.contains(addon),
-                                                onCheckedChange = {
-                                                    if (isSelected) viewModel.toggleAddon(addon)
-                                                },
-                                                enabled = isSelected
-                                            )
-                                            Text(
-                                                text = label,
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                modifier = Modifier.padding(start = 8.dp)
-                                            )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    planDetails[plan]?.forEach {
+                                        Text(
+                                            text = it,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                    if (plan != PlanType.STARTER) {
+                                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+                                        Text(
+                                            text = "Add-ons opcionales",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        availableAddons.forEach { (addon, label) ->
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 6.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Checkbox(
+                                                    checked = subscription.plan == plan && subscription.addons.contains(addon),
+                                                    onCheckedChange = {
+                                                        if (subscription.plan == plan) viewModel.toggleAddon(addon)
+                                                    },
+                                                    enabled = subscription.plan == plan
+                                                )
+                                                Text(
+                                                    text = label,
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                    modifier = Modifier.padding(start = 8.dp)
+                                                )
+                                            }
                                         }
                                     }
+                                    Spacer(modifier = Modifier.height(24.dp))
+                                    Text(
+                                        text = "Precio total: ${calculatePrice(subscription.copy(plan = plan, addons = if (subscription.plan == plan) subscription.addons else emptyList()))} €/mes",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
                                 }
-                                Spacer(modifier = Modifier.height(24.dp))
-                                Text(
-                                    text = "Precio total: ${calculatePrice(subscription.copy(plan = plan, addons = if (isSelected) subscription.addons else emptyList()))} €/mes",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .fillMaxWidth()
+                                    .padding(28.dp)
+                            ) {
                                 AuthButton(
                                     text = "Seleccionar plan",
-                                    isLoading = isSubmitting && isSelected,
+                                    isLoading = isSubmitting && subscription.plan == plan,
                                     onClick = {
                                         viewModel.selectPlan(plan)
                                         onNavigateNext()
