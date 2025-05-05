@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.platform.LocalDensity
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 
 @Composable
@@ -103,17 +104,17 @@ fun SubscriptionScreen(
                 val cardSpacing: Dp = 16.dp
                 val listState = rememberLazyListState()
                 val coroutineScope = rememberCoroutineScope()
-
-                // Snap al card más cercano al terminar el scroll
+                val density = LocalDensity.current
+                // Snap al card más cercano al terminar el scroll, pero solo de uno en uno
                 LaunchedEffect(listState.isScrollInProgress) {
                     if (!listState.isScrollInProgress) {
-                        val item = (listState.firstVisibleItemScrollOffset > cardWidth.value / 2)
-                            .let { offset ->
-                                val base = listState.firstVisibleItemIndex
-                                if (offset) base + 1 else base
-                            }
+                        val offsetPx = listState.firstVisibleItemScrollOffset
+                        val cardPx = with(density) { cardWidth.toPx() }
+                        val current = listState.firstVisibleItemIndex
+                        val direction = if (offsetPx > cardPx / 4) 1 else if (offsetPx < -cardPx / 4) -1 else 0
+                        val target = (current + direction).coerceIn(0, plans.lastIndex)
                         coroutineScope.launch {
-                            listState.animateScrollToItem(item.coerceIn(0, plans.lastIndex))
+                            listState.animateScrollToItem(target)
                         }
                     }
                 }
