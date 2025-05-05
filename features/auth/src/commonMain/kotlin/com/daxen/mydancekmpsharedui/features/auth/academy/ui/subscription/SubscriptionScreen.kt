@@ -1,11 +1,8 @@
 package com.daxen.mydancekmpsharedui.features.auth.academy.ui.subscription
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,8 +17,8 @@ import com.daxen.mydancekmpsharedui.features.auth.ui.components.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.ui.platform.LocalDensity
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.Canvas
 
 @Composable
 fun SubscriptionScreen(
@@ -35,41 +32,34 @@ fun SubscriptionScreen(
     val planDescriptions = mapOf(
         PlanType.STARTER to "Starter (Gratis)",
         PlanType.PRO to "Pro (29€/mes)",
-        PlanType.ELITE to "Elite (Marca Blanca – desde 99€/mes)"
+        PlanType.ELITE to "Elite (desde 99€/mes)"
     )
     val planDetails = mapOf(
         PlanType.STARTER to listOf(
             "1 profesor incluido",
             "30 alumnos activos",
-            "Reservas básicas",
+            "Reservas de alumnos",
             "Sin subida de vídeos",
             "Sin gestión de pagos",
-            "Branding: logo",
             "Estadísticas básicas",
-            "Soporte email (72h)",
-            "Sin app separada"
+            "Soporte email (48h)",
         ),
         PlanType.PRO to listOf(
             "5 profesores incluidos",
             "200 alumnos activos",
-            "Reservas avanzadas",
+            "Reservas de alumnos",
             "Subida de vídeos (50GB)",
-            "Gestión de pagos y paquetes",
-            "Branding parcial",
-            "Estadísticas detalladas",
+            "Gestión de pagos y bonos",
             "Soporte email (24h)",
-            "Sin app separada"
         ),
         PlanType.ELITE to listOf(
             "Profesores ilimitados",
             "Alumnos ilimitados",
-            "Reservas avanzadas + Marca Blanca",
+            "Reservas de alumnos",
             "Subida de vídeos (200GB+)",
-            "Gestión de pagos y paquetes",
-            "Branding completo (colores, dominio, app propia)",
-            "Estadísticas premium",
+            "Gestión de pagos y bonos",
+            "Personalizacion (colores, diseño...)",
             "Soporte dedicado (chat o WhatsApp)",
-            "App separada (publicada en su cuenta)"
         )
     )
     val availableAddons = listOf(
@@ -104,7 +94,7 @@ fun SubscriptionScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // HorizontalPager de planes
-                val plans = PlanType.values()
+                val plans = PlanType.entries.toTypedArray()
                 val cardWidth: Dp = 340.dp
                 val cardSpacing: Dp = 16.dp
                 val listState = rememberLazyListState()
@@ -130,11 +120,11 @@ fun SubscriptionScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(cardSpacing)
                 ) {
-                    itemsIndexed(plans) { index, plan ->
+                    itemsIndexed(plans) { _, plan ->
                         Box(
                             modifier = Modifier
                                 .fillParentMaxWidth()
-                                .fillParentMaxHeight(0.9f)
+                                .fillParentMaxHeight(0.85f)
                         ) {
                             Card(
                                 modifier = Modifier
@@ -157,7 +147,9 @@ fun SubscriptionScreen(
                                         text = planDescriptions[plan] ?: "",
                                         style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = MaterialTheme.colorScheme.primary,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth()
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                     planDetails[plan]?.forEach {
@@ -170,7 +162,7 @@ fun SubscriptionScreen(
                                     }
                                     Spacer(modifier = Modifier.height(20.dp))
                                     if (plan != PlanType.STARTER) {
-                                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+                                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                                         Text(
                                             text = "Add-ons opcionales",
                                             style = MaterialTheme.typography.titleMedium,
@@ -180,9 +172,7 @@ fun SubscriptionScreen(
                                         Spacer(modifier = Modifier.height(8.dp))
                                         availableAddons.forEach { (addon, label) ->
                                             Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(vertical = 6.dp),
+                                                modifier = Modifier.fillMaxWidth(),
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
                                                 Checkbox(
@@ -228,14 +218,45 @@ fun SubscriptionScreen(
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Indicadores de página (circulitos)
+                val currentIndex = listState.firstVisibleItemIndex
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .padding(bottom = 24.dp),
+                    shape = RoundedCornerShape(32.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        plans.forEachIndexed { index, _ ->
+                            val circleColor = if (index == currentIndex) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                            }
+                            Canvas(
+                                modifier = Modifier
+                                    .size(22.dp)
+                                    .padding(horizontal = 10.dp)
+                            ) {
+                                drawCircle(
+                                    color = circleColor,
+                                    radius = 14f
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
-}
-
-// Extension para convertir dp a px
-@Composable
-private fun Float.dpToPx(): Float {
-    val density = LocalDensity.current
-    return with(density) { this@dpToPx.dp.toPx() }
 }
