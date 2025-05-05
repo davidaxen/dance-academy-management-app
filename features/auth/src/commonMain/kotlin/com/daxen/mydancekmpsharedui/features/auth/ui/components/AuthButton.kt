@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 
 @Composable
@@ -16,7 +17,7 @@ fun AuthButton(
     modifier: Modifier = Modifier
 ) {
     Button(
-        onClick = onClick,
+        onClick = dropUnlessResumed { onClick() },
         modifier = modifier
             .fillMaxWidth()
             .padding(top = LocalPadding.current.normal),

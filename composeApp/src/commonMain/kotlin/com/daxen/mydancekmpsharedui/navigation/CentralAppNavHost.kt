@@ -6,10 +6,12 @@ import androidx.navigation.compose.NavHost
 import com.daxen.mydancekmpsharedui.features.auth.AcademyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.DanceRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
+import com.daxen.mydancekmpsharedui.features.auth.LogoUploaderScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.PersonalInfoScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.PostSplashDestination
 import com.daxen.mydancekmpsharedui.features.auth.RegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.RegisterScreenRoute
+import com.daxen.mydancekmpsharedui.features.auth.SubscriptionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.academyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.registerProcessNavGraph
@@ -31,8 +33,7 @@ fun CentralAppNavHost(
     }
     NavHost(
         navController = navController,
-//        startDestination = startDestination
-        startDestination = AcademyRegisterProcessNavGraph
+        startDestination = startDestination
     ) {
         authNavGraph(
             goToAcademySelection = {
@@ -50,7 +51,9 @@ fun CentralAppNavHost(
         )
 
         academyRegisterProcessNavGraph(
-            goBack = { navController.popBackStack() }
+            goBack = { navController.popBackStack() },
+            goToLogoUploader = { navController.navigate(LogoUploaderScreenRoute) },
+            goToSubscription = { navController.navigate(SubscriptionScreenRoute) }
         )
 
         registerProcessNavGraph(
@@ -62,6 +65,7 @@ fun CentralAppNavHost(
                     popUpTo(0) { inclusive = true}
                 }
             },
+            goToAcademyRegister = { navController.navigate(AcademyRegisterProcessNavGraph) },
             goBack = { navController.popBackStack() }
         )
 

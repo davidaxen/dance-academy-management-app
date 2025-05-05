@@ -68,10 +68,17 @@ data object SubscriptionScreenRoute
 
 fun NavGraphBuilder.academyRegisterProcessNavGraph(
     goBack: () -> Unit,
+    goToLogoUploader: () -> Unit,
+    goToSubscription: () -> Unit,
 ) {
-    navigation<AcademyRegisterProcessNavGraph>(startDestination = SubscriptionScreenRoute) {
+    navigation<AcademyRegisterProcessNavGraph>(startDestination = AcademyInfoScreenRoute) {
         composable<AcademyInfoScreenRoute>(
-            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(500)
+                )
+            },
             popEnterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { -it },
@@ -83,13 +90,18 @@ fun NavGraphBuilder.academyRegisterProcessNavGraph(
             AcademyInfoScreen(
                 viewModel = viewModel,
                 onNavigateBack = goBack,
-                onNavigateNext = {},
+                onNavigateNext = goToLogoUploader,
                 modifier = Modifier.fillMaxSize()
             )
         }
 
         composable<LogoUploaderScreenRoute>(
-            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(500)
+                )
+            },
             popEnterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { -it },
@@ -100,14 +112,19 @@ fun NavGraphBuilder.academyRegisterProcessNavGraph(
             val viewModel: LogoUploaderViewModel = koinViewModel()
             LogoUploaderScreen(
                 viewModel = viewModel,
-                onNavigateBack = {},
-                onNavigateNext = {},
+                onNavigateBack = goBack,
+                onNavigateNext = goToSubscription,
                 modifier = Modifier.fillMaxSize()
             )
         }
 
         composable<SubscriptionScreenRoute>(
-            enterTransition = { fadeIn(animationSpec = tween(500, easing = EaseIn)) },
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(500)
+                )
+            },
             popEnterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { -it },
@@ -118,7 +135,7 @@ fun NavGraphBuilder.academyRegisterProcessNavGraph(
             val viewModel: SubscriptionViewModel = koinViewModel()
             SubscriptionScreen(
                 viewModel = viewModel,
-                onNavigateBack = {},
+                onNavigateBack = goBack,
                 onNavigateNext = {},
             )
         }
@@ -130,6 +147,7 @@ fun NavGraphBuilder.registerProcessNavGraph(
     goToInfo: () -> Unit,
     goToDanceRoleSelection: () -> Unit,
     goToAcademySelection: () -> Unit,
+    goToAcademyRegister: () -> Unit,
     goBack: () -> Unit,
 ) {
     navigation<RegisterProcessNavGraph>(startDestination = UserRoleSelectionScreenRoute) {
@@ -148,8 +166,8 @@ fun NavGraphBuilder.registerProcessNavGraph(
                 onRoleSelected = { role ->
                     when (role) {
                         UserRole.STUDENT -> { goToInfo() }
-                        UserRole.TEACHER -> {}
-                        UserRole.ACADEMY -> {}
+                        UserRole.TEACHER -> { goToInfo() }
+                        UserRole.ACADEMY -> { goToAcademyRegister() }
                     }
                 },
                 onLogOut = goToLogin,
