@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 
 @Composable
@@ -210,12 +211,18 @@ fun SubscriptionScreen(
                                         )
                                         Spacer(modifier = Modifier.height(4.dp))
                                         availableAddons.forEach { (addon, label) ->
+                                            val checked = subscription.plan == plan && subscription.addons.contains(addon)
                                             Row(
-                                                modifier = Modifier.fillMaxWidth(),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 2.dp)
+                                                    .let {
+                                                        if (subscription.plan == plan) it.clickable { viewModel.toggleAddon(addon) } else it
+                                                    },
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
                                                 Checkbox(
-                                                    checked = subscription.plan == plan && subscription.addons.contains(addon),
+                                                    checked = checked,
                                                     onCheckedChange = {
                                                         if (subscription.plan == plan) viewModel.toggleAddon(addon)
                                                     },
