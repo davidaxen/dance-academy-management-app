@@ -64,6 +64,7 @@ class SubscriptionViewModel(
                 _isSubmitting.value = true
                 _subscriptionState.value = SubscriptionState.Loading
                 academyUserRepository.setSubscription(_subscription.value)
+                academyUserRepository.saveToDatabase()
                 _subscriptionState.value = SubscriptionState.Success
             } catch (e: Exception) {
                 println("Error al guardar la suscripción: $e")

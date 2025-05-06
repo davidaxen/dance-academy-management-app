@@ -34,6 +34,7 @@ navigation = "2.8.0-alpha10"
 
 # ImagePicker
 peekaboo = "0.5.2"
+startupRuntime = "1.2.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -59,6 +60,7 @@ koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-view
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom"}
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "gitlive" }
 firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "gitlive" }
+firebase-storage = { module = "dev.gitlive:firebase-storage", version.ref = "gitlive" }
 
 # Coil
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
@@ -80,6 +82,7 @@ peekaboo-image-picker = { module = "io.github.onseok:peekaboo-image-picker", ver
 
 
 material-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "compose-multiplatform" }
+androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startupRuntime" }
 
 [bundles]
 koin-compose = ["koin-compose", "koin-compose-viewmodel", "koin-compose-viewmodel-navigation"]
