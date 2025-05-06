@@ -42,12 +42,9 @@ fun AcademyInfoScreen(
     val closingTimeError by viewModel.closingTimeError.collectAsState()
     val isSubmitting by viewModel.isSubmitting.collectAsState()
 
-//    var isNavigating by remember { mutableStateOf(false) }
     var isNavigating by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
-        println(state)
-        println(isSubmitting)
         if (state is AcademyInfoState.Success && !isNavigating) {
             isNavigating = true
             onNavigateNext()
