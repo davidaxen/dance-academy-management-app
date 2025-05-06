@@ -1,13 +1,10 @@
 package com.daxen.mydancekmpsharedui.features.auth.academy.ui.logoUploader
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.daxen.mydancekmpsharedui.data.auth.repository.AuthRepository
-import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
+import com.daxen.mydancekmpsharedui.data.user.repository.AcademyUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 sealed class LogoUploaderState {
     data object Initial : LogoUploaderState()
@@ -17,8 +14,7 @@ sealed class LogoUploaderState {
 }
 
 class LogoUploaderViewModel(
-    private val userRepository: UserRepository,
-    private val authRepository: AuthRepository
+    private val academyUserRepository: AcademyUserRepository
 ): ViewModel() {
     private val _logoUploaderState = MutableStateFlow<LogoUploaderState>(LogoUploaderState.Initial)
     val logoUploaderState: StateFlow<LogoUploaderState> = _logoUploaderState.asStateFlow()
@@ -42,20 +38,17 @@ class LogoUploaderViewModel(
             _logoUploaderState.value = LogoUploaderState.Error("Debes seleccionar una imagen")
             return
         }
-
-        viewModelScope.launch {
-            try {
-                _isSubmitting.value = true
-                _logoUploaderState.value = LogoUploaderState.Loading
-
-                // TODO: Implementar la lógica de subida de imagen a Firebase Storage
-                // Por ahora solo simulamos el éxito
-                _logoUploaderState.value = LogoUploaderState.Success
-            } catch (e: Exception) {
-                _logoUploaderState.value = LogoUploaderState.Error(e.message ?: "Error desconocido")
-            } finally {
-                _isSubmitting.value = false
-            }
+        try {
+            _isSubmitting.value = true
+            _logoUploaderState.value = LogoUploaderState.Loading
+            academyUserRepository.setLogo(
+                image = _selectedImage.value!!
+            )
+            _logoUploaderState.value = LogoUploaderState.Success
+        } catch (e: Exception) {
+            _logoUploaderState.value = LogoUploaderState.Error(e.message ?: "Error desconocido")
+        } finally {
+            _isSubmitting.value = false
         }
     }
 

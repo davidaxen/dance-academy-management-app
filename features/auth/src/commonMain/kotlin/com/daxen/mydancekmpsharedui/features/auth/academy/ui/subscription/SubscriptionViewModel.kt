@@ -1,26 +1,17 @@
 package com.daxen.mydancekmpsharedui.features.auth.academy.ui.subscription
 
 import androidx.lifecycle.ViewModel
-import com.daxen.mydancekmpsharedui.data.auth.repository.AuthRepository
-import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
+import androidx.lifecycle.viewModelScope
+import com.daxen.mydancekmpsharedui.data.user.model.AddOnType
+import com.daxen.mydancekmpsharedui.data.user.model.PlanType
+import com.daxen.mydancekmpsharedui.data.user.model.Subscription
+import com.daxen.mydancekmpsharedui.data.user.repository.AcademyUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 // Modelos de datos
-data class Subscription(
-    val plan: PlanType,
-    val addons: List<AddOnType>
-)
-
-enum class PlanType { STARTER, PRO, ELITE }
-
-enum class AddOnType {
-    EXTRA_PROFESSOR,
-    EXTRA_ALUMNOS_50,
-    EXTRA_STORAGE_50GB,
-}
-
 fun calculatePrice(subscription: Subscription): Int {
     val basePrice = when (subscription.plan) {
         PlanType.STARTER -> 0
@@ -40,9 +31,11 @@ fun calculatePrice(subscription: Subscription): Int {
 }
 
 class SubscriptionViewModel(
-    private val userRepository: UserRepository,
-    private val authRepository: AuthRepository
+    private val academyUserRepository: AcademyUserRepository
 ): ViewModel() {
+    private val _subscriptionState = MutableStateFlow<SubscriptionState>(SubscriptionState.Initial)
+    val subscriptionState: StateFlow<SubscriptionState> = _subscriptionState.asStateFlow()
+
     private val _subscription = MutableStateFlow(
         Subscription(plan = PlanType.STARTER, addons = emptyList())
     )
@@ -66,14 +59,27 @@ class SubscriptionViewModel(
     }
 
     fun submitSubscription() {
-        // Aquí iría la lógica para guardar la suscripción
-        // Por ahora, solo simula éxito
-        _isSubmitting.value = true
-        try {
-        } catch (e: Exception) {
-            println("Error al guardar la suscripción: $e")
-        } finally {
-            _isSubmitting.value = false
+        viewModelScope.launch {
+            try {
+                _isSubmitting.value = true
+                _subscriptionState.value = SubscriptionState.Loading
+                academyUserRepository.setSubscription(_subscription.value)
+                _subscriptionState.value = SubscriptionState.Success
+            } catch (e: Exception) {
+                println("Error al guardar la suscripción: $e")
+            }
         }
     }
+
+    fun onBackClicked() {
+        _subscriptionState.value = SubscriptionState.Initial
+        _isSubmitting.value = false
+    }
+}
+
+sealed class SubscriptionState {
+    data object Initial : SubscriptionState()
+    data object Loading : SubscriptionState()
+    data object Success : SubscriptionState()
+    data class Error(val message: String) : SubscriptionState()
 }

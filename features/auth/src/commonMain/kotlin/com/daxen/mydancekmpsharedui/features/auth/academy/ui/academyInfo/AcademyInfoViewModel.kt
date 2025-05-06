@@ -2,47 +2,38 @@ package com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daxen.mydancekmpsharedui.data.auth.repository.AuthRepository
-import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
+import com.daxen.mydancekmpsharedui.data.user.repository.AcademyUserRepository
 import com.daxen.mydancekmpsharedui.features.auth.utils.AcademyValidations
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-sealed class AcademyInfoState {
-    data object Initial : AcademyInfoState()
-    data object Loading : AcademyInfoState()
-    data object Success : AcademyInfoState()
-    data class Error(val message: String) : AcademyInfoState()
-}
-
 class AcademyInfoViewModel(
-    private val userRepository: UserRepository,
-    private val authRepository: AuthRepository
+    private val academyUserRepository: AcademyUserRepository
 ): ViewModel() {
     private val _academyInfoState = MutableStateFlow<AcademyInfoState>(AcademyInfoState.Initial)
     val academyInfoState: StateFlow<AcademyInfoState> = _academyInfoState.asStateFlow()
 
-    private val _name = MutableStateFlow("")
+    private val _name = MutableStateFlow("qeqweqweq")
     val name: StateFlow<String> = _name.asStateFlow()
     private val _nameError = MutableStateFlow<String?>(null)
     val nameError: StateFlow<String?> = _nameError.asStateFlow()
 
-    private val _nif = MutableStateFlow("")
+    private val _nif = MutableStateFlow("qweqweqwe")
     val nif: StateFlow<String> = _nif.asStateFlow()
     private val _nifError = MutableStateFlow<String?>(null)
     val nifError: StateFlow<String?> = _nifError.asStateFlow()
 
-    private val _address = MutableStateFlow("")
+    private val _address = MutableStateFlow("qweqweqwe")
     val address: StateFlow<String> = _address.asStateFlow()
     private val _addressError = MutableStateFlow<String?>(null)
     val addressError: StateFlow<String?> = _addressError.asStateFlow()
 
-    private val _openingTime = MutableStateFlow("")
+    private val _openingTime = MutableStateFlow("03:22")
     val openingTime: StateFlow<String> = _openingTime.asStateFlow()
     private val _openingTimeError = MutableStateFlow<String?>(null)
     val openingTimeError: StateFlow<String?> = _openingTimeError.asStateFlow()
 
-    private val _closingTime = MutableStateFlow("")
+    private val _closingTime = MutableStateFlow("03:40")
     val closingTime: StateFlow<String> = _closingTime.asStateFlow()
     private val _closingTimeError = MutableStateFlow<String?>(null)
     val closingTimeError: StateFlow<String?> = _closingTimeError.asStateFlow()
@@ -90,27 +81,31 @@ class AcademyInfoViewModel(
 
         if (nameError == null && nifError == null && addressError == null && 
             openingTimeError == null && closingTimeError == null) {
+            _isSubmitting.value = true
             submitAcademyInfo()
         }
     }
 
     private fun submitAcademyInfo() {
         viewModelScope.launch {
-            _isSubmitting.value = true
-            _academyInfoState.value = AcademyInfoState.Loading
-
             try {
-                // TODO: Implementar la lógica para guardar la información de la academia
+                _academyInfoState.value = AcademyInfoState.Loading
+                academyUserRepository.setAcademyInfo(
+                    name = _name.value,
+                    nif = _nif.value,
+                    address = _address.value,
+                    openingTime = _openingTime.value,
+                    closingTime = _closingTime.value
+                )
                 _academyInfoState.value = AcademyInfoState.Success
             } catch (e: Exception) {
                 _academyInfoState.value = AcademyInfoState.Error(e.message ?: "Error desconocido")
-            } finally {
-                _isSubmitting.value = false
             }
         }
     }
 
     fun onBackClicked() {
         _academyInfoState.value = AcademyInfoState.Initial
+        _isSubmitting.value = false
     }
 }
