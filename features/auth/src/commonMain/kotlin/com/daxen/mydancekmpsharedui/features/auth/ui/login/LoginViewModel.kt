@@ -45,7 +45,7 @@ class LoginViewModel(
                 _loginState.value = LoginState.Success
             } catch (e: Exception) {
                 println("LoginViewModel Error en login $e")
-                _loginState.value = LoginState.Error(e.message ?: "Error desconocido")
+                _loginState.value = LoginState.Error("Usuario o contraseña incorrectos")
             }
         }
     }

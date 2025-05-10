@@ -8,16 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.daxen.mydancekmpsharedui.navigation.bottomnavigation.AppBottomNavigation
-import com.daxen.mydancekmpsharedui.navigation.bottomnavigation.BottomBarNavHost
+import com.daxen.mydancekmpsharedui.navigation.studentBottomNavigation.StudentBottomBarNavigation
+import com.daxen.mydancekmpsharedui.navigation.studentBottomNavigation.StudentBottomBarNavHost
 
 @Composable
-fun MainScreen(appNavController: NavHostController) {
+fun StudentMainScreen(appNavController: NavHostController) {
     val bottomNavController = rememberNavController()
 
     Scaffold (
         bottomBar = {
-            AppBottomNavigation(bottomNavController)
+            StudentBottomBarNavigation(bottomNavController)
         }
     ) {
         Box(
@@ -25,8 +25,7 @@ fun MainScreen(appNavController: NavHostController) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-
-            BottomBarNavHost(bottomNavController = bottomNavController, appNavController = appNavController)
+            StudentBottomBarNavHost(bottomNavController = bottomNavController, appNavController = appNavController)
         }
     }
 }

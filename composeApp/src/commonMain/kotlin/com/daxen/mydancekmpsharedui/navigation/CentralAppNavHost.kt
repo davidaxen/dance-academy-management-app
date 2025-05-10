@@ -18,6 +18,7 @@ import com.daxen.mydancekmpsharedui.features.auth.registerProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph
 import com.daxen.mydancekmpsharedui.features.user.academySelectionNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userOptionsNavGraph
+import com.daxen.mydancekmpsharedui.main.AcademyMainGraph
 import com.daxen.mydancekmpsharedui.main.mainNavGraph
 
 @Composable
@@ -30,6 +31,7 @@ fun CentralAppNavHost(
         PostSplashDestination.Login -> CentralAppDestination.Auth.route
         PostSplashDestination.AcademySelection -> AcademySelectionGraph
         PostSplashDestination.CompleteProfile -> RegisterProcessNavGraph
+        PostSplashDestination.AcademyHome -> AcademyMainGraph
     }
     NavHost(
         navController = navController,
@@ -38,6 +40,11 @@ fun CentralAppNavHost(
         authNavGraph(
             goToAcademySelection = {
                 navController.navigate(AcademySelectionGraph) {
+                    popUpTo(0) { inclusive = true}
+                }
+            },
+            goToAcademyHome = {
+                navController.navigate(AcademyMainGraph) {
                     popUpTo(0) { inclusive = true}
                 }
             },

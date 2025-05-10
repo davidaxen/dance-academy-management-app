@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.navigation.bottomnavigation
+package com.daxen.mydancekmpsharedui.navigation.studentBottomNavigation
 
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -15,15 +15,14 @@ import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class BottomBarDestination<T>(
+sealed class StudentBottomBarDestination<T>(
     val title: String, // the title of the tab
     val selectedIcon: @Composable () -> Unit, // filled icon when selected
     val unselectedIcon: @Composable () -> Unit, // unfilled icon when not selected
     val route: T //graphs defined in feature module for each tab
 ){
-
     @Serializable
-    data object User: BottomBarDestination<UserGraph>(
+    data object User: StudentBottomBarDestination<UserGraph>(
         title = "Perfil",
         selectedIcon = {
             Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "")
@@ -34,7 +33,7 @@ sealed class BottomBarDestination<T>(
         route = UserGraph
     )
     @Serializable
-    data object Reservation: BottomBarDestination<ReservationGraph>(
+    data object Reservation: StudentBottomBarDestination<ReservationGraph>(
         title = "Reservas",
         selectedIcon = {
             Icon(imageVector = Icons.Filled.DateRange, contentDescription = "")
@@ -45,7 +44,7 @@ sealed class BottomBarDestination<T>(
         route = ReservationGraph
     )
     @Serializable
-    data object Calendar: BottomBarDestination<CalendarGraph>(
+    data object Calendar: StudentBottomBarDestination<CalendarGraph>(
         title = "Calendario",
         selectedIcon = {
             Icon(imageVector = Icons.Filled.CalendarMonth, contentDescription = "")

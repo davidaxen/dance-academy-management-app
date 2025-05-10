@@ -219,6 +219,7 @@ fun NavGraphBuilder.registerProcessNavGraph(
 
 fun NavGraphBuilder.authNavGraph(
     goToAcademySelection: () -> Unit,
+    goToAcademyHome: () -> Unit,
     goToRegister: () -> Unit,
     goToRoleSelection: () -> Unit,
     goBack: () -> Unit,
@@ -231,6 +232,7 @@ fun NavGraphBuilder.authNavGraph(
                 viewModel = viewModel,
                 checkerViewModel = checkerViewModel,
                 navigateToRoleSelection = goToRoleSelection,
+                navigateToAcademyHome = goToAcademyHome,
                 navigateToAcademySelection = goToAcademySelection,
                 navigateToRegister = goToRegister,
                 modifier = Modifier.fillMaxSize()
