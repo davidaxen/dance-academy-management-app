@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
+import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 
 @Composable
@@ -37,6 +38,12 @@ fun StudentsListingScreen(
             )
             is StudentsListingUiState.Success -> StudentsList(students = state.students)
             is StudentsListingUiState.Empty -> EmptyContent(isFiltered = state.isFiltered)
+            is StudentsListingUiState.Error -> {
+                ErrorComponent(
+                    message = state.message,
+                    onRetry = { viewModel.refreshStudents() }
+                )
+            }
         }
     }
 }
