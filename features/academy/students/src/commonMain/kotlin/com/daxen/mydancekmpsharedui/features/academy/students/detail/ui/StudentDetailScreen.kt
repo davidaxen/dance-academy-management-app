@@ -14,12 +14,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cake
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,11 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.AsyncImage
+import com.daxen.mydancekmpsharedui.data.students.model.DanceRole
 import com.daxen.mydancekmpsharedui.data.students.model.Student
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,6 +103,13 @@ private fun StudentDetailContent(student: Student) {
             textAlign = TextAlign.Center
         )
         
+        Text(
+            text = student.danceRole.roleName.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center
+        )
+        
         Spacer(modifier = Modifier.height(24.dp))
         
         // Tarjeta de información
@@ -116,30 +128,37 @@ private fun StudentDetailContent(student: Student) {
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Email
                 InfoRow(
                     icon = Icons.Default.Email,
                     label = "Email",
                     value = student.email
                 )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Aquí podríamos añadir más campos como teléfono, dirección, etc.
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+
+                // Teléfono
                 InfoRow(
-                    icon = Icons.Default.Person,
-                    label = "ID de estudiante",
-                    value = student.uid
+                    icon = Icons.Default.Phone,
+                    label = "Teléfono",
+                    value = "${student.phoneNumberPrefix} ${student.phoneNumber}"
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+
+                // Fecha de nacimiento
+                InfoRow(
+                    icon = Icons.Default.Cake,
+                    label = "Fecha de nacimiento",
+                    value = student.birthDate
                 )
             }
         }
         
         Spacer(modifier = Modifier.height(24.dp))
-        
-        // Aquí podríamos añadir más secciones como historial de clases, etc.
     }
 }
 
