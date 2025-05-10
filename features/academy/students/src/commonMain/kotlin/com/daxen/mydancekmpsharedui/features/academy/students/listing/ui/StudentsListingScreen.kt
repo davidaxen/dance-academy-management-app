@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,13 +22,68 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
+import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 
 @Composable
 fun StudentsListingScreen(
     viewModel: StudentsListingViewModel
 ) {
-    val students by viewModel.filteredStudents.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (val state = uiState) {
+            is StudentsListingUiState.Loading -> LoadingComponent(
+                "Cargando estudiantes...",
+            )
+            is StudentsListingUiState.Success -> StudentsList(students = state.students)
+            is StudentsListingUiState.Empty -> EmptyContent(isFiltered = state.isFiltered)
+        }
+    }
+}
 
+@Composable
+private fun EmptyContent(isFiltered: Boolean) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = if (isFiltered) Icons.Default.Search else Icons.Default.ErrorOutline,
+            contentDescription = null,
+            modifier = Modifier.size(80.dp),
+            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = if (isFiltered) 
+                "No se encontraron estudiantes con esa búsqueda" 
+            else 
+                "No hay estudiantes disponibles",
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = if (isFiltered)
+                "Intenta con otros términos de búsqueda"
+            else
+                "Agrega estudiantes a tu academia para comenzar",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun StudentsList(students: List<StudentModel>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
     ) {

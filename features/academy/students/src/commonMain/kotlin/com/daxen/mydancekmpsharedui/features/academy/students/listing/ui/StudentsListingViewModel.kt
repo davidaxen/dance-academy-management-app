@@ -19,13 +19,23 @@ object StudentsListingViewModelProvider : KoinComponent {
     fun get(): StudentsListingViewModel = viewModel
 }
 
+// Estado UI para la pantalla de listado de estudiantes
+sealed class StudentsListingUiState {
+    data object Loading : StudentsListingUiState()
+    data class Success(val students: List<StudentModel>) : StudentsListingUiState()
+    data class Empty(val isFiltered: Boolean) : StudentsListingUiState() // isFiltered indica si está vacío por búsqueda
+}
+
 class StudentsListingViewModel : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(true)
+    
     private val _students = MutableStateFlow<List<StudentModel>>(emptyList())
 
-    val filteredStudents: StateFlow<List<StudentModel>> = combine(
+    // Flujo de estudiantes filtrados
+    private val filteredStudents = combine(
         _students, _searchQuery
     ) { students, query ->
         if (query.isBlank()) students
@@ -37,10 +47,21 @@ class StudentsListingViewModel : ViewModel() {
                         it.email.contains(lowerQuery, ignoreCase = true)
             }
         }
+    }
+    
+    // Estado UI combinado para la pantalla
+    val uiState: StateFlow<StudentsListingUiState> = combine(
+        filteredStudents, _isLoading, _searchQuery
+    ) { filteredList, isLoading, query ->
+        when {
+            isLoading -> StudentsListingUiState.Loading
+            filteredList.isEmpty() -> StudentsListingUiState.Empty(isFiltered = query.isNotEmpty())
+            else -> StudentsListingUiState.Success(filteredList)
+        }
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        emptyList()
+        StudentsListingUiState.Loading
     )
 
     init {
@@ -49,14 +70,16 @@ class StudentsListingViewModel : ViewModel() {
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
-        println("Search query changed: $query")
-        println("Filtered students: ${filteredStudents.value}")
     }
 
     private fun loadStudents() {
         // TODO: Implementar la carga real de estudiantes desde la base de datos
         // Por ahora usamos datos de ejemplo
         viewModelScope.launch {
+            _isLoading.value = true
+            // Simulamos tiempo de carga
+            kotlinx.coroutines.delay(1000)
+            
             _students.value = listOf(
                 StudentModel(
                     id = "1",
@@ -125,6 +148,12 @@ class StudentsListingViewModel : ViewModel() {
                     profileImageUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop"
                 )
             )
+            _isLoading.value = false
         }
+    }
+    
+    // Función para recargar los estudiantes (útil para pull-to-refresh)
+    fun refreshStudents() {
+        loadStudents()
     }
 }
