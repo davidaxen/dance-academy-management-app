@@ -98,13 +98,13 @@ private fun StudentDetailContent(student: StudentModel) {
             textAlign = TextAlign.Center
         )
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         
         // Tarjeta de información
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                containerColor = MaterialTheme.colorScheme.background
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -112,7 +112,7 @@ private fun StudentDetailContent(student: StudentModel) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "INFORMACIÓN DE CONTACTO",
+                    text = "INFORMACIÓN DEL ESTUDIANTE",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -201,11 +201,12 @@ private fun InfoRow(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = value,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
     }
