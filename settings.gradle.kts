@@ -32,8 +32,11 @@ include(":composeApp")
 
 include(":features:auth")
 include(":features:user")
+
 include(":features:student:reservation")
 include(":features:student:calendar")
+
+include(":features:academy:students")
 
 include(":data:auth")
 include(":data:user")
