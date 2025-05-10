@@ -15,11 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentModel
+import com.daxen.mydancekmpsharedui.data.students.model.Student
 
 @Composable
 fun StudentAvatar(
-    student: StudentModel,
+    student: Student,
     modifier: Modifier = Modifier
 ) {
     val avatarSize = 40.dp
@@ -45,7 +45,7 @@ fun StudentAvatar(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = getInitials(student.name, student.surnames),
+                    text = getInitials(student.name, student.lastName),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,

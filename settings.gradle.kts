@@ -42,6 +42,7 @@ include(":data:auth")
 include(":data:user")
 include(":data:classes")
 include(":data:reservation")
+include(":data:students")
 
 include(":core:ui")
 include(":core:firebase")

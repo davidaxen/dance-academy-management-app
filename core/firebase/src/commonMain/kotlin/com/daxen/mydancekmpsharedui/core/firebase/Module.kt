@@ -1,5 +1,7 @@
 package com.daxen.mydancekmpsharedui.core.firebase
 
+import com.daxen.mydancekmpsharedui.core.firebase.academy.students.FirebaseAcademyStudentsRepository
+import com.daxen.mydancekmpsharedui.core.firebase.academy.students.FirebaseAcademyStudentsRepositoryImpl
 import com.daxen.mydancekmpsharedui.core.firebase.auth.FirebaseAuthService
 import com.daxen.mydancekmpsharedui.core.firebase.auth.FirebaseAuthServiceImpl
 import com.daxen.mydancekmpsharedui.core.firebase.classes.FirebaseClassesService
@@ -39,6 +41,7 @@ val coreFirebaseModule = module {
     //User
     singleOf(::FirebaseUserServiceImpl) { bind<FirebaseUserService>() }
 
-    //AcademyUser
+    //Academy
     singleOf(::FirebaseAcademyUserServiceImpl) { bind<FirebaseAcademyUserService>() }
+    singleOf(::FirebaseAcademyStudentsRepositoryImpl) { bind<FirebaseAcademyStudentsRepository>() }
 }

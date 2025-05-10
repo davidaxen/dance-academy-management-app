@@ -8,8 +8,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.daxen.mydancekmpsharedui.data.students.model.DanceRole
+import com.daxen.mydancekmpsharedui.data.students.model.Student
 import com.daxen.mydancekmpsharedui.features.academy.students.detail.ui.StudentDetailScreen
-import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentModel
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingScreen
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingViewModelProvider
 import kotlinx.serialization.Serializable
@@ -26,8 +27,12 @@ sealed class AcademyStudentsDestinations {
     data class StudentDetailRoute(
         val id: String,
         val name: String,
-        val surnames: String,
+        val lastName: String,
         val email: String,
+        val birthDate: String,
+        val phoneNumber: String,
+        val phoneNumberPrefix: String,
+        val danceRole: DanceRole,
         val profileImageUrl: String? = null
     ): AcademyStudentsDestinations()
 }
@@ -43,10 +48,14 @@ fun NavGraphBuilder.academyStudentsGraph(
                 onStudentClick = { student ->
                     appNavController.navigate(
                         AcademyStudentsDestinations.StudentDetailRoute(
-                            id = student.id,
+                            id = student.uid,
                             name = student.name,
-                            surnames = student.surnames,
+                            lastName = student.lastName,
                             email = student.email,
+                            birthDate = student.birthDate,
+                            phoneNumber = student.phoneNumber,
+                            phoneNumberPrefix = student.phoneNumberPrefix,
+                            danceRole = student.danceRole,
                             profileImageUrl = student.profileImageUrl
                         )
                     )
@@ -74,11 +83,15 @@ fun NavGraphBuilder.studentDetailGraph(
         }
     ) { backStackEntry ->
         val studentDetail = backStackEntry.toRoute<AcademyStudentsDestinations.StudentDetailRoute>()
-        val student = StudentModel(
-            id = studentDetail.id,
+        val student = Student(
+            uid = studentDetail.id,
             name = studentDetail.name,
-            surnames = studentDetail.surnames,
+            lastName = studentDetail.lastName,
             email = studentDetail.email,
+            birthDate = studentDetail.birthDate,
+            phoneNumber = studentDetail.phoneNumber,
+            phoneNumberPrefix = studentDetail.phoneNumberPrefix,
+            danceRole = studentDetail.danceRole,
             profileImageUrl = studentDetail.profileImageUrl
         )
         StudentDetailScreen(

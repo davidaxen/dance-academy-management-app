@@ -13,27 +13,27 @@ class AcademyInfoViewModel(
     private val _academyInfoState = MutableStateFlow<AcademyInfoState>(AcademyInfoState.Initial)
     val academyInfoState: StateFlow<AcademyInfoState> = _academyInfoState.asStateFlow()
 
-    private val _name = MutableStateFlow("qeqweqweq")
+    private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name.asStateFlow()
     private val _nameError = MutableStateFlow<String?>(null)
     val nameError: StateFlow<String?> = _nameError.asStateFlow()
 
-    private val _nif = MutableStateFlow("qweqweqwe")
+    private val _nif = MutableStateFlow("")
     val nif: StateFlow<String> = _nif.asStateFlow()
     private val _nifError = MutableStateFlow<String?>(null)
     val nifError: StateFlow<String?> = _nifError.asStateFlow()
 
-    private val _address = MutableStateFlow("qweqweqwe")
+    private val _address = MutableStateFlow("")
     val address: StateFlow<String> = _address.asStateFlow()
     private val _addressError = MutableStateFlow<String?>(null)
     val addressError: StateFlow<String?> = _addressError.asStateFlow()
 
-    private val _openingTime = MutableStateFlow("03:22")
+    private val _openingTime = MutableStateFlow("")
     val openingTime: StateFlow<String> = _openingTime.asStateFlow()
     private val _openingTimeError = MutableStateFlow<String?>(null)
     val openingTimeError: StateFlow<String?> = _openingTimeError.asStateFlow()
 
-    private val _closingTime = MutableStateFlow("03:40")
+    private val _closingTime = MutableStateFlow("")
     val closingTime: StateFlow<String> = _closingTime.asStateFlow()
     private val _closingTimeError = MutableStateFlow<String?>(null)
     val closingTimeError: StateFlow<String?> = _closingTimeError.asStateFlow()

@@ -18,13 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
-import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentModel
+import com.daxen.mydancekmpsharedui.data.students.model.Student
 
 @Composable
 fun StudentsList(
-    students: List<StudentModel>,
+    students: List<Student>,
     onStudentClick: (
-        student: StudentModel
+        student: Student
     ) -> Unit
 ) {
     LazyColumn(
@@ -47,7 +47,7 @@ fun StudentsList(
 
 @Composable
 private fun StudentListItem(
-    student: StudentModel,
+    student: Student,
     onClick: () -> Unit
 ) {
     ListItem(
@@ -56,7 +56,7 @@ private fun StudentListItem(
         },
         headlineContent = {
             Text(
-                text = "${student.name} ${student.surnames}",
+                text = "${student.name} ${student.lastName}",
                 style = MaterialTheme.typography.titleMedium
             )
         },

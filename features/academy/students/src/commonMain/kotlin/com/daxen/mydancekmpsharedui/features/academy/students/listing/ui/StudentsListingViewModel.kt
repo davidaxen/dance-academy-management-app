@@ -2,18 +2,20 @@ package com.daxen.mydancekmpsharedui.features.academy.students.listing.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daxen.mydancekmpsharedui.data.students.model.Student
+import com.daxen.mydancekmpsharedui.data.students.repository.AcademyStudentsRepository
+import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
+import com.daxen.mydancekmpsharedui.data.user.repository.AcademyUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-// Crea un Singleton del ViewModel
 object StudentsListingViewModelProvider : KoinComponent {
     private val viewModel: StudentsListingViewModel by inject()
     
@@ -23,21 +25,25 @@ object StudentsListingViewModelProvider : KoinComponent {
 // Estado UI para la pantalla de listado de estudiantes
 sealed class StudentsListingUiState {
     data object Loading : StudentsListingUiState()
-    data class Success(val students: List<StudentModel>) : StudentsListingUiState()
+    data class Success(val students: List<Student>) : StudentsListingUiState()
     data class Empty(val isFiltered: Boolean) : StudentsListingUiState() // isFiltered indica si está vacío por búsqueda
     data class Error(val message: String) : StudentsListingUiState() // Nuevo estado para errores
 }
 
-class StudentsListingViewModel : ViewModel() {
+class StudentsListingViewModel(
+    private val studentsRepository: AcademyStudentsRepository,
+    academyUserRepository: AcademyUserRepository
+) : ViewModel() {
+    private val currentAcademy: StateFlow<UserAcademy> = academyUserRepository.currentAcademy
+
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     private val _error = MutableStateFlow<String?>(null)
     
-    private val _students = MutableStateFlow<List<StudentModel>>(emptyList())
+    private val _students: StateFlow<List<Student>> = studentsRepository.students
 
-    // Flujo de estudiantes filtrados
     private val filteredStudents = combine(
         _students, _searchQuery
     ) { students, query ->
@@ -46,13 +52,12 @@ class StudentsListingViewModel : ViewModel() {
             val lowerQuery = query.lowercase()
             students.filter {
                 it.name.contains(lowerQuery, ignoreCase = true) ||
-                        it.surnames.contains(lowerQuery, ignoreCase = true) ||
+                        it.lastName.contains(lowerQuery, ignoreCase = true) ||
                         it.email.contains(lowerQuery, ignoreCase = true)
             }
         }
     }
     
-    // Estado UI combinado para la pantalla
     val uiState: StateFlow<StudentsListingUiState> = combine(
         filteredStudents, _isLoading, _searchQuery, _error
     ) { filteredList, isLoading, query, error ->
@@ -77,90 +82,20 @@ class StudentsListingViewModel : ViewModel() {
     }
 
     private fun loadStudents() {
-        // TODO: Implementar la carga real de estudiantes desde la base de datos
-        // Por ahora usamos datos de ejemplo
         viewModelScope.launch {
             _isLoading.value = true
-            _error.value = null // Resetear errores previos
+            _error.value = null
             
             try {
-                _students.value = listOf(
-                    StudentModel(
-                        id = "1",
-                        name = "Juan",
-                        surnames = "Pérez García",
-                        email = "juan.perez@email.com",
-                        profileImageUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop"
-                    ),
-                    StudentModel(
-                        id = "2",
-                        name = "María",
-                        surnames = "López Sánchez",
-                        email = "maria.lopez@email.com"
-                    ),
-                    StudentModel(
-                        id = "3",
-                        name = "Carlos",
-                        surnames = "Rodríguez Martín",
-                        email = "carlos.rodriguez@email.com",
-                        profileImageUrl = "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=200&h=200&fit=crop"
-                    ),
-                    StudentModel(
-                        id = "4",
-                        name = "Laura",
-                        surnames = "Fernández Torres",
-                        email = "laura.fernandez@email.com",
-                        profileImageUrl = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop"
-                    ),
-                    StudentModel(
-                        id = "5",
-                        name = "Antonio",
-                        surnames = "González Ruiz",
-                        email = "antonio.gonzalez@email.com"
-                    ),
-                    StudentModel(
-                        id = "6",
-                        name = "Sofía",
-                        surnames = "Martínez Ortega",
-                        email = "sofia.martinez@email.com",
-                        profileImageUrl = "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=200&h=200&fit=crop"
-                    ),
-                    StudentModel(
-                        id = "7",
-                        name = "Miguel",
-                        surnames = "Sánchez Pérez",
-                        email = "miguel.sanchez@email.com"
-                    ),
-                    StudentModel(
-                        id = "8",
-                        name = "Patricia",
-                        surnames = "Díaz Jiménez",
-                        email = "patricia.diaz@email.com",
-                        profileImageUrl = "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop"
-                    ),
-                    StudentModel(
-                        id = "9",
-                        name = "David",
-                        surnames = "Moreno Castro",
-                        email = "david.moreno@email.com"
-                    ),
-                    StudentModel(
-                        id = "10",
-                        name = "Lucía",
-                        surnames = "Álvarez Vega",
-                        email = "lucia.alvarez@email.com",
-                        profileImageUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop"
-                    )
-                )
+                studentsRepository.getStudentsByAcademyID(currentAcademy.value.academyId)
             } catch (e: Exception) {
-                _error.value = e.message ?: "Error desconocido"
+                _error.value = "Error al obtener los estudiantes: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
     
-    // Función para recargar los estudiantes (útil para pull-to-refresh)
     fun refreshStudents() {
         loadStudents()
     }

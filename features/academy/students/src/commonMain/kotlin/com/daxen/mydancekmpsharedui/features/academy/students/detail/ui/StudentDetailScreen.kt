@@ -37,12 +37,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import coil3.compose.AsyncImage
-import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentModel
+import com.daxen.mydancekmpsharedui.data.students.model.Student
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentDetailScreen(
-    student: StudentModel,
+    student: Student,
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -77,7 +77,7 @@ fun StudentDetailScreen(
 }
 
 @Composable
-private fun StudentDetailContent(student: StudentModel) {
+private fun StudentDetailContent(student: Student) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,7 +92,7 @@ private fun StudentDetailContent(student: StudentModel) {
         
         // Nombre completo
         Text(
-            text = "${student.name} ${student.surnames}",
+            text = "${student.name} ${student.lastName}",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -132,7 +132,7 @@ private fun StudentDetailContent(student: StudentModel) {
                 InfoRow(
                     icon = Icons.Default.Person,
                     label = "ID de estudiante",
-                    value = student.id
+                    value = student.uid
                 )
             }
         }
@@ -144,7 +144,7 @@ private fun StudentDetailContent(student: StudentModel) {
 }
 
 @Composable
-private fun StudentProfileImage(student: StudentModel) {
+private fun StudentProfileImage(student: Student) {
     val profileSize = 150.dp
     
     if (student.profileImageUrl != null) {
@@ -166,7 +166,7 @@ private fun StudentProfileImage(student: StudentModel) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = getInitials(student.name, student.surnames),
+                    text = getInitials(student.name, student.lastName),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,

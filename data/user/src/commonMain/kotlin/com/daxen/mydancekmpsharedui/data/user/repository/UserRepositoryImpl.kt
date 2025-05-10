@@ -54,7 +54,8 @@ class UserRepositoryImpl(
     override suspend fun saveUserToDatabase() {
         _currentUser.value.email = firebaseAuthService.getCurrentUserEmail()
             ?: throw IllegalStateException("Email de usuario nulo")
-
+        _currentUser.value.uid = firebaseAuthService.getCurrentUserId()
+            ?: throw IllegalStateException("ID de usuario nulo")
         firebaseUserService.saveUserToDatabase(_currentUser.value.toUserResponse())
     }
 

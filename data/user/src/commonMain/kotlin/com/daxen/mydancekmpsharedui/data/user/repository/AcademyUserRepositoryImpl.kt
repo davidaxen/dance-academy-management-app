@@ -6,14 +6,28 @@ import com.daxen.mydancekmpsharedui.data.user.model.Subscription
 import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
 import com.daxen.mydancekmpsharedui.data.user.model.mapper.toAcademyModel
 import com.daxen.mydancekmpsharedui.data.user.model.mapper.toAcademyUserModel
+import com.daxen.mydancekmpsharedui.data.user.model.mapper.toUserAcademy
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class AcademyUserRepositoryImpl(
     private val firebaseAuthService: FirebaseAuthService,
     private val firebaseAcademyUserService: FirebaseAcademyUserService
 ): AcademyUserRepository {
     private val _currentAcademy = MutableStateFlow(UserAcademy.EMPTY)
+    override val currentAcademy: StateFlow<UserAcademy> = _currentAcademy
+
     private val _selectedLogo = MutableStateFlow(ByteArray(0))
+
+    override suspend fun updateCurrentAcademy() {
+        val academyUserResponse = firebaseAcademyUserService.getCurrentAcademyUserData()
+        val academyResponse = firebaseAcademyUserService.getCurrentAcademyData(academyUserResponse.academyId)
+
+        _currentAcademy.value = toUserAcademy(
+            academyUserModel = academyUserResponse,
+            academyModel = academyResponse
+        )
+    }
 
     override fun setAcademyInfo(
         name: String,
@@ -22,8 +36,6 @@ class AcademyUserRepositoryImpl(
         openingTime: String,
         closingTime: String
     ) {
-        _currentAcademy.value.uid = firebaseAuthService.getCurrentUserId()!!
-        _currentAcademy.value.email = firebaseAuthService.getCurrentUserEmail()!!
         _currentAcademy.value.name = name
         _currentAcademy.value.nif = nif
         _currentAcademy.value.address = address
@@ -40,6 +52,11 @@ class AcademyUserRepositoryImpl(
     }
 
     override suspend fun saveToDatabase() {
+        _currentAcademy.value.email = firebaseAuthService.getCurrentUserEmail()
+            ?: throw IllegalStateException("Email de usuario nulo")
+        _currentAcademy.value.uid = firebaseAuthService.getCurrentUserId()
+            ?: throw IllegalStateException("ID de usuario nulo")
+
         firebaseAcademyUserService.saveUserToDatabase(
             academyUserModel = _currentAcademy.value.toAcademyUserModel(),
             academyModel = _currentAcademy.value.toAcademyModel(),

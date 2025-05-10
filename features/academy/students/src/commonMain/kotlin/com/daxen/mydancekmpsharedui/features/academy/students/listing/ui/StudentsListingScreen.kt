@@ -14,12 +14,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
+import com.daxen.mydancekmpsharedui.data.students.model.Student
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.components.StudentsList
 
 @Composable
 fun StudentsListingScreen(
     viewModel: StudentsListingViewModel,
-    onStudentClick: (student: StudentModel) -> Unit
+    onStudentClick: (student: Student) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
