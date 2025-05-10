@@ -33,7 +33,7 @@ class LoginViewModel(
             _isLoggingIn.value = true
             login(email, password)
         } else {
-            resetIsLogginIn()
+            resetIsLoginIn()
         }
     }
 
@@ -50,7 +50,7 @@ class LoginViewModel(
         }
     }
 
-    fun resetIsLogginIn() {
+    fun resetIsLoginIn() {
         _isLoggingIn.value = false
     }
 
