@@ -8,4 +8,5 @@ data class AcademyUserModel(
     val email: String = "",
     val name: String = "",
     val role: String = "",
+    val academyId: String = "",
 )

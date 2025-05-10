@@ -58,4 +58,43 @@ object Validations {
             else -> null
         }
     }
+}
+
+object AcademyValidations {
+    fun validateName(name: String): String? {
+        return when {
+            name.isBlank() -> "El nombre es obligatorio"
+            name.length < 3 -> "El nombre debe tener al menos 3 caracteres"
+            else -> null
+        }
+    }
+
+    fun validateNif(nif: String): String? {
+        return when {
+            nif.isBlank() -> "El NIF es obligatorio"
+            else -> null
+        }
+    }
+
+    fun validateAddress(address: String): String? {
+        return when {
+            address.isBlank() -> "La dirección es obligatoria"
+            address.length < 5 -> "La dirección debe tener al menos 5 caracteres"
+            else -> null
+        }
+    }
+
+    fun validateOpeningTime(time: String): String? {
+        return when {
+            time.isBlank() -> "La hora de apertura es obligatoria"
+            else -> null
+        }
+    }
+
+    fun validateClosingTime(time: String): String? {
+        return when {
+            time.isBlank() -> "La hora de cierre es obligatoria"
+            else -> null
+        }
+    }
 } 

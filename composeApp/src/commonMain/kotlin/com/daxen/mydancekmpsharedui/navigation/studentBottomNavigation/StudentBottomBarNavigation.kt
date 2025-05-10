@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.navigation.bottomnavigation
+package com.daxen.mydancekmpsharedui.navigation.studentBottomNavigation
 
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -13,12 +13,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun AppBottomNavigation(navController: NavHostController) {
+fun StudentBottomBarNavigation(navController: NavHostController) {
     val bottomScreens = remember {
         listOf(
-            BottomBarDestination.Reservation,
-            BottomBarDestination.Calendar,
-            BottomBarDestination.User,
+            StudentBottomBarDestination.Reservation,
+            StudentBottomBarDestination.Calendar,
+            StudentBottomBarDestination.User,
         )
     }
 

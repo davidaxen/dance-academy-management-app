@@ -14,6 +14,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.AcademyInfoScreen
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.academyInfo.AcademyInfoViewModel
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.logoUploader.LogoUploaderScreen
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.logoUploader.LogoUploaderViewModel
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.subscription.SubscriptionScreen
+import com.daxen.mydancekmpsharedui.features.auth.academy.ui.subscription.SubscriptionViewModel
 import com.daxen.mydancekmpsharedui.features.auth.ui.personalInfo.PersonalInfoScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginScreen
 import com.daxen.mydancekmpsharedui.features.auth.ui.login.LoginViewModel
@@ -48,12 +54,100 @@ data object DanceRoleSelectionScreenRoute
 @Serializable
 data object RegisterProcessNavGraph
 
+@Serializable
+data object AcademyRegisterProcessNavGraph
+
+@Serializable
+data object AcademyInfoScreenRoute
+
+@Serializable
+data object LogoUploaderScreenRoute
+
+@Serializable
+data object SubscriptionScreenRoute
+
+fun NavGraphBuilder.academyRegisterProcessNavGraph(
+    goBack: () -> Unit,
+    goToLogoUploader: () -> Unit,
+    goToSubscription: () -> Unit,
+) {
+    navigation<AcademyRegisterProcessNavGraph>(startDestination = AcademyInfoScreenRoute) {
+        composable<AcademyInfoScreenRoute>(
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(500)
+                )
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(500)
+                )
+            },
+        ) {
+            val viewModel: AcademyInfoViewModel = koinViewModel()
+            AcademyInfoScreen(
+                viewModel = viewModel,
+                onNavigateBack = goBack,
+                onNavigateNext = goToLogoUploader,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        composable<LogoUploaderScreenRoute>(
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(500)
+                )
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(500)
+                )
+            },
+        ) {
+            val viewModel: LogoUploaderViewModel = koinViewModel()
+            LogoUploaderScreen(
+                viewModel = viewModel,
+                onNavigateBack = goBack,
+                onNavigateNext = goToSubscription,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        composable<SubscriptionScreenRoute>(
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(500)
+                )
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it },
+                    animationSpec = tween(500)
+                )
+            },
+        ) {
+            val viewModel: SubscriptionViewModel = koinViewModel()
+            SubscriptionScreen(
+                viewModel = viewModel,
+                onNavigateBack = goBack,
+                onNavigateNext = {},
+            )
+        }
+    }
+}
 
 fun NavGraphBuilder.registerProcessNavGraph(
     goToLogin: () -> Unit,
     goToInfo: () -> Unit,
     goToDanceRoleSelection: () -> Unit,
     goToAcademySelection: () -> Unit,
+    goToAcademyRegister: () -> Unit,
     goBack: () -> Unit,
 ) {
     navigation<RegisterProcessNavGraph>(startDestination = UserRoleSelectionScreenRoute) {
@@ -72,8 +166,8 @@ fun NavGraphBuilder.registerProcessNavGraph(
                 onRoleSelected = { role ->
                     when (role) {
                         UserRole.STUDENT -> { goToInfo() }
-                        UserRole.TEACHER -> {}
-                        UserRole.ACADEMY -> {}
+                        UserRole.TEACHER -> { goToInfo() }
+                        UserRole.ACADEMY -> { goToAcademyRegister() }
                     }
                 },
                 onLogOut = goToLogin,
@@ -125,6 +219,7 @@ fun NavGraphBuilder.registerProcessNavGraph(
 
 fun NavGraphBuilder.authNavGraph(
     goToAcademySelection: () -> Unit,
+    goToAcademyHome: () -> Unit,
     goToRegister: () -> Unit,
     goToRoleSelection: () -> Unit,
     goBack: () -> Unit,
@@ -137,6 +232,7 @@ fun NavGraphBuilder.authNavGraph(
                 viewModel = viewModel,
                 checkerViewModel = checkerViewModel,
                 navigateToRoleSelection = goToRoleSelection,
+                navigateToAcademyHome = goToAcademyHome,
                 navigateToAcademySelection = goToAcademySelection,
                 navigateToRegister = goToRegister,
                 modifier = Modifier.fillMaxSize()
