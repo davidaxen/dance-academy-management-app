@@ -62,11 +62,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
+import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingViewModel
+import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerDestination
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerNavHost
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
+
+// Clase de ayuda para configurar qué elementos mostrar en la TopBar según la pantalla
+data class TopBarConfig(
+    val showSearch: Boolean = false,
+    val showFilter: Boolean = false
+)
 
 @Composable
 fun AcademyMainScreen(appNavController: NavHostController) {
@@ -80,13 +88,17 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val studentsListingViewModel: StudentsListingViewModel = koinViewModel()
+    
+    // Obtener la pantalla actual
+    val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    
+    // Configurar el título y los botones según la pantalla actual
+    val (screenTitle, topBarConfig) = getScreenInfo(currentDestination, drawerScreens)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-
             ModalDrawerContent(drawerScreens, currentDestination, drawerNavController) {
                 scope.launch {
                     if (drawerState.isOpen) {
@@ -99,6 +111,9 @@ fun AcademyMainScreen(appNavController: NavHostController) {
         Scaffold(
             topBar = {
                 TopBar(
+                    title = screenTitle,
+                    showSearch = topBarConfig.showSearch,
+                    showFilter = topBarConfig.showFilter,
                     onSearchQuery = {
                         studentsListingViewModel.onSearchQueryChanged(it)
                     },
@@ -130,9 +145,45 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     }
 }
 
+// Función que determina el título y la configuración de la barra superior según la pantalla
+@Composable
+private fun getScreenInfo(
+    currentDestination: NavDestination?,
+    drawerScreens: List<AcademyDrawerDestination<out Any>>
+): Pair<String, TopBarConfig> {
+    // Valor por defecto
+    var screenTitle = ""
+    var topBarConfig = TopBarConfig()
+    
+    // Encontrar la pantalla activa en el drawer
+    drawerScreens.forEach { destination ->
+        if (currentDestination?.hierarchy?.any { it.hasRoute(destination.route::class) } == true) {
+            screenTitle = destination.title
+            
+            // Configurar botones según la pantalla
+            topBarConfig = when (destination.route) {
+                is AcademyStudentsDestinations.AcademyStudentsGraph -> TopBarConfig(
+                    showSearch = true, 
+                    showFilter = true
+                )
+                is UserGraph -> TopBarConfig(
+                    showSearch = false,
+                    showFilter = false
+                )
+                else -> TopBarConfig()
+            }
+        }
+    }
+    
+    return Pair(screenTitle, topBarConfig)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(
+    title: String,
+    showSearch: Boolean,
+    showFilter: Boolean,
     onSearchQuery: (String) -> Unit,
     onFilterClick: () -> Unit,
     onMenuClick: () -> Unit
@@ -156,7 +207,7 @@ private fun TopBar(
                     animationSpec = tween(300)
                 )
             ) {
-                Text("Academia")
+                Text(title)
             }
             
             AnimatedVisibility(
@@ -274,24 +325,28 @@ private fun TopBar(
                 exit = fadeOut(animationSpec = tween(300))
             ) {
                 Row {
-                    IconButton(
-                        onClick = { 
-                            isSearchMode = true
+                    if (showSearch) {
+                        IconButton(
+                            onClick = { 
+                                isSearchMode = true
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search, 
+                                contentDescription = "Buscar"
+                            )
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search, 
-                            contentDescription = "Buscar"
-                        )
                     }
                     
-                    IconButton(
-                        onClick = onFilterClick
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FilterList, 
-                            contentDescription = "Filtrar"
-                        )
+                    if (showFilter) {
+                        IconButton(
+                            onClick = onFilterClick
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FilterList, 
+                                contentDescription = "Filtrar"
+                            )
+                        }
                     }
                 }
             }
