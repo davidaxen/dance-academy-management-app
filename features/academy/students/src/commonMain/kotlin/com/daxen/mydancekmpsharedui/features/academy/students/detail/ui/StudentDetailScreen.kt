@@ -131,7 +131,7 @@ private fun StudentDetailContent(student: Student) {
                 // Email
                 InfoRow(
                     icon = Icons.Default.Email,
-                    label = "Email",
+                    label = "Correo",
                     value = student.email
                 )
 
