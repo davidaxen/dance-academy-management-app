@@ -25,7 +25,7 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 fun StudentsListingScreen(
     viewModel: StudentsListingViewModel
 ) {
-    val students by viewModel.students.collectAsState()
+    val students by viewModel.filteredStudents.collectAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

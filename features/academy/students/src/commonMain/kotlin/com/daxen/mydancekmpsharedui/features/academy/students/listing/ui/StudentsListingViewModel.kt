@@ -3,16 +3,44 @@ package com.daxen.mydancekmpsharedui.features.academy.students.listing.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class StudentsListingViewModel : ViewModel() {
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
     private val _students = MutableStateFlow<List<StudentModel>>(emptyList())
     val students: StateFlow<List<StudentModel>> = _students.asStateFlow()
 
+    val filteredStudents: StateFlow<List<StudentModel>> = combine(
+        _students, _searchQuery
+    ) { students, query ->
+        if (query.isBlank()) students
+        else {
+            val lowerQuery = query.lowercase()
+            students.filter {
+                it.name.contains(lowerQuery, ignoreCase = true) ||
+                        it.surnames.contains(lowerQuery, ignoreCase = true) ||
+                        it.email.contains(lowerQuery, ignoreCase = true)
+            }
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
+
     init {
         loadStudents()
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
     }
 
     private fun loadStudents() {
