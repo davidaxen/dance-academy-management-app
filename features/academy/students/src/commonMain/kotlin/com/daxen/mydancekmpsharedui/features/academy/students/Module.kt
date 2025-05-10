@@ -8,4 +8,5 @@ val academyStudentsModule = module {
 //    includes(dataUserModule)
 //    includes(dataReservationModule)
     viewModelOf(::StudentsListingViewModel)
+    single { StudentsListingViewModel() }
 }

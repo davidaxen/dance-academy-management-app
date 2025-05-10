@@ -9,13 +9,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+
+// Crea un Singleton del ViewModel
+object StudentsListingViewModelProvider : KoinComponent {
+    private val viewModel: StudentsListingViewModel by inject()
+    
+    fun get(): StudentsListingViewModel = viewModel
+}
 
 class StudentsListingViewModel : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _students = MutableStateFlow<List<StudentModel>>(emptyList())
-    val students: StateFlow<List<StudentModel>> = _students.asStateFlow()
 
     val filteredStudents: StateFlow<List<StudentModel>> = combine(
         _students, _searchQuery
@@ -41,6 +49,8 @@ class StudentsListingViewModel : ViewModel() {
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
+        println("Search query changed: $query")
+        println("Filtered students: ${filteredStudents.value}")
     }
 
     private fun loadStudents() {

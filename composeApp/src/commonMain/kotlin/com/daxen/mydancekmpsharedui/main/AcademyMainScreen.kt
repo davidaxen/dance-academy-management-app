@@ -42,6 +42,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,12 +65,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
-import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingViewModel
+import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingViewModelProvider
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerDestination
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerNavHost
 import kotlinx.coroutines.launch
-import org.koin.compose.viewmodel.koinViewModel
 
 // Clase de ayuda para configurar qué elementos mostrar en la TopBar según la pantalla
 data class TopBarConfig(
@@ -87,7 +88,12 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val studentsListingViewModel: StudentsListingViewModel = koinViewModel()
+    
+    // Obtener el ViewModel compartido
+    val studentsListingViewModel = StudentsListingViewModelProvider.get()
+    
+    // Obtener la query actual del ViewModel
+    val currentSearchQuery by studentsListingViewModel.searchQuery.collectAsState()
     
     // Obtener la pantalla actual
     val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
@@ -95,6 +101,11 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     
     // Configurar el título y los botones según la pantalla actual
     val (screenTitle, topBarConfig) = getScreenInfo(currentDestination, drawerScreens)
+
+    // Variable para rastrear si estamos en la pantalla de estudiantes
+    val isStudentsScreen = currentDestination?.hierarchy?.any { 
+        it.hasRoute(AcademyStudentsDestinations.AcademyStudentsGraph::class) 
+    } == true
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -114,8 +125,13 @@ fun AcademyMainScreen(appNavController: NavHostController) {
                     title = screenTitle,
                     showSearch = topBarConfig.showSearch,
                     showFilter = topBarConfig.showFilter,
-                    onSearchQuery = {
-                        studentsListingViewModel.onSearchQueryChanged(it)
+                    initialSearchQuery = currentSearchQuery,
+                    isActiveSearchScreen = isStudentsScreen,
+                    onSearchQuery = { query ->
+                        // Solo actualizamos la búsqueda si estamos en la pantalla de estudiantes
+                        if (isStudentsScreen) {
+                            studentsListingViewModel.onSearchQueryChanged(query)
+                        }
                     },
                     onFilterClick = {
                         // Por ahora no hace nada
@@ -184,15 +200,24 @@ private fun TopBar(
     title: String,
     showSearch: Boolean,
     showFilter: Boolean,
+    initialSearchQuery: String,
+    isActiveSearchScreen: Boolean,
     onSearchQuery: (String) -> Unit,
     onFilterClick: () -> Unit,
     onMenuClick: () -> Unit
 ) {
-    var searchText by remember { mutableStateOf("") }
+    var searchText by remember { mutableStateOf(initialSearchQuery) }
     var isFocused by remember { mutableStateOf(false) }
     var isSearchMode by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
+    
+    // Actualizar el texto de búsqueda cuando cambia en el ViewModel
+    LaunchedEffect(initialSearchQuery, isActiveSearchScreen) {
+        if (isActiveSearchScreen) {
+            searchText = initialSearchQuery
+        }
+    }
     
     TopAppBar(
         title = { 
@@ -225,7 +250,10 @@ private fun TopBar(
                     value = searchText,
                     onValueChange = { 
                         searchText = it
-                        onSearchQuery(it)
+                        // Solo enviar el cambio si estamos en la pantalla de estudiantes
+                        if (isActiveSearchScreen) {
+                            onSearchQuery(it)
+                        }
                     },
                     modifier = Modifier
                         .fillMaxHeight(0.8f)
@@ -247,8 +275,11 @@ private fun TopBar(
                         IconButton(
                             onClick = { 
                                 isSearchMode = false
-                                searchText = ""
-                                onSearchQuery("")
+                                if (isActiveSearchScreen) {
+                                    // Limpiar la búsqueda y resetear el filtro al cerrar
+                                    searchText = ""
+                                    onSearchQuery("")
+                                }
                                 focusManager.clearFocus()
                             }
                         ) {
@@ -267,7 +298,9 @@ private fun TopBar(
                             IconButton(
                                 onClick = {
                                     searchText = ""
-                                    onSearchQuery("")
+                                    if (isActiveSearchScreen) {
+                                        onSearchQuery("")
+                                    }
                                     focusManager.clearFocus()
                                 }
                             ) {
@@ -329,6 +362,16 @@ private fun TopBar(
                         IconButton(
                             onClick = { 
                                 isSearchMode = true
+                                // Al activar el modo búsqueda, enfocar el campo
+                                // después de renderizarlo
+                                if (isActiveSearchScreen) {
+                                    // Intenta enfocar el campo después de que sea visible
+                                    try {
+                                        focusRequester.requestFocus()
+                                    } catch (e: Exception) {
+                                        // Ignorar errores de foco
+                                    }
+                                }
                             }
                         ) {
                             Icon(
