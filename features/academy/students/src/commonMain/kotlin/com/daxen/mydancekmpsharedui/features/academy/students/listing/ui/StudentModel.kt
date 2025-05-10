@@ -4,5 +4,6 @@ data class StudentModel(
     val id: String,
     val name: String,
     val surnames: String,
-    val email: String
+    val email: String,
+    val profileImageUrl: String? = null
 ) 

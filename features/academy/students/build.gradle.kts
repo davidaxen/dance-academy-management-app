@@ -41,6 +41,9 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.bundles.koin.compose)
 
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
+
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
