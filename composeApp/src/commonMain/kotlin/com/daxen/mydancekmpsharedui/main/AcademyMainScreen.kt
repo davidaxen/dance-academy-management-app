@@ -1,7 +1,14 @@
 package com.daxen.mydancekmpsharedui.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +19,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DrawerValue
@@ -38,7 +47,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -93,6 +101,9 @@ fun AcademyMainScreen(appNavController: NavHostController) {
                 TopBar(
                     onSearchQuery = {
                         studentsListingViewModel.onSearchQueryChanged(it)
+                    },
+                    onFilterClick = {
+                        // Por ahora no hace nada
                     }
                 ) {
                     scope.launch {
@@ -121,17 +132,43 @@ fun AcademyMainScreen(appNavController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(onSearchQuery: (String) -> Unit, onClick: () -> Unit) {
+private fun TopBar(
+    onSearchQuery: (String) -> Unit,
+    onFilterClick: () -> Unit,
+    onMenuClick: () -> Unit
+) {
     var searchText by remember { mutableStateOf("") }
     var isFocused by remember { mutableStateOf(false) }
+    var isSearchMode by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     
     TopAppBar(
         title = { 
-            Box(
-                modifier = Modifier.fillMaxWidth(0.8f),
-                contentAlignment = Alignment.CenterStart
+            AnimatedVisibility(
+                visible = !isSearchMode,
+                enter = slideInHorizontally(
+                    initialOffsetX = { -it }, // Empieza desde la izquierda
+                    animationSpec = tween(300)
+                ),
+                exit = slideOutHorizontally(
+                    targetOffsetX = { -it }, // Sale hacia la izquierda
+                    animationSpec = tween(300)
+                )
+            ) {
+                Text("Academia")
+            }
+            
+            AnimatedVisibility(
+                visible = isSearchMode,
+                enter = slideInHorizontally(
+                    initialOffsetX = { it }, // Empieza desde la derecha
+                    animationSpec = tween(300)
+                ),
+                exit = slideOutHorizontally(
+                    targetOffsetX = { it }, // Sale hacia la derecha
+                    animationSpec = tween(300)
+                )
             ) {
                 OutlinedTextField(
                     value = searchText,
@@ -141,7 +178,7 @@ private fun TopBar(onSearchQuery: (String) -> Unit, onClick: () -> Unit) {
                     },
                     modifier = Modifier
                         .fillMaxHeight(0.8f)
-                        .fillMaxWidth()
+                        .fillMaxWidth(0.95f)
                         .focusRequester(focusRequester)
                         .onFocusChanged { 
                             isFocused = it.isFocused 
@@ -156,14 +193,23 @@ private fun TopBar(onSearchQuery: (String) -> Unit, onClick: () -> Unit) {
                         ) 
                     },
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Icono de búsqueda",
-                            tint = if (isFocused) 
-                                MaterialTheme.colorScheme.onBackground 
-                            else 
-                                MaterialTheme.colorScheme.onPrimary
-                        )
+                        IconButton(
+                            onClick = { 
+                                isSearchMode = false
+                                searchText = ""
+                                onSearchQuery("")
+                                focusManager.clearFocus()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Volver",
+                                tint = if (isFocused) 
+                                    MaterialTheme.colorScheme.onBackground 
+                                else 
+                                    MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     },
                     trailingIcon = {
                         if (searchText.isNotEmpty()) {
@@ -211,8 +257,43 @@ private fun TopBar(onSearchQuery: (String) -> Unit, onClick: () -> Unit) {
             }
         },
         navigationIcon = {
-            IconButton(onClick = onClick) {
-                Icon(Icons.Default.Menu, contentDescription = "Menu")
+            AnimatedVisibility(
+                visible = !isSearchMode,
+                enter = fadeIn(animationSpec = tween(300)),
+                exit = fadeOut(animationSpec = tween(300))
+            ) {
+                IconButton(onClick = onMenuClick) {
+                    Icon(Icons.Default.Menu, contentDescription = "Menu")
+                }
+            }
+        },
+        actions = {
+            AnimatedVisibility(
+                visible = !isSearchMode,
+                enter = fadeIn(animationSpec = tween(300)),
+                exit = fadeOut(animationSpec = tween(300))
+            ) {
+                Row {
+                    IconButton(
+                        onClick = { 
+                            isSearchMode = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search, 
+                            contentDescription = "Buscar"
+                        )
+                    }
+                    
+                    IconButton(
+                        onClick = onFilterClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FilterList, 
+                            contentDescription = "Filtrar"
+                        )
+                    }
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
