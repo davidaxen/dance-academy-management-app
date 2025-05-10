@@ -23,6 +23,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,7 +48,7 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     val drawerScreens = remember {
         listOf(
             AcademyDrawerDestination.User,
-            AcademyDrawerDestination.TeachersList,
+            AcademyDrawerDestination.StudentsList,
         )
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -59,7 +60,13 @@ fun AcademyMainScreen(appNavController: NavHostController) {
             val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
 
-            ModalDrawerContent(drawerScreens, currentDestination, drawerNavController)
+            ModalDrawerContent(drawerScreens, currentDestination, drawerNavController) {
+                scope.launch {
+                    if (drawerState.isOpen) {
+                        drawerState.close()
+                    }
+                }
+            }
         }
     ) {
         Scaffold(
@@ -98,7 +105,13 @@ private fun TopBar(onClick: () -> Unit) {
             IconButton(onClick = onClick) {
                 Icon(Icons.Default.Menu, contentDescription = "Menu")
             }
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
+        )
     )
 }
 
@@ -106,7 +119,8 @@ private fun TopBar(onClick: () -> Unit) {
 private fun ModalDrawerContent(
     drawerScreens: List<AcademyDrawerDestination<out Any>>,
     currentDestination: NavDestination?,
-    drawerNavController: NavHostController
+    drawerNavController: NavHostController,
+    onClick: () -> Unit
 ) {
     ModalDrawerSheet(
         drawerContainerColor = MaterialTheme.colorScheme.background,
@@ -126,7 +140,7 @@ private fun ModalDrawerContent(
                     selected = isSelected,
                     shape = RoundedCornerShape(0),
                     colors = NavigationDrawerItemDefaults.colors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onBackground,
                         unselectedTextColor = MaterialTheme.colorScheme.onBackground,
                         selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -140,6 +154,7 @@ private fun ModalDrawerContent(
                             launchSingleTop = true
                             restoreState = true
                         }
+                        onClick()
                     },
                 )
             }

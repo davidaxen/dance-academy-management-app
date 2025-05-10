@@ -5,7 +5,7 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph
+import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import kotlinx.serialization.Serializable
 
@@ -29,15 +29,15 @@ sealed class AcademyDrawerDestination<T>(
     )
 
     @Serializable
-    data object TeachersList: AcademyDrawerDestination<AcademySelectionGraph>(
-        title = "Tus profesores",
+    data object StudentsList: AcademyDrawerDestination<AcademyStudentsDestinations.AcademyStudentsGraph>(
+        title = "Tus Alumnos",
         selectedIcon = {
              Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "")
         },
         unselectedIcon = {
              Icon(imageVector = Icons.Outlined.AccountBox, contentDescription = "")
         },
-        route = AcademySelectionGraph
+        route = AcademyStudentsDestinations.AcademyStudentsGraph
     )
 
 
