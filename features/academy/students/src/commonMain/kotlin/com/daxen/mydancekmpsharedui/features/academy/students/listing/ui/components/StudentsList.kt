@@ -16,16 +16,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentModel
 
 @Composable
-fun StudentsList(students: List<StudentModel>) {
+fun StudentsList(
+    students: List<StudentModel>,
+    onStudentClick: (
+        student: StudentModel
+    ) -> Unit
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
     ) {
         itemsIndexed(students) { index, student ->
-            StudentListItem(student = student)
+            StudentListItem(student = student, onClick = dropUnlessResumed {
+                onStudentClick(student)
+            })
 
             if (index < students.size - 1) {
                 HorizontalDivider(
@@ -39,7 +47,8 @@ fun StudentsList(students: List<StudentModel>) {
 
 @Composable
 private fun StudentListItem(
-    student: StudentModel
+    student: StudentModel,
+    onClick: () -> Unit
 ) {
     ListItem(
         leadingContent = {
@@ -67,9 +76,7 @@ private fun StudentListItem(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-
-            }
+            .clickable { onClick() }
             .padding(horizontal = LocalPadding.current.extraTiny)
     )
 }

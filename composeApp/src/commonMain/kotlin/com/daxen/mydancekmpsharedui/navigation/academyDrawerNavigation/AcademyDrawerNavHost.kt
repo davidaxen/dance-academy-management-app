@@ -21,7 +21,9 @@ fun AcademyDrawerNavHost(drawerNavController: NavHostController, appNavControlle
                 appNavController.navigate(CentralAppDestination.Auth.route)
             },
         )
-        academyStudentsGraph()
+        academyStudentsGraph(
+            appNavController = appNavController,
+        )
 //        teachersListNavGraph()
     }
 }

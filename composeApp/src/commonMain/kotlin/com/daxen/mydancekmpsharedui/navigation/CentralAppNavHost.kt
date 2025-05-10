@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.daxen.mydancekmpsharedui.features.academy.students.studentDetailGraph
 import com.daxen.mydancekmpsharedui.features.auth.AcademyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.DanceRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
@@ -81,6 +82,10 @@ fun CentralAppNavHost(
         academySelectionNavGraph(
             appNavController = navController,
             navigateToLogin = { navController.navigate(LoginScreenRoute) }
+        )
+
+        studentDetailGraph(
+            onBackClick = { navController.popBackStack() }
         )
 
         userOptionsNavGraph(appNavController = navController)
