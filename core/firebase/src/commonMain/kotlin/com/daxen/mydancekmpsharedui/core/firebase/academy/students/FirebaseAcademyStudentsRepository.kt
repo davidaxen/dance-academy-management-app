@@ -5,5 +5,6 @@ import com.daxen.mydancekmpsharedui.core.firebase.academy.students.model.Invitat
 
 interface FirebaseAcademyStudentsRepository {
     suspend fun getStudentsByAcademyID(id: String): List<StudentModel>
-    suspend fun inviteStudentToAcademy(userId: String, academyId: String, academyName: String): Boolean
+    suspend fun inviteStudentToAcademy(invitation: InvitationModel): Boolean
+    suspend fun getInvitationsByAcademyID(academyId: String): List<InvitationModel>
 }

@@ -93,7 +93,7 @@ fun InvitationStudentScreen(
                 is InviteStudentUiState.Error -> {
                     ErrorComponent(
                         message = state.message,
-                        onRetry = { /* Aquí implementar la función de reintento */ }
+                        onRetry = { viewModel.refreshInvitations() }
                     )
                 }
             }

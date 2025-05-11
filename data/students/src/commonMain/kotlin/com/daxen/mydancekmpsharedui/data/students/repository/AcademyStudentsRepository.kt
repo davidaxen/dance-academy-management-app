@@ -1,10 +1,14 @@
 package com.daxen.mydancekmpsharedui.data.students.repository
 
+import com.daxen.mydancekmpsharedui.data.students.model.Invitation
 import com.daxen.mydancekmpsharedui.data.students.model.Student
 import kotlinx.coroutines.flow.StateFlow
 
 interface AcademyStudentsRepository {
     val students: StateFlow<List<Student>>
+    val invitations: StateFlow<List<Invitation>>
+    
     suspend fun getStudentsByAcademyID(id: String)
-    suspend fun inviteStudentToAcademy(academyId: String, studentId: String, academyName: String): Boolean
+    suspend fun getInvitationsByAcademyID(id: String)
+    suspend fun inviteStudentToAcademy(invitation: Invitation): Boolean
 }

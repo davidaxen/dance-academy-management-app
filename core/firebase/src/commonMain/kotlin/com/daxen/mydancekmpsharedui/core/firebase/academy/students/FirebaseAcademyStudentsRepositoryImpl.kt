@@ -30,15 +30,8 @@ class FirebaseAcademyStudentsRepositoryImpl(
         }
     }
 
-    override suspend fun inviteStudentToAcademy(userId: String, academyId: String, academyName: String): Boolean {
+    override suspend fun inviteStudentToAcademy(invitation: InvitationModel): Boolean {
         return try {
-            val invitation = InvitationModel(
-                userId = userId,
-                academyId = academyId,
-                role = "student",
-                academyName = academyName
-            )
-
             firestore.collection("invitations")
                 .add(invitation)
             
@@ -46,6 +39,24 @@ class FirebaseAcademyStudentsRepositoryImpl(
         } catch (e: Exception) {
             println("Error inviting student: ${e.message}")
             false
+        }
+    }
+    
+    override suspend fun getInvitationsByAcademyID(academyId: String): List<InvitationModel> {
+        return try {
+            val documents = firestore.collection("invitations")
+                .where {
+                    "academyId" equalTo  academyId
+                }
+                .get()
+                .documents
+                
+            documents.map { doc ->
+                doc.data(InvitationModel.serializer())
+            }
+        } catch (e: Exception) {
+            println("Error getting invitations: ${e.message}")
+            emptyList()
         }
     }
 }

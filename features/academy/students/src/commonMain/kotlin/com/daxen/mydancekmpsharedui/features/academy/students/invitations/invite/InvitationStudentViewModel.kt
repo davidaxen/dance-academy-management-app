@@ -31,8 +31,6 @@ class InvitationStudentViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
     
-    private val _invitations = MutableStateFlow<List<Invitation>>(emptyList())
-    
     private val _isModalVisible = MutableStateFlow(false)
     val isModalVisible: StateFlow<Boolean> = _isModalVisible.asStateFlow()
     
@@ -49,7 +47,7 @@ class InvitationStudentViewModel(
     
     // Combinar las invitaciones con la consulta de búsqueda
     private val filteredInvitations = combine(
-        _invitations, _searchQuery
+        academyStudentsRepository.invitations, _searchQuery
     ) { invitations, query ->
         if (query.isBlank()) invitations
         else {
@@ -78,7 +76,6 @@ class InvitationStudentViewModel(
     
     init {
         loadCurrentAcademy()
-        loadInvitations()
     }
     
     fun onSearchQueryChanged(query: String) {
@@ -89,8 +86,11 @@ class InvitationStudentViewModel(
         viewModelScope.launch {
             try {
                 academyUserRepository.updateCurrentAcademy()
+                // Una vez obtenemos la academia actual, cargamos las invitaciones
+                loadInvitations()
             } catch (e: Exception) {
                 _errorMessage.value = "Error al cargar la academia: ${e.message}"
+                _isLoading.value = false
             }
         }
     }
@@ -100,41 +100,16 @@ class InvitationStudentViewModel(
             _isLoading.value = true
             
             try {
-                // En una implementación real, cargaríamos desde Firebase
-                // Por ahora simulamos datos
-                simulateInvitations()
+                val academyId = currentAcademy.value.uid
+                if (academyId.isNotEmpty()) {
+                    academyStudentsRepository.getInvitationsByAcademyID(academyId)
+                }
             } catch (e: Exception) {
                 _errorMessage.value = "Error al cargar invitaciones: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
-    }
-    
-    private fun simulateInvitations() {
-        // En una implementación real, aquí cargaríamos las invitaciones desde Firebase
-        val dummyInvitations = listOf(
-            Invitation(
-                email = "estudiante1@example.com",
-                academyId = "academyId1",
-                academyName = "Mi Academia",
-                status = InvitationStatus.PENDING
-            ),
-            Invitation(
-                email = "estudiante2@example.com",
-                academyId = "academyId1",
-                academyName = "Mi Academia",
-                status = InvitationStatus.ACCEPTED
-            ),
-            Invitation(
-                email = "profesor@example.com",
-                academyId = "academyId1",
-                academyName = "Mi Academia",
-                status = InvitationStatus.PENDING
-            )
-        )
-        
-        _invitations.value = dummyInvitations
     }
     
     fun toggleModal() {
@@ -166,26 +141,18 @@ class InvitationStudentViewModel(
             _isSubmitting.value = true
             
             try {
-                val result = academyStudentsRepository.inviteStudentToAcademy(
+                // Crear un objeto Invitation completo
+                val invitation = Invitation(
+                    email = email,
                     academyId = currentAcademy.value.uid,
-                    studentId = email, // Usamos el email como ID temporal
-                    academyName = currentAcademy.value.name
+                    academyName = currentAcademy.value.name,
+                    status = InvitationStatus.PENDING
                 )
                 
+                val result = academyStudentsRepository.inviteStudentToAcademy(invitation)
+                
                 if (result) {
-                    // Simulamos agregar la invitación a la lista
-                    val newInvitation = Invitation(
-                        email = email,
-                        academyId = currentAcademy.value.uid,
-                        academyName = currentAcademy.value.name,
-                        status = InvitationStatus.PENDING
-                    )
-                    
-                    val updatedInvitations = _invitations.value.toMutableList().apply {
-                        add(newInvitation)
-                    }
-                    
-                    _invitations.value = updatedInvitations
+                    loadInvitations()
                     toggleModal()
                 } else {
                     _errorMessage.value = "Error al enviar la invitación"
