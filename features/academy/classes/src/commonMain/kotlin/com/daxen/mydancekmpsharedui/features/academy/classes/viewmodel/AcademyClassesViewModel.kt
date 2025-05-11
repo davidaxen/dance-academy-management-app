@@ -38,17 +38,13 @@ class AcademyClassesViewModel(
     val selectedDate: StateFlow<LocalDate> = _selectedDate
 
     init {
+        _selectedWeekStartDate.value = getCurrentWeekMonday()
+        _selectedDate.value = Clock.System.todayIn(TimeZone.currentSystemDefault())
         loadClasses()
     }
 
     private fun getCurrentWeekMonday(): LocalDate {
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        
-        // Calcular el inicio de la semana (lunes)
-        val dayOfWeek = today.dayOfWeek.ordinal
-        // Si el ordinal empieza en 0 para MONDAY, no necesitamos restar 1
-        // Si empieza en 1 para MONDAY, entonces sí restamos 1
-        // Aseguramos que MONDAY sea 0, TUESDAY sea 1, etc.
         val mondayOffset = when (today.dayOfWeek) {
             DayOfWeek.MONDAY -> 0
             DayOfWeek.TUESDAY -> 1
@@ -66,20 +62,14 @@ class AcademyClassesViewModel(
     fun moveWeekForward() {
         val newStartDate = _selectedWeekStartDate.value.plus(7, DateTimeUnit.DAY)
         _selectedWeekStartDate.value = newStartDate
-        
-        // Actualizamos la fecha seleccionada al lunes de la nueva semana
         _selectedDate.value = newStartDate
-        
         loadClasses()
     }
 
     fun moveWeekBackward() {
         val newStartDate = _selectedWeekStartDate.value.minus(7, DateTimeUnit.DAY)
         _selectedWeekStartDate.value = newStartDate
-        
-        // Actualizamos la fecha seleccionada al lunes de la nueva semana
         _selectedDate.value = newStartDate
-        
         loadClasses()
     }
     
