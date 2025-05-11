@@ -67,6 +67,9 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentViewModelProvider
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingViewModelProvider
+import com.daxen.mydancekmpsharedui.features.academy.teachers.AcademyTeachersDestinations
+import com.daxen.mydancekmpsharedui.features.academy.teachers.invitations.invite.InvitationTeacherViewModelProvider
+import com.daxen.mydancekmpsharedui.features.academy.teachers.listing.ui.TeachersListingViewModelProvider
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerDestination
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerNavHost
@@ -93,33 +96,46 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     
-    // Obtener el ViewModel compartido de estudiantes
+    // Obtener los ViewModels compartidos
     val studentsListingViewModel = StudentsListingViewModelProvider.get()
-    
-    // Obtener el ViewModel compartido de invitaciones
     val invitationStudentViewModel = InvitationStudentViewModelProvider.get()
+    val teachersListingViewModel = TeachersListingViewModelProvider.get()
+    val invitationTeacherViewModel = InvitationTeacherViewModelProvider.get()
     
     // Obtener la query actual del ViewModel según la pantalla
     val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     
-    // Determinar si estamos en la pantalla de estudiantes o invitaciones
+    // Determinar en qué pantalla estamos
     val isStudentsScreen = currentDestination?.hierarchy?.any { 
         it.hasRoute(AcademyStudentsDestinations.AcademyStudentsGraph::class)
     } == true
     
-    val isInvitationsScreen = currentDestination?.hierarchy?.any { 
+    val isStudentsInvitationsScreen = currentDestination?.hierarchy?.any { 
         it.hasRoute(AcademyStudentsDestinations.InviteStudentGraph::class)
+    } == true
+    
+    val isTeachersScreen = currentDestination?.hierarchy?.any { 
+        it.hasRoute(AcademyTeachersDestinations.AcademyTeachersGraph::class)
+    } == true
+    
+    val isTeachersInvitationsScreen = currentDestination?.hierarchy?.any { 
+        it.hasRoute(AcademyTeachersDestinations.InviteTeacherGraph::class)
     } == true
     
     // Configurar el título y los botones según la pantalla actual
     val (screenTitle, topBarConfig) = getScreenInfo(currentDestination, drawerScreens)
     
+    // Determinar si estamos en una pantalla con búsqueda
+    val isActiveSearchScreen = isStudentsScreen || isStudentsInvitationsScreen || 
+                              isTeachersScreen || isTeachersInvitationsScreen
+    
     // Obtener la consulta de búsqueda según la pantalla activa
-    val currentSearchQuery by if (isInvitationsScreen) {
-        invitationStudentViewModel.searchQuery.collectAsState()
-    } else {
-        studentsListingViewModel.searchQuery.collectAsState()
+    val currentSearchQuery by when {
+        isStudentsInvitationsScreen -> invitationStudentViewModel.searchQuery.collectAsState()
+        isTeachersScreen -> teachersListingViewModel.searchQuery.collectAsState()
+        isTeachersInvitationsScreen -> invitationTeacherViewModel.searchQuery.collectAsState()
+        else -> studentsListingViewModel.searchQuery.collectAsState() // Por defecto o si es isStudentsScreen
     }
 
     ModalNavigationDrawer(
@@ -141,13 +157,14 @@ fun AcademyMainScreen(appNavController: NavHostController) {
                     showSearch = topBarConfig.showSearch,
                     showFilter = topBarConfig.showFilter,
                     initialSearchQuery = currentSearchQuery,
-                    isActiveSearchScreen = isStudentsScreen || isInvitationsScreen,
+                    isActiveSearchScreen = isActiveSearchScreen,
                     onSearchQuery = { query ->
                         // Dirigir la búsqueda al ViewModel correcto según la pantalla
-                        if (isStudentsScreen) {
-                            studentsListingViewModel.onSearchQueryChanged(query)
-                        } else if (isInvitationsScreen) {
-                            invitationStudentViewModel.onSearchQueryChanged(query)
+                        when {
+                            isStudentsScreen -> studentsListingViewModel.onSearchQueryChanged(query)
+                            isStudentsInvitationsScreen -> invitationStudentViewModel.onSearchQueryChanged(query)
+                            isTeachersScreen -> teachersListingViewModel.onSearchQueryChanged(query)
+                            isTeachersInvitationsScreen -> invitationTeacherViewModel.onSearchQueryChanged(query)
                         }
                     },
                     onFilterClick = {
@@ -199,6 +216,14 @@ private fun getScreenInfo(
                     showFilter = true
                 )
                 is AcademyStudentsDestinations.InviteStudentGraph -> TopBarConfig(
+                    showSearch = true,
+                    showFilter = true
+                )
+                is AcademyTeachersDestinations.AcademyTeachersGraph -> TopBarConfig(
+                    showSearch = true,
+                    showFilter = true
+                )
+                is AcademyTeachersDestinations.InviteTeacherGraph -> TopBarConfig(
                     showSearch = true,
                     showFilter = true
                 )
@@ -270,7 +295,7 @@ private fun TopBar(
                     value = searchText,
                     onValueChange = { 
                         searchText = it
-                        // Solo enviar el cambio si estamos en la pantalla de estudiantes
+                        // Solo enviar el cambio si estamos en una pantalla de búsqueda activa
                         if (isActiveSearchScreen) {
                             onSearchQuery(it)
                         }
@@ -284,7 +309,7 @@ private fun TopBar(
                         },
                     placeholder = { 
                         Text(
-                            "Buscar estudiantes",
+                            "Buscar",
                             color = if (isFocused) 
                                 MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f) 
                             else 
