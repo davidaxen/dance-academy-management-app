@@ -1,0 +1,99 @@
+package com.daxen.mydancekmpsharedui.core.firebase.academy.classes.repository
+
+import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.SpecificClassModel
+import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.WeeklyClassModel
+import dev.gitlive.firebase.firestore.FirebaseFirestore
+import kotlinx.serialization.DeserializationStrategy
+
+class ClassRepositoryImpl(
+    private val firestore: FirebaseFirestore
+) : ClassRepository {
+
+    private suspend inline fun <reified T, R> getClassesByAcademyId(
+        academyId: String,
+        collectionName: String,
+        deserializer: DeserializationStrategy<T>,
+        map: (T, String) -> R
+    ): List<R> {
+        val documents = firestore
+            .collection("/academies/$academyId/$collectionName")
+            .get()
+            .documents
+
+        return documents.mapNotNull { doc ->
+            doc.data(deserializer)?.let { data ->
+                map(data, doc.id)
+            }
+        }
+    }
+
+    override suspend fun getWeeklyClassesByAcademyId(academyId: String): List<WeeklyClassModel> {
+        return getClassesByAcademyId(
+            academyId = academyId,
+            collectionName = "classes",
+            deserializer = WeeklyClassModel.serializer()
+        ) { response, uid ->
+            WeeklyClassModel(
+                dayOfWeek = response.dayOfWeek,
+                id = uid,
+                name = response.name,
+                hour = response.hour,
+                status = response.status,
+                teachers = response.teachers
+            )
+        }
+    }
+
+    override suspend fun getSpecificClassesByAcademyId(academyId: String): List<SpecificClassModel> {
+        return getClassesByAcademyId(
+            academyId = academyId,
+            collectionName = "specificClasses",
+            deserializer = SpecificClassModel.serializer()
+        ) { response, uid ->
+            SpecificClassModel(
+                date = response.date,
+                id = uid,
+                name = response.name,
+                hour = response.hour,
+                status = response.status,
+                teachers = response.teachers
+            )
+        }
+    }
+
+    override suspend fun saveWeeklyClass(academyId: String, weeklyClass: WeeklyClassModel): Result<WeeklyClassModel> {
+        return try {
+            val docRef = if (weeklyClass.id.isEmpty()) {
+                firestore.collection("/academies/$academyId/classes").add(weeklyClass)
+            } else {
+                firestore.collection("/academies/$academyId/classes")
+                    .document(weeklyClass.id)
+                    .set(weeklyClass)
+                firestore.collection("/academies/$academyId/classes").document(weeklyClass.id)
+            }
+            
+            val savedClass = weeklyClass.copy(id = docRef.id)
+            Result.success(savedClass)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun saveSpecificClass(academyId: String, specificClass: SpecificClassModel): Result<SpecificClassModel> {
+        return try {
+            val docRef = if (specificClass.id.isEmpty()) {
+                firestore.collection("/academies/$academyId/specificClasses").add(specificClass)
+            } else {
+                firestore.collection("/academies/$academyId/specificClasses")
+                    .document(specificClass.id)
+                    .set(specificClass)
+                firestore.collection("/academies/$academyId/specificClasses").document(specificClass.id)
+            }
+            
+            val savedClass = specificClass.copy(id = docRef.id)
+            Result.success(savedClass)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+} 
