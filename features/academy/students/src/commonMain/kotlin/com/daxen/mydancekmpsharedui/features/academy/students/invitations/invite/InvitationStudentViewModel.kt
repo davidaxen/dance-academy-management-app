@@ -40,8 +40,13 @@ class InvitationStudentViewModel(
     private val _isSubmitting = MutableStateFlow(false)
     val isSubmitting: StateFlow<Boolean> = _isSubmitting.asStateFlow()
     
+    // Error para el listado
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+    
+    // Error específico para el formulario de invitación
+    private val _formErrorMessage = MutableStateFlow<String?>(null)
+    val formErrorMessage: StateFlow<String?> = _formErrorMessage.asStateFlow()
     
     private val _isLoading = MutableStateFlow(true)
     
@@ -126,12 +131,16 @@ class InvitationStudentViewModel(
         _isModalVisible.value = !_isModalVisible.value
         if (!_isModalVisible.value) {
             _studentEmail.value = ""
-            _errorMessage.value = null
+            _formErrorMessage.value = null
         }
     }
     
     fun updateStudentEmail(email: String) {
         _studentEmail.value = email
+        // Limpiar el error al cambiar el email
+        if (_formErrorMessage.value != null) {
+            _formErrorMessage.value = null
+        }
     }
 
     fun sendInvitation() {
@@ -139,18 +148,27 @@ class InvitationStudentViewModel(
             val email = _studentEmail.value.trim()
             
             if (email.isEmpty()) {
-                _errorMessage.value = "El correo no puede estar vacío"
+                _formErrorMessage.value = "El correo no puede estar vacío"
                 return@launch
             }
             
             if (!isValidEmail(email)) {
-                _errorMessage.value = "Introduce un correo electrónico válido"
+                _formErrorMessage.value = "Introduce un correo electrónico válido"
                 return@launch
             }
 
             _isSubmitting.value = true
             
             try {
+                // Verificar si se puede crear la invitación
+                val (canCreate, errorMessage) = academyStudentsRepository.canCreateInvitation(email)
+                
+                if (!canCreate) {
+                    _formErrorMessage.value = errorMessage
+                    _isSubmitting.value = false
+                    return@launch
+                }
+                
                 // Crear un objeto Invitation completo
                 val invitation = Invitation(
                     email = email,
@@ -165,10 +183,10 @@ class InvitationStudentViewModel(
                     loadInvitations()
                     toggleModal()
                 } else {
-                    _errorMessage.value = "Error al enviar la invitación"
+                    _formErrorMessage.value = "Error al enviar la invitación"
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "Error: ${e.message}"
+                _formErrorMessage.value = "Error: ${e.message}"
             } finally {
                 _isSubmitting.value = false
             }

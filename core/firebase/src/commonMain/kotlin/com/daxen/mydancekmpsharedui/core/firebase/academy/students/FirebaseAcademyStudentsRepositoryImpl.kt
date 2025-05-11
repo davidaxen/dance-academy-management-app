@@ -82,4 +82,44 @@ class FirebaseAcademyStudentsRepositoryImpl(
             false
         }
     }
+    
+    override suspend fun checkUserExists(email: String): Boolean {
+        return try {
+            // Buscamos usuarios donde el campo "email" coincida con el email proporcionado
+            val querySnapshot = firestore.collection("users")
+                .where {
+                    "email" equalTo email
+                }
+                .get()
+            
+            querySnapshot.documents.isNotEmpty()
+        } catch (e: Exception) {
+            println("Error checking user existence: ${e.message}")
+            false
+        }
+    }
+    
+    override suspend fun getUserInvitations(email: String): List<InvitationModel> {
+        return try {
+            // Buscamos invitaciones para el usuario especificado
+            val documents = firestore.collection("invitations")
+                .where {
+                    "userId" equalTo email
+                }
+                .get()
+                .documents
+            
+            documents.map { doc ->
+                val invitation = doc.data(InvitationModel.serializer())
+                if (invitation.id.isEmpty()) {
+                    invitation.copy(id = doc.id)
+                } else {
+                    invitation
+                }
+            }
+        } catch (e: Exception) {
+            println("Error getting user invitations: ${e.message}")
+            emptyList()
+        }
+    }
 }

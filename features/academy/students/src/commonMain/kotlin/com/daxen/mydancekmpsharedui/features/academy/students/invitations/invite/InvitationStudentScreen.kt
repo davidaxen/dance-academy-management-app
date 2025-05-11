@@ -299,7 +299,7 @@ private fun EmptyContent() {
 private fun InviteStudentForm(viewModel: InvitationStudentViewModel) {
     val studentEmail by viewModel.studentEmail.collectAsState()
     val isSubmitting by viewModel.isSubmitting.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
+    val formErrorMessage by viewModel.formErrorMessage.collectAsState()
     
     Column(
         modifier = Modifier
@@ -325,8 +325,8 @@ private fun InviteStudentForm(viewModel: InvitationStudentViewModel) {
                     contentDescription = null
                 )
             },
-            isError = errorMessage != null,
-            supportingText = errorMessage?.let { { Text(it) } },
+            isError = formErrorMessage != null,
+            supportingText = formErrorMessage?.let { { Text(it) } },
             modifier = Modifier.fillMaxWidth(),
             enabled = !isSubmitting
         )

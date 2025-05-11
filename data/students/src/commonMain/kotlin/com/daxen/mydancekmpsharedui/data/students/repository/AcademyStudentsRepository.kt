@@ -12,4 +12,7 @@ interface AcademyStudentsRepository {
     suspend fun getInvitationsByAcademyID(id: String)
     suspend fun inviteStudentToAcademy(invitation: Invitation): Boolean
     suspend fun deleteInvitation(invitationId: String): Boolean
+    suspend fun checkUserExists(email: String): Boolean
+    suspend fun getUserInvitations(email: String): List<Invitation>
+    suspend fun canCreateInvitation(email: String): Pair<Boolean, String>
 }

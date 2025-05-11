@@ -2,6 +2,7 @@ package com.daxen.mydancekmpsharedui.data.students.repository
 
 import com.daxen.mydancekmpsharedui.core.firebase.academy.students.FirebaseAcademyStudentsRepository
 import com.daxen.mydancekmpsharedui.data.students.model.Invitation
+import com.daxen.mydancekmpsharedui.data.students.model.InvitationStatus
 import com.daxen.mydancekmpsharedui.data.students.model.Student
 import com.daxen.mydancekmpsharedui.data.students.model.mapper.toFirebaseModel
 import com.daxen.mydancekmpsharedui.data.students.model.mapper.toInvitation
@@ -43,5 +44,39 @@ class AcademyStudentsRepositoryImpl(
         }
         
         return success
+    }
+    
+    override suspend fun checkUserExists(email: String): Boolean {
+        return firebaseAcademyStudentsRepository.checkUserExists(email)
+    }
+    
+    override suspend fun getUserInvitations(email: String): List<Invitation> {
+        val invitationsResponse = firebaseAcademyStudentsRepository.getUserInvitations(email)
+        return invitationsResponse.map { it.toInvitation() }
+    }
+    
+    override suspend fun canCreateInvitation(email: String): Pair<Boolean, String> {
+        // Primero verificar si el usuario existe
+        val userExists = checkUserExists(email)
+        if (!userExists) {
+            return Pair(false, "El correo electrónico no está registrado en el sistema")
+        }
+        
+        // Verificar invitaciones existentes
+        val userInvitations = getUserInvitations(email)
+        if (userInvitations.isEmpty()) {
+            return Pair(true, "")
+        }
+        
+        // Verificar si hay alguna invitación aceptada o pendiente
+        val hasActiveInvitation = userInvitations.any { 
+            it.status == InvitationStatus.ACCEPTED || it.status == InvitationStatus.PENDING 
+        }
+        
+        return if (hasActiveInvitation) {
+            Pair(false, "El usuario ya tiene una invitación pendiente o aceptada")
+        } else {
+            Pair(true, "")
+        }
     }
 }

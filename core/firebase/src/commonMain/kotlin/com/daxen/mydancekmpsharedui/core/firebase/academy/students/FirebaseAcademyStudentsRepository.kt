@@ -8,4 +8,6 @@ interface FirebaseAcademyStudentsRepository {
     suspend fun inviteStudentToAcademy(invitation: InvitationModel): Boolean
     suspend fun getInvitationsByAcademyID(academyId: String): List<InvitationModel>
     suspend fun deleteInvitation(invitationId: String): Boolean
+    suspend fun checkUserExists(email: String): Boolean
+    suspend fun getUserInvitations(email: String): List<InvitationModel>
 }
