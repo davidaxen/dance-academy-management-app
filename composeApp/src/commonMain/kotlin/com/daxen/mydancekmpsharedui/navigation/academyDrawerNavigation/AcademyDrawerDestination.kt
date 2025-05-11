@@ -71,7 +71,7 @@ sealed class AcademyDrawerDestination<T>(
 
     @Serializable
     data object StudentsInvitation: AcademyDrawerDestination<AcademyStudentsDestinations.InviteStudentGraph>(
-        title = "Invitaciones",
+        title = "Invitaciones Alumnos",
         selectedIcon = {
              Icon(imageVector = Icons.Filled.PersonAdd, contentDescription = "")
         },
@@ -84,7 +84,7 @@ sealed class AcademyDrawerDestination<T>(
 
     @Serializable
     data object TeachersInvitation: AcademyDrawerDestination<AcademyTeachersDestinations.InviteTeacherGraph>(
-        title = "Invitaciones",
+        title = "Invitaciones Profesores",
         selectedIcon = {
             Icon(imageVector = Icons.Filled.PersonAdd, contentDescription = "")
         },
