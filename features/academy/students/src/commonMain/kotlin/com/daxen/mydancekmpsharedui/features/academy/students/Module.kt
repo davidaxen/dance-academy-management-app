@@ -14,5 +14,7 @@ val academyStudentsModule = module {
 
     singleOf(::StudentsListingViewModel)
     viewModelOf(::StudentsListingViewModel)
+    
+    singleOf(::InvitationStudentViewModel)
     viewModelOf(::InvitationStudentViewModel)
 }

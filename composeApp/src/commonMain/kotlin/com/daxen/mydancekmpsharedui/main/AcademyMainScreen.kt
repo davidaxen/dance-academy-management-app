@@ -65,6 +65,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
+import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentViewModelProvider
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingViewModelProvider
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerDestination
@@ -90,24 +91,34 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     
-    // Obtener el ViewModel compartido
+    // Obtener el ViewModel compartido de estudiantes
     val studentsListingViewModel = StudentsListingViewModelProvider.get()
     
-    // Obtener la query actual del ViewModel
-    val currentSearchQuery by studentsListingViewModel.searchQuery.collectAsState()
+    // Obtener el ViewModel compartido de invitaciones
+    val invitationStudentViewModel = InvitationStudentViewModelProvider.get()
     
-    // Obtener la pantalla actual
+    // Obtener la query actual del ViewModel según la pantalla
     val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     
-    // Configurar el título y los botones según la pantalla actual
-    val (screenTitle, topBarConfig) = getScreenInfo(currentDestination, drawerScreens)
-
-    // Variable para rastrear si estamos en la pantalla de estudiantes
+    // Determinar si estamos en la pantalla de estudiantes o invitaciones
     val isStudentsScreen = currentDestination?.hierarchy?.any { 
         it.hasRoute(AcademyStudentsDestinations.AcademyStudentsGraph::class)
-                || it.hasRoute(AcademyDrawerDestination.StudentsInvitation::class)
     } == true
+    
+    val isInvitationsScreen = currentDestination?.hierarchy?.any { 
+        it.hasRoute(AcademyStudentsDestinations.InviteStudentGraph::class)
+    } == true
+    
+    // Configurar el título y los botones según la pantalla actual
+    val (screenTitle, topBarConfig) = getScreenInfo(currentDestination, drawerScreens)
+    
+    // Obtener la consulta de búsqueda según la pantalla activa
+    val currentSearchQuery by if (isInvitationsScreen) {
+        invitationStudentViewModel.searchQuery.collectAsState()
+    } else {
+        studentsListingViewModel.searchQuery.collectAsState()
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -128,11 +139,13 @@ fun AcademyMainScreen(appNavController: NavHostController) {
                     showSearch = topBarConfig.showSearch,
                     showFilter = topBarConfig.showFilter,
                     initialSearchQuery = currentSearchQuery,
-                    isActiveSearchScreen = isStudentsScreen,
+                    isActiveSearchScreen = isStudentsScreen || isInvitationsScreen,
                     onSearchQuery = { query ->
-                        // Solo actualizamos la búsqueda si estamos en la pantalla de estudiantes
+                        // Dirigir la búsqueda al ViewModel correcto según la pantalla
                         if (isStudentsScreen) {
                             studentsListingViewModel.onSearchQueryChanged(query)
+                        } else if (isInvitationsScreen) {
+                            invitationStudentViewModel.onSearchQueryChanged(query)
                         }
                     },
                     onFilterClick = {

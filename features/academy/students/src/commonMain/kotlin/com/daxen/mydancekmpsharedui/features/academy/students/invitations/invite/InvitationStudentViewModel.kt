@@ -7,8 +7,11 @@ import com.daxen.mydancekmpsharedui.data.students.repository.AcademyStudentsRepo
 import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
 import com.daxen.mydancekmpsharedui.data.user.repository.AcademyUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed class InviteStudentUiState {
@@ -24,8 +27,8 @@ class InvitationStudentViewModel(
 ) : ViewModel() {
     private val currentAcademy: StateFlow<UserAcademy> = academyUserRepository.currentAcademy
     
-    private val _uiState = MutableStateFlow<InviteStudentUiState>(InviteStudentUiState.Loading)
-    val uiState: StateFlow<InviteStudentUiState> = _uiState.asStateFlow()
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
     
     private val _invitations = MutableStateFlow<List<Invitation>>(emptyList())
     
@@ -41,9 +44,44 @@ class InvitationStudentViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
     
+    private val _isLoading = MutableStateFlow(true)
+    
+    // Combinar las invitaciones con la consulta de búsqueda
+    private val filteredInvitations = combine(
+        _invitations, _searchQuery
+    ) { invitations, query ->
+        if (query.isBlank()) invitations
+        else {
+            val lowerQuery = query.lowercase()
+            invitations.filter {
+                it.email.contains(lowerQuery, ignoreCase = true)
+            }
+        }
+    }
+    
+    // Estado UI combinado
+    val uiState: StateFlow<InviteStudentUiState> = combine(
+        filteredInvitations, _isLoading, _searchQuery, _errorMessage
+    ) { filteredList, isLoading, query, error ->
+        when {
+            isLoading -> InviteStudentUiState.Loading
+            error != null -> InviteStudentUiState.Error(error)
+            filteredList.isEmpty() -> InviteStudentUiState.Empty
+            else -> InviteStudentUiState.Success(filteredList)
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        InviteStudentUiState.Loading
+    )
+    
     init {
         loadCurrentAcademy()
-        simulateInvitations()
+        loadInvitations()
+    }
+    
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
     }
     
     private fun loadCurrentAcademy() {
@@ -56,35 +94,46 @@ class InvitationStudentViewModel(
         }
     }
     
-    private fun simulateInvitations() {
+    private fun loadInvitations() {
         viewModelScope.launch {
-            // Simulamos carga
-            _uiState.value = InviteStudentUiState.Loading
+            _isLoading.value = true
             
-            // En una implementación real, aquí cargaríamos las invitaciones desde Firebase
-            val dummyInvitations = listOf(
-                Invitation(
-                    email = "estudiante1@example.com",
-                    academyId = "academyId1",
-                    academyName = "Mi Academia",
-                    status = "pending"
-                ),
-                Invitation(
-                    email = "estudiante2@example.com",
-                    academyId = "academyId1",
-                    academyName = "Mi Academia",
-                    status = "accepted"
-                )
-            )
-            
-            _invitations.value = dummyInvitations
-            
-            if (dummyInvitations.isEmpty()) {
-                _uiState.value = InviteStudentUiState.Empty
-            } else {
-                _uiState.value = InviteStudentUiState.Success(dummyInvitations)
+            try {
+                // En una implementación real, cargaríamos desde Firebase
+                // Por ahora simulamos datos
+                simulateInvitations()
+            } catch (e: Exception) {
+                _errorMessage.value = "Error al cargar invitaciones: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
+    }
+    
+    private fun simulateInvitations() {
+        // En una implementación real, aquí cargaríamos las invitaciones desde Firebase
+        val dummyInvitations = listOf(
+            Invitation(
+                email = "estudiante1@example.com",
+                academyId = "academyId1",
+                academyName = "Mi Academia",
+                status = "pending"
+            ),
+            Invitation(
+                email = "estudiante2@example.com",
+                academyId = "academyId1",
+                academyName = "Mi Academia",
+                status = "accepted"
+            ),
+            Invitation(
+                email = "profesor@example.com",
+                academyId = "academyId1",
+                academyName = "Mi Academia",
+                status = "pending"
+            )
+        )
+        
+        _invitations.value = dummyInvitations
     }
     
     fun toggleModal() {
@@ -136,7 +185,6 @@ class InvitationStudentViewModel(
                     }
                     
                     _invitations.value = updatedInvitations
-                    _uiState.value = InviteStudentUiState.Success(updatedInvitations)
                     toggleModal()
                 } else {
                     _errorMessage.value = "Error al enviar la invitación"
@@ -147,6 +195,10 @@ class InvitationStudentViewModel(
                 _isSubmitting.value = false
             }
         }
+    }
+    
+    fun refreshInvitations() {
+        loadInvitations()
     }
     
     private fun isValidEmail(email: String): Boolean {

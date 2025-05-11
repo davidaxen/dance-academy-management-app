@@ -12,11 +12,10 @@ import com.daxen.mydancekmpsharedui.data.students.model.DanceRole
 import com.daxen.mydancekmpsharedui.data.students.model.Student
 import com.daxen.mydancekmpsharedui.features.academy.students.detail.ui.StudentDetailScreen
 import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentScreen
-import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentViewModel
+import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentViewModelProvider
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingScreen
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingViewModelProvider
 import kotlinx.serialization.Serializable
-import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
 sealed class AcademyStudentsDestinations {
@@ -79,7 +78,7 @@ fun NavGraphBuilder.academyInvitationStudentsGraph() {
         startDestination = AcademyStudentsDestinations.InviteStudentRoute
     ) {
         composable<AcademyStudentsDestinations.InviteStudentRoute> {
-            val viewModel: InvitationStudentViewModel = koinViewModel()
+            val viewModel = InvitationStudentViewModelProvider.get()
             InvitationStudentScreen(
                 viewModel = viewModel,
             )
