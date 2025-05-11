@@ -38,6 +38,7 @@ include(":features:student:calendar")
 
 include(":features:academy:students")
 include(":features:academy:teachers")
+include(":features:academy:classes")
 
 include(":data:auth")
 include(":data:user")
