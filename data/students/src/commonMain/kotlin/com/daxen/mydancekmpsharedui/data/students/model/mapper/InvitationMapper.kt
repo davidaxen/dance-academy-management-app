@@ -21,6 +21,6 @@ fun Invitation.toFirebaseModel(): InvitationModel {
         academyId = this.academyId,
         academyName = this.academyName,
         role = "student",
-        status = this.status.value.lowercase() // Usamos el value del enum
+        status = this.status.value
     )
 } 

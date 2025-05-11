@@ -56,6 +56,9 @@ class InvitationStudentViewModel(
     private val _isDeletingInvitation = MutableStateFlow(false)
     val isDeletingInvitation: StateFlow<Boolean> = _isDeletingInvitation.asStateFlow()
     
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+    
     private val filteredInvitations = combine(
         academyStudentsRepository.invitations, _searchQuery
     ) { invitations, query ->
@@ -105,7 +108,9 @@ class InvitationStudentViewModel(
     
     private fun loadInvitations() {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (!_isRefreshing.value) {
+                _isLoading.value = true
+            }
             
             try {
                 val academyId = currentAcademy.value.uid
@@ -116,6 +121,7 @@ class InvitationStudentViewModel(
                 _errorMessage.value = "Error al cargar invitaciones: ${e.message}"
             } finally {
                 _isLoading.value = false
+                _isRefreshing.value = false
             }
         }
     }
@@ -225,8 +231,22 @@ class InvitationStudentViewModel(
     }
     
     fun refreshInvitations() {
+        _isRefreshing.value = true
+        
         _errorMessage.value = null
-        loadInvitations()
+        
+        viewModelScope.launch {
+            try {
+                val academyId = currentAcademy.value.uid
+                if (academyId.isNotEmpty()) {
+                    academyStudentsRepository.getInvitationsByAcademyID(academyId)
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Error al actualizar: ${e.message}"
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
     }
     
     private fun isValidEmail(email: String): Boolean {

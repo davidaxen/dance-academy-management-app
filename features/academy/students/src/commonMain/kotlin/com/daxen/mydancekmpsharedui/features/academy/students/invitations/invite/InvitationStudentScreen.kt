@@ -37,6 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -65,6 +66,7 @@ fun InvitationStudentScreen(
     val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
     val invitationToDelete by viewModel.invitationToDelete.collectAsState()
     val isDeletingInvitation by viewModel.isDeletingInvitation.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     val sheetState = rememberModalBottomSheetState()
     
     Scaffold(
@@ -88,18 +90,25 @@ fun InvitationStudentScreen(
         ) {
             when (val state = uiState) {
                 is InviteStudentUiState.Loading -> {
-                    LoadingComponent(text = "Cargando invitaciones...")
+                    if (!isRefreshing) {
+                        LoadingComponent(text = "Cargando invitaciones...")
+                    }
                 }
                 is InviteStudentUiState.Success -> {
-                    InvitationsList(
+                    InvitationsListWithRefresh(
                         invitations = state.invitations,
+                        onRefresh = { viewModel.refreshInvitations() },
+                        isRefreshing = isRefreshing,
                         onDeleteClick = { invitation ->
                             viewModel.showDeleteConfirmationDialog(invitation)
                         }
                     )
                 }
                 is InviteStudentUiState.Empty -> {
-                    EmptyContent()
+                    EmptyContentWithRefresh(
+                        onRefresh = { viewModel.refreshInvitations() },
+                        isRefreshing = isRefreshing
+                    )
                 }
                 is InviteStudentUiState.Error -> {
                     ErrorComponent(
@@ -120,7 +129,6 @@ fun InvitationStudentScreen(
         }
     }
     
-    // Diálogo de confirmación para eliminar invitación
     if (showDeleteDialog && invitationToDelete != null) {
         AlertDialog(
             onDismissRequest = { viewModel.hideDeleteConfirmationDialog() },
@@ -156,26 +164,80 @@ fun InvitationStudentScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun InvitationsList(
+private fun InvitationsListWithRefresh(
     invitations: List<Invitation>,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean,
     onDeleteClick: (Invitation) -> Unit
 ) {
-    LazyColumn(
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
         modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(invitations) { index, invitation ->
-            InvitationListItem(
-                invitation = invitation,
-                onDeleteClick = onDeleteClick
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            itemsIndexed(invitations) { index, invitation ->
+                InvitationListItem(
+                    invitation = invitation,
+                    onDeleteClick = onDeleteClick
+                )
+                
+                if (index < invitations.size - 1) {
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EmptyContentWithRefresh(
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean
+) {
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Email,
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
             )
             
-            if (index < invitations.size - 1) {
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
-                )
-            }
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = "No hay invitaciones",
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = "Pulsa el botón + para invitar a estudiantes a tu academia",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            )
         }
     }
 }
@@ -185,7 +247,6 @@ private fun InvitationListItem(
     invitation: Invitation,
     onDeleteClick: (Invitation) -> Unit
 ) {
-    // Determinar el icono y color basado en el estado
     val (icon, color, statusText) = when (invitation.status) {
         InvitationStatus.PENDING -> Triple(
             Icons.Default.PendingActions,
@@ -257,41 +318,6 @@ private fun StatusIcon(icon: ImageVector, color: Color) {
                 tint = color
             )
         }
-    }
-}
-
-@Composable
-private fun EmptyContent() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Email,
-            contentDescription = null,
-            modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = "No hay invitaciones",
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Text(
-            text = "Pulsa el botón + para invitar a estudiantes a tu academia",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-        )
     }
 }
 
