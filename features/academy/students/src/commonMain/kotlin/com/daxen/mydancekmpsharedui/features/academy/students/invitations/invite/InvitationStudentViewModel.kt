@@ -39,18 +39,14 @@ class InvitationStudentViewModel(
     
     private val _isSubmitting = MutableStateFlow(false)
     val isSubmitting: StateFlow<Boolean> = _isSubmitting.asStateFlow()
-    
-    // Error para el listado
+
     private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
     
-    // Error específico para el formulario de invitación
     private val _formErrorMessage = MutableStateFlow<String?>(null)
     val formErrorMessage: StateFlow<String?> = _formErrorMessage.asStateFlow()
     
     private val _isLoading = MutableStateFlow(true)
     
-    // Estado para el diálogo de confirmación
     private val _showDeleteDialog = MutableStateFlow(false)
     val showDeleteDialog: StateFlow<Boolean> = _showDeleteDialog.asStateFlow()
     
@@ -60,7 +56,6 @@ class InvitationStudentViewModel(
     private val _isDeletingInvitation = MutableStateFlow(false)
     val isDeletingInvitation: StateFlow<Boolean> = _isDeletingInvitation.asStateFlow()
     
-    // Combinar las invitaciones con la consulta de búsqueda
     private val filteredInvitations = combine(
         academyStudentsRepository.invitations, _searchQuery
     ) { invitations, query ->
@@ -72,8 +67,7 @@ class InvitationStudentViewModel(
             }
         }
     }
-    
-    // Estado UI combinado
+
     val uiState: StateFlow<InviteStudentUiState> = combine(
         filteredInvitations, _isLoading, _errorMessage
     ) { filteredList, isLoading, error ->
@@ -101,7 +95,6 @@ class InvitationStudentViewModel(
         viewModelScope.launch {
             try {
                 academyUserRepository.updateCurrentAcademy()
-                // Una vez obtenemos la academia actual, cargamos las invitaciones
                 loadInvitations()
             } catch (e: Exception) {
                 _errorMessage.value = "Error al cargar la academia: ${e.message}"
@@ -137,7 +130,6 @@ class InvitationStudentViewModel(
     
     fun updateStudentEmail(email: String) {
         _studentEmail.value = email
-        // Limpiar el error al cambiar el email
         if (_formErrorMessage.value != null) {
             _formErrorMessage.value = null
         }
@@ -221,12 +213,11 @@ class InvitationStudentViewModel(
                 
                 if (result) {
                     hideDeleteConfirmationDialog()
-                    // No es necesario volver a cargar las invitaciones ya que el repositorio actualiza el StateFlow
                 } else {
                     _errorMessage.value = "Error al eliminar la invitación"
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "Error al eliminar la invitación: ${e.message}"
+                _errorMessage.value = "Error al eliminar la invitación"
             } finally {
                 _isDeletingInvitation.value = false
             }
@@ -234,6 +225,7 @@ class InvitationStudentViewModel(
     }
     
     fun refreshInvitations() {
+        _errorMessage.value = null
         loadInvitations()
     }
     
