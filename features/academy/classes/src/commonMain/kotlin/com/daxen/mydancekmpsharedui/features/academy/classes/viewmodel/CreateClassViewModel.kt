@@ -81,7 +81,6 @@ class CreateClassViewModel(
     }
 
     private fun filterTeachers() {
-        println(_availableTeachers.value)
         val query = _teacherSearchQuery.value.lowercase()
         val selectedTeacherIds = _uiState.value.selectedTeachers.map { it.uid }
         
@@ -142,7 +141,7 @@ class CreateClassViewModel(
             
             // Convertir los profesores seleccionados al modelo esperado
             val teachers = state.selectedTeachers.map {
-                TeacherModel(id = it.uid, name = it.name)
+                TeacherModel(id = it.uid, name = "${it.name} ${it.lastName}")
             }
             
             val result = when (state.selectedClassType) {
