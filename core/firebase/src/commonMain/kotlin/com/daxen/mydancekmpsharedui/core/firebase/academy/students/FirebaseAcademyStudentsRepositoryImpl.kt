@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.core.firebase.academy.students
 import com.daxen.mydancekmpsharedui.core.firebase.academy.students.model.StudentModel
 import com.daxen.mydancekmpsharedui.core.firebase.academy.students.model.InvitationModel
 import dev.gitlive.firebase.firestore.FirebaseFirestore
+import kotlinx.datetime.Clock
 
 class FirebaseAcademyStudentsRepositoryImpl(
     private val firestore: FirebaseFirestore
@@ -32,14 +33,12 @@ class FirebaseAcademyStudentsRepositoryImpl(
 
     override suspend fun inviteStudentToAcademy(invitation: InvitationModel): Boolean {
         return try {
-            // Generamos un nuevo documento y obtenemos su ID
             val docRef = firestore.collection("invitations").document
-            
-            // Actualizamos el modelo con el ID generado
-            val invitationWithId = invitation.copy(id = docRef.id)
-            
-            // Guardamos el documento con su ID
-            docRef.set(invitationWithId)
+            val invitationWithIdAndTimestamp = invitation.copy(
+                id = docRef.id,
+                createdAt = Clock.System.now()
+            )
+            docRef.set(invitationWithIdAndTimestamp)
             
             true
         } catch (e: Exception) {

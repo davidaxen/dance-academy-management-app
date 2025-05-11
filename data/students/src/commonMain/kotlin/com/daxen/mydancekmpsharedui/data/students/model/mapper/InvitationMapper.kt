@@ -10,7 +10,8 @@ fun InvitationModel.toInvitation(): Invitation {
         email = this.userId, // Asumiendo que el userId es el email en este contexto
         academyId = this.academyId,
         academyName = this.academyName,
-        status = InvitationStatus.fromValue(this.status)
+        status = InvitationStatus.fromValue(this.status),
+        createdAt = this.createdAt
     )
 }
 
@@ -21,6 +22,7 @@ fun Invitation.toFirebaseModel(): InvitationModel {
         academyId = this.academyId,
         academyName = this.academyName,
         role = "student",
-        status = this.status.value
+        status = this.status.value,
+        createdAt = this.createdAt
     )
 } 

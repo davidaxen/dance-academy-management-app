@@ -30,6 +30,7 @@ kotlin {
             implementation(projects.core.firebase)
 
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.koin.core)
         }
     }

@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 
 sealed class InviteStudentUiState {
     data object Loading : InviteStudentUiState()
@@ -59,13 +61,19 @@ class InvitationStudentViewModel(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
     
+    // Primero ordenamos las invitaciones por fecha de creación (más recientes primero)
+    private val sortedInvitations = academyStudentsRepository.invitations.map { invitations ->
+        invitations.sortedByDescending { it.createdAt }
+    }
+    
+    // Luego aplicamos el filtro de búsqueda sobre las invitaciones ya ordenadas
     private val filteredInvitations = combine(
-        academyStudentsRepository.invitations, _searchQuery
-    ) { invitations, query ->
-        if (query.isBlank()) invitations
+        sortedInvitations, _searchQuery
+    ) { sortedList, query ->
+        if (query.isBlank()) sortedList
         else {
             val lowerQuery = query.lowercase()
-            invitations.filter {
+            sortedList.filter {
                 it.email.contains(lowerQuery, ignoreCase = true)
             }
         }
@@ -172,7 +180,8 @@ class InvitationStudentViewModel(
                     email = email,
                     academyId = currentAcademy.value.uid,
                     academyName = currentAcademy.value.name,
-                    status = InvitationStatus.PENDING
+                    status = InvitationStatus.PENDING,
+                    createdAt = Instant.DISTANT_PAST
                 )
                 
                 val result = academyStudentsRepository.inviteStudentToAcademy(invitation)
@@ -232,9 +241,7 @@ class InvitationStudentViewModel(
     
     fun refreshInvitations() {
         _isRefreshing.value = true
-        
         _errorMessage.value = null
-        
         viewModelScope.launch {
             try {
                 val academyId = currentAcademy.value.uid
