@@ -61,8 +61,8 @@ class InvitationStudentViewModel(
     
     // Estado UI combinado
     val uiState: StateFlow<InviteStudentUiState> = combine(
-        filteredInvitations, _isLoading, _searchQuery, _errorMessage
-    ) { filteredList, isLoading, query, error ->
+        filteredInvitations, _isLoading, _errorMessage
+    ) { filteredList, isLoading, error ->
         when {
             isLoading -> InviteStudentUiState.Loading
             error != null -> InviteStudentUiState.Error(error)
