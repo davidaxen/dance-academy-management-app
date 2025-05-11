@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.features.academy.students.invitations.invit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daxen.mydancekmpsharedui.data.students.model.Invitation
+import com.daxen.mydancekmpsharedui.data.students.model.InvitationStatus
 import com.daxen.mydancekmpsharedui.data.students.repository.AcademyStudentsRepository
 import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
 import com.daxen.mydancekmpsharedui.data.user.repository.AcademyUserRepository
@@ -117,19 +118,19 @@ class InvitationStudentViewModel(
                 email = "estudiante1@example.com",
                 academyId = "academyId1",
                 academyName = "Mi Academia",
-                status = "pending"
+                status = InvitationStatus.PENDING
             ),
             Invitation(
                 email = "estudiante2@example.com",
                 academyId = "academyId1",
                 academyName = "Mi Academia",
-                status = "accepted"
+                status = InvitationStatus.ACCEPTED
             ),
             Invitation(
                 email = "profesor@example.com",
                 academyId = "academyId1",
                 academyName = "Mi Academia",
-                status = "pending"
+                status = InvitationStatus.PENDING
             )
         )
         
@@ -177,7 +178,7 @@ class InvitationStudentViewModel(
                         email = email,
                         academyId = currentAcademy.value.uid,
                         academyName = currentAcademy.value.name,
-                        status = "pending"
+                        status = InvitationStatus.PENDING
                     )
                     
                     val updatedInvitations = _invitations.value.toMutableList().apply {

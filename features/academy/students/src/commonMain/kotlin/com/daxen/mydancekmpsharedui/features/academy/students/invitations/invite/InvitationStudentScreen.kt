@@ -50,6 +50,7 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 import com.daxen.mydancekmpsharedui.data.students.model.Invitation
+import com.daxen.mydancekmpsharedui.data.students.model.InvitationStatus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,20 +132,20 @@ private fun InvitationsList(invitations: List<Invitation>) {
 private fun InvitationListItem(invitation: Invitation) {
     // Determinar el icono y color basado en el estado
     val (icon, color, statusText) = when (invitation.status) {
-        "pending" -> Triple(
+        InvitationStatus.PENDING -> Triple(
             Icons.Default.PendingActions,
             Color(0xFFFFA000),
-            "Pendiente"
+            InvitationStatus.PENDING.localizedValue
         )
-        "accepted" -> Triple(
+        InvitationStatus.ACCEPTED -> Triple(
             Icons.Default.CheckCircle,
             Color(0xFF4CAF50),
-            "Aceptada"
+            InvitationStatus.ACCEPTED.localizedValue
         )
         else -> Triple(
             Icons.Default.ErrorOutline,
             Color(0xFFF44336),
-            "Rechazada"
+            InvitationStatus.REJECTED.localizedValue
         )
     }
     
