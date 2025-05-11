@@ -1,5 +1,6 @@
 package com.daxen.mydancekmpsharedui
 
+import com.daxen.mydancekmpsharedui.features.academy.classes.academyClassesModule
 import com.daxen.mydancekmpsharedui.features.academy.students.academyStudentsModule
 import com.daxen.mydancekmpsharedui.features.academy.teachers.academyTeachersModule
 import com.daxen.mydancekmpsharedui.features.auth.authModule
@@ -15,6 +16,7 @@ val appModule = module {
         reservationModule,
         calendarModule,
         academyStudentsModule,
-        academyTeachersModule
+        academyTeachersModule,
+        academyClassesModule
     )
 }

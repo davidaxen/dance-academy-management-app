@@ -2,15 +2,18 @@ package com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.AccountBox
+import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import com.daxen.mydancekmpsharedui.features.academy.classes.AcademyClassesDestinations
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.academy.teachers.AcademyTeachersDestinations
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
@@ -20,6 +23,7 @@ enum class DrawerSection(val title: String) {
     User("Usuario"),
     Students("Alumnos"),
     Teachers("Profesores"),
+    Classes("Clases"),
 }
 
 @Serializable
@@ -41,6 +45,19 @@ sealed class AcademyDrawerDestination<T>(
         },
         section = DrawerSection.User,
         route = UserGraph
+    )
+
+    @Serializable
+    data object ClassesList: AcademyDrawerDestination<AcademyClassesDestinations.AcademyClassesGraph>(
+        title = "Tus Clases",
+        selectedIcon = {
+            Icon(imageVector = Icons.Filled.Event, contentDescription = "")
+        },
+        unselectedIcon = {
+            Icon(imageVector = Icons.Outlined.Event, contentDescription = "")
+        },
+        section = DrawerSection.Classes,
+        route = AcademyClassesDestinations.AcademyClassesGraph
     )
 
     @Serializable
