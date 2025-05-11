@@ -42,6 +42,9 @@ class TeachersListingViewModel(
     private val _isLoading = MutableStateFlow(true)
     private val _error = MutableStateFlow<String?>(null)
     
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+    
     private val _teachers: StateFlow<List<Teacher>> = teachersRepository.teachers
 
     private val filteredTeachers = combine(
@@ -62,7 +65,7 @@ class TeachersListingViewModel(
         filteredTeachers, _isLoading, _searchQuery, _error
     ) { filteredList, isLoading, query, error ->
         when {
-            isLoading -> TeachersListingUiState.Loading
+            isLoading && !_isRefreshing.value -> TeachersListingUiState.Loading
             error != null -> TeachersListingUiState.Error(error)
             filteredList.isEmpty() -> TeachersListingUiState.Empty(isFiltered = query.isNotEmpty())
             else -> TeachersListingUiState.Success(filteredList)
@@ -83,7 +86,9 @@ class TeachersListingViewModel(
 
     private fun loadTeachers() {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (!_isRefreshing.value) {
+                _isLoading.value = true
+            }
             _error.value = null
             
             try {
@@ -92,11 +97,13 @@ class TeachersListingViewModel(
                 _error.value = "Error al obtener los profesores: ${e.message}"
             } finally {
                 _isLoading.value = false
+                _isRefreshing.value = false
             }
         }
     }
     
     fun refreshTeachers() {
+        _isRefreshing.value = true
         loadTeachers()
     }
 } 

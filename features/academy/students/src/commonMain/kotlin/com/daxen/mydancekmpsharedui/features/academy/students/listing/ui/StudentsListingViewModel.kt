@@ -42,6 +42,9 @@ class StudentsListingViewModel(
     private val _isLoading = MutableStateFlow(true)
     private val _error = MutableStateFlow<String?>(null)
     
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+    
     private val _students: StateFlow<List<Student>> = studentsRepository.students
 
     private val filteredStudents = combine(
@@ -62,7 +65,7 @@ class StudentsListingViewModel(
         filteredStudents, _isLoading, _searchQuery, _error
     ) { filteredList, isLoading, query, error ->
         when {
-            isLoading -> StudentsListingUiState.Loading
+            isLoading && !_isRefreshing.value -> StudentsListingUiState.Loading
             error != null -> StudentsListingUiState.Error(error)
             filteredList.isEmpty() -> StudentsListingUiState.Empty(isFiltered = query.isNotEmpty())
             else -> StudentsListingUiState.Success(filteredList)
@@ -83,7 +86,9 @@ class StudentsListingViewModel(
 
     private fun loadStudents() {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (!_isRefreshing.value) {
+                _isLoading.value = true
+            }
             _error.value = null
             
             try {
@@ -92,11 +97,13 @@ class StudentsListingViewModel(
                 _error.value = "Error al obtener los estudiantes: ${e.message}"
             } finally {
                 _isLoading.value = false
+                _isRefreshing.value = false
             }
         }
     }
     
     fun refreshStudents() {
+        _isRefreshing.value = true
         loadStudents()
     }
 }

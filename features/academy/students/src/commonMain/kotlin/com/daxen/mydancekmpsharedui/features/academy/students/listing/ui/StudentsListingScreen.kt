@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,6 +24,7 @@ fun StudentsListingScreen(
     onStudentClick: (student: Student) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
@@ -31,9 +33,15 @@ fun StudentsListingScreen(
             )
             is StudentsListingUiState.Success -> StudentsList(
                 students = state.students,
-                onStudentClick = onStudentClick
+                onStudentClick = onStudentClick,
+                onRefresh = { viewModel.refreshStudents() },
+                isRefreshing = isRefreshing
             )
-            is StudentsListingUiState.Empty -> EmptyContent(isFiltered = state.isFiltered)
+            is StudentsListingUiState.Empty -> EmptyContentWithRefresh(
+                isFiltered = state.isFiltered,
+                onRefresh = { viewModel.refreshStudents() },
+                isRefreshing = isRefreshing
+            )
             is StudentsListingUiState.Error -> {
                 ErrorComponent(
                     message = state.message,
@@ -44,43 +52,54 @@ fun StudentsListingScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EmptyContent(isFiltered: Boolean) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+private fun EmptyContentWithRefresh(
+    isFiltered: Boolean,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean
+) {
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize()
     ) {
-        Icon(
-            imageVector = if (isFiltered) Icons.Default.Search else Icons.Default.ErrorOutline,
-            contentDescription = null,
-            modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = if (isFiltered) 
-                "No se encontraron estudiantes con esa búsqueda" 
-            else 
-                "No hay estudiantes disponibles",
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Text(
-            text = if (isFiltered)
-                "Intenta con otros términos de búsqueda"
-            else
-                "Agrega estudiantes a tu academia para comenzar",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = if (isFiltered) Icons.Default.Search else Icons.Default.ErrorOutline,
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = if (isFiltered) 
+                    "No se encontraron estudiantes con esa búsqueda" 
+                else 
+                    "No hay estudiantes disponibles",
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = if (isFiltered)
+                    "Intenta con otros términos de búsqueda"
+                else
+                    "Agrega estudiantes a tu academia para comenzar",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }

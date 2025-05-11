@@ -8,11 +8,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,26 +22,35 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.data.teachers.model.Teacher
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeachersList(
     teachers: List<Teacher>,
     onTeacherClick: (
         teacher: Teacher
-    ) -> Unit
+    ) -> Unit,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(teachers) { index, teacher ->
-            TeacherListItem(teacher = teacher, onClick = dropUnlessResumed {
-                onTeacherClick(teacher)
-            })
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            itemsIndexed(teachers) { index, teacher ->
+                TeacherListItem(teacher = teacher, onClick = dropUnlessResumed {
+                    onTeacherClick(teacher)
+                })
 
-            if (index < teachers.size - 1) {
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                if (index < teachers.size - 1) {
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     }
