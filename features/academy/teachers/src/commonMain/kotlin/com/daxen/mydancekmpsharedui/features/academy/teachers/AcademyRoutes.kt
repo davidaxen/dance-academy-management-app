@@ -10,6 +10,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.daxen.mydancekmpsharedui.data.teachers.model.Teacher
 import com.daxen.mydancekmpsharedui.features.academy.teachers.detail.ui.TeacherDetailScreen
+import com.daxen.mydancekmpsharedui.features.academy.teachers.invitations.invite.InvitationTeacherScreen
+import com.daxen.mydancekmpsharedui.features.academy.teachers.invitations.invite.InvitationTeacherViewModelProvider
 import com.daxen.mydancekmpsharedui.features.academy.teachers.listing.ui.TeachersListingScreen
 import com.daxen.mydancekmpsharedui.features.academy.teachers.listing.ui.TeachersListingViewModelProvider
 import kotlinx.serialization.Serializable
@@ -75,7 +77,10 @@ fun NavGraphBuilder.academyInvitationTeachersGraph() {
         startDestination = AcademyTeachersDestinations.InviteTeacherRoute
     ) {
         composable<AcademyTeachersDestinations.InviteTeacherRoute> {
-            // Aquí se implementará la pantalla de invitación de profesores
+            val viewModel = InvitationTeacherViewModelProvider.get()
+            InvitationTeacherScreen(
+                viewModel = viewModel
+            )
         }
     }
 }

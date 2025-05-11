@@ -81,4 +81,17 @@ sealed class AcademyDrawerDestination<T>(
         section = DrawerSection.Students,
         route = AcademyStudentsDestinations.InviteStudentGraph
     )
+
+    @Serializable
+    data object TeachersInvitation: AcademyDrawerDestination<AcademyTeachersDestinations.InviteTeacherGraph>(
+        title = "Invitaciones",
+        selectedIcon = {
+            Icon(imageVector = Icons.Filled.PersonAdd, contentDescription = "")
+        },
+        unselectedIcon = {
+            Icon(imageVector = Icons.Outlined.PersonAdd, contentDescription = "")
+        },
+        section = DrawerSection.Teachers,
+        route = AcademyTeachersDestinations.InviteTeacherGraph
+    )
 }
