@@ -86,6 +86,7 @@ fun AcademyMainScreen(appNavController: NavHostController) {
             AcademyDrawerDestination.User,
             AcademyDrawerDestination.StudentsList,
             AcademyDrawerDestination.StudentsInvitation,
+            AcademyDrawerDestination.TeachersList,
         )
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)

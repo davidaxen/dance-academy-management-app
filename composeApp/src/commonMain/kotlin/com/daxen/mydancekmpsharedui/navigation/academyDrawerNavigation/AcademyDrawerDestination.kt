@@ -2,20 +2,24 @@ package com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.AccountBox
+import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
+import com.daxen.mydancekmpsharedui.features.academy.teachers.AcademyTeachersDestinations
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import kotlinx.serialization.Serializable
 
 enum class DrawerSection(val title: String) {
     User("Usuario"),
     Students("Alumnos"),
+    Teachers("Profesores"),
 }
 
 @Serializable
@@ -43,13 +47,26 @@ sealed class AcademyDrawerDestination<T>(
     data object StudentsList: AcademyDrawerDestination<AcademyStudentsDestinations.AcademyStudentsGraph>(
         title = "Tus Alumnos",
         selectedIcon = {
-             Icon(imageVector = Icons.Filled.People, contentDescription = "")
+             Icon(imageVector = Icons.Filled.Groups, contentDescription = "")
         },
         unselectedIcon = {
-             Icon(imageVector = Icons.Outlined.People, contentDescription = "")
+             Icon(imageVector = Icons.Outlined.Groups, contentDescription = "")
         },
         section = DrawerSection.Students,
         route = AcademyStudentsDestinations.AcademyStudentsGraph
+    )
+
+    @Serializable
+    data object TeachersList: AcademyDrawerDestination<AcademyTeachersDestinations.AcademyTeachersGraph>(
+        title = "Tus Profesores",
+        selectedIcon = {
+            Icon(imageVector = Icons.Filled.People, contentDescription = "")
+        },
+        unselectedIcon = {
+            Icon(imageVector = Icons.Outlined.People, contentDescription = "")
+        },
+        section = DrawerSection.Teachers,
+        route = AcademyTeachersDestinations.AcademyTeachersGraph
     )
 
     @Serializable

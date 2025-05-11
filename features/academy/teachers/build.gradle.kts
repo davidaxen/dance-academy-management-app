@@ -37,7 +37,7 @@ kotlin {
             implementation(projects.data.user)
             implementation(projects.data.classes)
             implementation(projects.data.reservation)
-            implementation(projects.data.students)
+            implementation(projects.data.teachers)
 
             implementation(libs.koin.core)
             implementation(libs.bundles.koin.compose)

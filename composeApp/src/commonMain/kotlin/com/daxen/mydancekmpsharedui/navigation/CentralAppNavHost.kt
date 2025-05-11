@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.daxen.mydancekmpsharedui.features.academy.students.academyStudentsSectionsGraph
+import com.daxen.mydancekmpsharedui.features.academy.teachers.academyTeachersSectionsGraph
 import com.daxen.mydancekmpsharedui.features.auth.AcademyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.DanceRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
@@ -85,6 +86,9 @@ fun CentralAppNavHost(
         )
 
         academyStudentsSectionsGraph(
+            onBackClick = { navController.popBackStack() }
+        )
+        academyTeachersSectionsGraph(
             onBackClick = { navController.popBackStack() }
         )
 
