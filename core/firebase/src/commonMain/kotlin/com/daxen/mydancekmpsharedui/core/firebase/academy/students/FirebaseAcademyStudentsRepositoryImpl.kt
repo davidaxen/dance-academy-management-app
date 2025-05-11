@@ -1,6 +1,7 @@
 package com.daxen.mydancekmpsharedui.core.firebase.academy.students
 
 import com.daxen.mydancekmpsharedui.core.firebase.academy.students.model.StudentModel
+import com.daxen.mydancekmpsharedui.core.firebase.academy.students.model.InvitationModel
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 
 class FirebaseAcademyStudentsRepositoryImpl(
@@ -29,7 +30,22 @@ class FirebaseAcademyStudentsRepositoryImpl(
         }
     }
 
-    override suspend fun inviteStudentToAcademy(): Boolean {
-        return false
+    override suspend fun inviteStudentToAcademy(userId: String, academyId: String, academyName: String): Boolean {
+        return try {
+            val invitation = InvitationModel(
+                userId = userId,
+                academyId = academyId,
+                role = "student",
+                academyName = academyName
+            )
+
+            firestore.collection("invitations")
+                .add(invitation)
+            
+            true
+        } catch (e: Exception) {
+            println("Error inviting student: ${e.message}")
+            false
+        }
     }
 }
