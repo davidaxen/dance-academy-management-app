@@ -22,19 +22,20 @@ import kotlinx.datetime.todayIn
 class AcademyClassesViewModel(
     private val academyClassesRepository: AcademyClassesRepository,
     academyUserRepository: AcademyUserRepository
-): ViewModel() {
+) : ViewModel() {
     private val currentAcademy: StateFlow<UserAcademy> = academyUserRepository.currentAcademy
 
     private val _uiState = MutableStateFlow<AcademyClassesUiState>(AcademyClassesUiState.Loading)
     val uiState: StateFlow<AcademyClassesUiState> = _uiState
-    
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
-    
+
     private val _selectedWeekStartDate = MutableStateFlow<LocalDate>(getCurrentWeekMonday())
     val selectedWeekStartDate: StateFlow<LocalDate> = _selectedWeekStartDate
 
-    private val _selectedDate = MutableStateFlow<LocalDate>(Clock.System.todayIn(TimeZone.currentSystemDefault()))
+    private val _selectedDate =
+        MutableStateFlow(Clock.System.todayIn(TimeZone.currentSystemDefault()))
     val selectedDate: StateFlow<LocalDate> = _selectedDate
 
     init {
@@ -55,7 +56,7 @@ class AcademyClassesViewModel(
             DayOfWeek.SUNDAY -> 6
             else -> 0
         }
-        
+
         return today.minus(mondayOffset, DateTimeUnit.DAY)
     }
 
@@ -72,12 +73,12 @@ class AcademyClassesViewModel(
         _selectedDate.value = newStartDate
         loadClasses()
     }
-    
+
     fun onDateSelected(date: LocalDate) {
         _selectedDate.value = date
         loadClasses()
     }
-    
+
     fun refreshClasses() {
         viewModelScope.launch {
             _isRefreshing.value = true
@@ -105,9 +106,9 @@ class AcademyClassesViewModel(
                     DayOfWeek.SUNDAY -> "SUNDAY"
                     else -> "MONDAY"
                 }
-                
+
                 val dayWeeklyClasses = weeklyClasses.filter { it.dayOfWeek == selectedDayOfWeek }
-                
+
                 // Filtrar las clases específicas para la fecha seleccionada exacta
                 val daySpecificClasses = specificClasses.filter { specificClass ->
                     try {
@@ -115,27 +116,28 @@ class AcademyClassesViewModel(
                         val parts = specificClass.date.split("-")
                         if (parts.size == 3) {
                             val classDate = LocalDate(parts[0].toInt(), parts[1].toInt(), parts[2].toInt())
-                            
+
                             // Verificar si la fecha coincide exactamente con la seleccionada
-                            classDate.year == _selectedDate.value.year && 
-                            classDate.month == _selectedDate.value.month && 
+                            classDate.year == _selectedDate.value.year &&
+                            classDate.month == _selectedDate.value.month &&
                             classDate.dayOfMonth == _selectedDate.value.dayOfMonth
                         } else false
                     } catch (e: Exception) {
                         false
                     }
                 }
-                
+
                 // Crear un único grupo para el día seleccionado
                 val classesGroup = ClassesGroup(
                     dayOfWeek = _selectedDate.value.dayOfWeek,
                     weeklyClasses = dayWeeklyClasses,
                     specificClasses = daySpecificClasses
                 )
-                
+
                 _uiState.value = AcademyClassesUiState.Success(listOf(classesGroup))
             } catch (e: Exception) {
-                _uiState.value = AcademyClassesUiState.Error(e.message ?: "Error al cargar las clases")
+                _uiState.value =
+                    AcademyClassesUiState.Error(e.message ?: "Error al cargar las clases")
             }
         }
     }

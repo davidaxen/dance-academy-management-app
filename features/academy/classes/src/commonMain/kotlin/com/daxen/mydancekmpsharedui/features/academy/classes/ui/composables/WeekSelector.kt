@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,15 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.minus
 import kotlinx.datetime.plus
-import kotlinx.datetime.todayIn
 
 @Composable
 fun WeekSelector(
@@ -85,7 +79,7 @@ fun WeekSelector(
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Semana anterior",
                         modifier = Modifier.size(16.dp)
                     )
@@ -119,7 +113,7 @@ fun WeekSelector(
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = "Semana siguiente",
                         modifier = Modifier.size(16.dp)
                     )
