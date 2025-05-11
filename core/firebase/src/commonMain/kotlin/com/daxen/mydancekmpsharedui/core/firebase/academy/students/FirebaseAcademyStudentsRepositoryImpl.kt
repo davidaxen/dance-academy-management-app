@@ -32,8 +32,14 @@ class FirebaseAcademyStudentsRepositoryImpl(
 
     override suspend fun inviteStudentToAcademy(invitation: InvitationModel): Boolean {
         return try {
-            firestore.collection("invitations")
-                .add(invitation)
+            // Generamos un nuevo documento y obtenemos su ID
+            val docRef = firestore.collection("invitations").document
+            
+            // Actualizamos el modelo con el ID generado
+            val invitationWithId = invitation.copy(id = docRef.id)
+            
+            // Guardamos el documento con su ID
+            docRef.set(invitationWithId)
             
             true
         } catch (e: Exception) {
@@ -52,7 +58,13 @@ class FirebaseAcademyStudentsRepositoryImpl(
                 .documents
                 
             documents.map { doc ->
-                doc.data(InvitationModel.serializer())
+                // Aseguramos que el ID del documento esté incluido en el modelo
+                val invitation = doc.data(InvitationModel.serializer())
+                if (invitation.id.isEmpty()) {
+                    invitation.copy(id = doc.id)
+                } else {
+                    invitation
+                }
             }
         } catch (e: Exception) {
             println("Error getting invitations: ${e.message}")
@@ -60,23 +72,10 @@ class FirebaseAcademyStudentsRepositoryImpl(
         }
     }
     
-    override suspend fun deleteInvitation(email: String, academyId: String): Boolean {
+    override suspend fun deleteInvitation(invitationId: String): Boolean {
         return try {
-            // Primero buscamos la invitación que coincida con el email (userId) y academyId
-            val querySnapshot = firestore.collection("invitations")
-                .where {
-                    "userId" equalTo email
-                    "academyId" equalTo academyId
-                }
-                .get()
-            
-            if (querySnapshot.documents.isEmpty()) {
-                return false
-            }
-            
-            // Eliminamos el primer documento que coincide
-            val docId = querySnapshot.documents.first().id
-            firestore.collection("invitations").document(docId).delete()
+            // Eliminamos directamente usando el ID
+            firestore.collection("invitations").document(invitationId).delete()
             true
         } catch (e: Exception) {
             println("Error deleting invitation: ${e.message}")

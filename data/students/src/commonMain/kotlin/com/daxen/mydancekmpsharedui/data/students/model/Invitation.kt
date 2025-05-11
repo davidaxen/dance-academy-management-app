@@ -1,6 +1,7 @@
 package com.daxen.mydancekmpsharedui.data.students.model
 
 data class Invitation(
+    val id: String = "",
     val email: String,
     val academyId: String,
     val academyName: String,

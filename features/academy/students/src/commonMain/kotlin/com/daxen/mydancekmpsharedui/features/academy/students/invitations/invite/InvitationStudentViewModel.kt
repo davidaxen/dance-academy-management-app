@@ -188,11 +188,18 @@ class InvitationStudentViewModel(
     fun deleteInvitation() {
         val invitation = _invitationToDelete.value ?: return
         
+        // Verificar que la invitación tenga un ID
+        if (invitation.id.isEmpty()) {
+            _errorMessage.value = "No se puede eliminar: ID de invitación no válido"
+            hideDeleteConfirmationDialog()
+            return
+        }
+        
         viewModelScope.launch {
             _isDeletingInvitation.value = true
             
             try {
-                val result = academyStudentsRepository.deleteInvitation(invitation)
+                val result = academyStudentsRepository.deleteInvitation(invitation.id)
                 
                 if (result) {
                     hideDeleteConfirmationDialog()

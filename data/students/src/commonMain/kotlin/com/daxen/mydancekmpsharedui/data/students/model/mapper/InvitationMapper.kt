@@ -6,6 +6,7 @@ import com.daxen.mydancekmpsharedui.data.students.model.InvitationStatus
 
 fun InvitationModel.toInvitation(): Invitation {
     return Invitation(
+        id = this.id,
         email = this.userId, // Asumiendo que el userId es el email en este contexto
         academyId = this.academyId,
         academyName = this.academyName,
@@ -15,6 +16,7 @@ fun InvitationModel.toInvitation(): Invitation {
 
 fun Invitation.toFirebaseModel(): InvitationModel {
     return InvitationModel(
+        id = this.id,
         userId = this.email, // Guardamos el email como userId
         academyId = this.academyId,
         academyName = this.academyName,

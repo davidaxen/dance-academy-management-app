@@ -7,5 +7,5 @@ interface FirebaseAcademyStudentsRepository {
     suspend fun getStudentsByAcademyID(id: String): List<StudentModel>
     suspend fun inviteStudentToAcademy(invitation: InvitationModel): Boolean
     suspend fun getInvitationsByAcademyID(academyId: String): List<InvitationModel>
-    suspend fun deleteInvitation(email: String, academyId: String): Boolean
+    suspend fun deleteInvitation(invitationId: String): Boolean
 }

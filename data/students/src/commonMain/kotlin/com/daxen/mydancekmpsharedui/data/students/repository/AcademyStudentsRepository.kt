@@ -11,5 +11,5 @@ interface AcademyStudentsRepository {
     suspend fun getStudentsByAcademyID(id: String)
     suspend fun getInvitationsByAcademyID(id: String)
     suspend fun inviteStudentToAcademy(invitation: Invitation): Boolean
-    suspend fun deleteInvitation(invitation: Invitation): Boolean
+    suspend fun deleteInvitation(invitationId: String): Boolean
 }

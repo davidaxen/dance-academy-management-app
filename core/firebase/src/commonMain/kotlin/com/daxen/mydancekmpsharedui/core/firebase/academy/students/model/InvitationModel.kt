@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class InvitationModel(
+    val id: String = "",
     val userId: String = "",
     val academyId: String = "",
     val role: String = "",
