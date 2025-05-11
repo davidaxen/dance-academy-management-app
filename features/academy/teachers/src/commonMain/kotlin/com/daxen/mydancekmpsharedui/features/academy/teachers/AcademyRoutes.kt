@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.daxen.mydancekmpsharedui.data.teachers.model.Teacher
+import com.daxen.mydancekmpsharedui.features.academy.teachers.detail.ui.TeacherDetailScreen
 import com.daxen.mydancekmpsharedui.features.academy.teachers.listing.ui.TeachersListingScreen
 import com.daxen.mydancekmpsharedui.features.academy.teachers.listing.ui.TeachersListingViewModelProvider
 import kotlinx.serialization.Serializable
@@ -108,6 +109,9 @@ fun NavGraphBuilder.academyTeachersSectionsGraph(
             profileImageUrl = teacherDetail.profileImageUrl,
             joinedAt = teacherDetail.joinedAt
         )
-        // Aquí se implementará la pantalla de detalle de profesor
+        TeacherDetailScreen(
+            teacher = teacher,
+            onBackClick = onBackClick
+        )
     }
 } 
