@@ -15,8 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,80 +45,75 @@ fun WeekSelector(
 ) {
     val padding = LocalPadding.current
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(padding.small)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(padding.small)
+        // Mostrar mes y año
+        Text(
+            text = getMesAnoText(selectedDate),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(padding.small))
+
+        // Fila de días de la semana
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Mostrar mes y año
-            Text(
-                text = getMesAnoText(selectedDate),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(padding.small))
-
-            // Fila de días de la semana
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            IconButton(
+                onClick = onPreviousWeekClick,
+                modifier = Modifier.size(32.dp)
             ) {
-                IconButton(
-                    onClick = onPreviousWeekClick,
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "Semana anterior",
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "Semana anterior",
+                    modifier = Modifier.size(16.dp)
+                )
+            }
 
-                // Mostrar todos los días de la semana
-                Row(
-                    modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    // Generar fechas para la semana actual (comenzando en lunes)
-                    val weekDates = generateWeekDates(weekStartDate)
+            // Mostrar todos los días de la semana
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Generar fechas para la semana actual (comenzando en lunes)
+                val weekDates = generateWeekDates(weekStartDate)
 
-                    // Mostramos todos los días de la semana (índices 0-6)
-                    for (i in 0..6) {
-                        val date = weekDates[i]
-                        val isSelected = selectedDate.dayOfMonth == date.dayOfMonth &&
-                                selectedDate.month == date.month &&
-                                selectedDate.year == date.year
+                // Mostramos todos los días de la semana (índices 0-6)
+                for (i in 0..6) {
+                    val date = weekDates[i]
+                    val isSelected = selectedDate.dayOfMonth == date.dayOfMonth &&
+                            selectedDate.month == date.month &&
+                            selectedDate.year == date.year
 
-                        DayItem(
-                            date = date,
-                            isSelected = isSelected,
-                            onClick = { onDateSelected(date) }
-                        )
-                    }
-                }
-
-                IconButton(
-                    onClick = onNextWeekClick,
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Semana siguiente",
-                        modifier = Modifier.size(16.dp)
+                    DayItem(
+                        date = date,
+                        isSelected = isSelected,
+                        onClick = { onDateSelected(date) }
                     )
                 }
             }
+
+            IconButton(
+                onClick = onNextWeekClick,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "Semana siguiente",
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
+
 }
 
 @Composable
