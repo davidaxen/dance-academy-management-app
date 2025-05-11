@@ -45,6 +45,16 @@ class InvitationStudentViewModel(
     
     private val _isLoading = MutableStateFlow(true)
     
+    // Estado para el diálogo de confirmación
+    private val _showDeleteDialog = MutableStateFlow(false)
+    val showDeleteDialog: StateFlow<Boolean> = _showDeleteDialog.asStateFlow()
+    
+    private val _invitationToDelete = MutableStateFlow<Invitation?>(null)
+    val invitationToDelete: StateFlow<Invitation?> = _invitationToDelete.asStateFlow()
+    
+    private val _isDeletingInvitation = MutableStateFlow(false)
+    val isDeletingInvitation: StateFlow<Boolean> = _isDeletingInvitation.asStateFlow()
+    
     // Combinar las invitaciones con la consulta de búsqueda
     private val filteredInvitations = combine(
         academyStudentsRepository.invitations, _searchQuery
@@ -161,6 +171,39 @@ class InvitationStudentViewModel(
                 _errorMessage.value = "Error: ${e.message}"
             } finally {
                 _isSubmitting.value = false
+            }
+        }
+    }
+    
+    fun showDeleteConfirmationDialog(invitation: Invitation) {
+        _invitationToDelete.value = invitation
+        _showDeleteDialog.value = true
+    }
+    
+    fun hideDeleteConfirmationDialog() {
+        _showDeleteDialog.value = false
+        _invitationToDelete.value = null
+    }
+    
+    fun deleteInvitation() {
+        val invitation = _invitationToDelete.value ?: return
+        
+        viewModelScope.launch {
+            _isDeletingInvitation.value = true
+            
+            try {
+                val result = academyStudentsRepository.deleteInvitation(invitation)
+                
+                if (result) {
+                    hideDeleteConfirmationDialog()
+                    // No es necesario volver a cargar las invitaciones ya que el repositorio actualiza el StateFlow
+                } else {
+                    _errorMessage.value = "Error al eliminar la invitación"
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Error al eliminar la invitación: ${e.message}"
+            } finally {
+                _isDeletingInvitation.value = false
             }
         }
     }

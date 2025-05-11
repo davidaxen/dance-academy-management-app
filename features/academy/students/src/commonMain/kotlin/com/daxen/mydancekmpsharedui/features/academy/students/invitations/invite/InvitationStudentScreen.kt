@@ -17,15 +17,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.PendingActions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -59,6 +62,9 @@ fun InvitationStudentScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isModalVisible by viewModel.isModalVisible.collectAsState()
+    val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
+    val invitationToDelete by viewModel.invitationToDelete.collectAsState()
+    val isDeletingInvitation by viewModel.isDeletingInvitation.collectAsState()
     val sheetState = rememberModalBottomSheetState()
     
     Scaffold(
@@ -85,7 +91,12 @@ fun InvitationStudentScreen(
                     LoadingComponent(text = "Cargando invitaciones...")
                 }
                 is InviteStudentUiState.Success -> {
-                    InvitationsList(invitations = state.invitations)
+                    InvitationsList(
+                        invitations = state.invitations,
+                        onDeleteClick = { invitation ->
+                            viewModel.showDeleteConfirmationDialog(invitation)
+                        }
+                    )
                 }
                 is InviteStudentUiState.Empty -> {
                     EmptyContent()
@@ -108,15 +119,56 @@ fun InvitationStudentScreen(
             InviteStudentForm(viewModel)
         }
     }
+    
+    // Diálogo de confirmación para eliminar invitación
+    if (showDeleteDialog && invitationToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.hideDeleteConfirmationDialog() },
+            title = { Text("Eliminar invitación") },
+            text = { 
+                Text("¿Estás seguro que deseas eliminar la invitación enviada a ${invitationToDelete?.email}?") 
+            },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.deleteInvitation() },
+                    enabled = !isDeletingInvitation
+                ) {
+                    if (isDeletingInvitation) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { viewModel.hideDeleteConfirmationDialog() },
+                    enabled = !isDeletingInvitation
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 }
 
 @Composable
-private fun InvitationsList(invitations: List<Invitation>) {
+private fun InvitationsList(
+    invitations: List<Invitation>,
+    onDeleteClick: (Invitation) -> Unit
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
         itemsIndexed(invitations) { index, invitation ->
-            InvitationListItem(invitation = invitation)
+            InvitationListItem(
+                invitation = invitation,
+                onDeleteClick = onDeleteClick
+            )
             
             if (index < invitations.size - 1) {
                 HorizontalDivider(
@@ -129,7 +181,10 @@ private fun InvitationsList(invitations: List<Invitation>) {
 }
 
 @Composable
-private fun InvitationListItem(invitation: Invitation) {
+private fun InvitationListItem(
+    invitation: Invitation,
+    onDeleteClick: (Invitation) -> Unit
+) {
     // Determinar el icono y color basado en el estado
     val (icon, color, statusText) = when (invitation.status) {
         InvitationStatus.PENDING -> Triple(
@@ -149,6 +204,8 @@ private fun InvitationListItem(invitation: Invitation) {
         )
     }
     
+    val showDeleteButton = invitation.status == InvitationStatus.PENDING
+    
     ListItem(
         leadingContent = {
             StatusIcon(icon = icon, color = color)
@@ -165,6 +222,17 @@ private fun InvitationListItem(invitation: Invitation) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = color
             )
+        },
+        trailingContent = {
+            if (showDeleteButton) {
+                IconButton(onClick = { onDeleteClick(invitation) }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Eliminar invitación",
+                        tint = Color(0xFFF44336)
+                    )
+                }
+            }
         },
         modifier = Modifier
             .fillMaxWidth()

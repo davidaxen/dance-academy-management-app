@@ -46,7 +46,7 @@ class FirebaseAcademyStudentsRepositoryImpl(
         return try {
             val documents = firestore.collection("invitations")
                 .where {
-                    "academyId" equalTo  academyId
+                    "academyId" equalTo academyId
                 }
                 .get()
                 .documents
@@ -57,6 +57,30 @@ class FirebaseAcademyStudentsRepositoryImpl(
         } catch (e: Exception) {
             println("Error getting invitations: ${e.message}")
             emptyList()
+        }
+    }
+    
+    override suspend fun deleteInvitation(email: String, academyId: String): Boolean {
+        return try {
+            // Primero buscamos la invitación que coincida con el email (userId) y academyId
+            val querySnapshot = firestore.collection("invitations")
+                .where {
+                    "userId" equalTo email
+                    "academyId" equalTo academyId
+                }
+                .get()
+            
+            if (querySnapshot.documents.isEmpty()) {
+                return false
+            }
+            
+            // Eliminamos el primer documento que coincide
+            val docId = querySnapshot.documents.first().id
+            firestore.collection("invitations").document(docId).delete()
+            true
+        } catch (e: Exception) {
+            println("Error deleting invitation: ${e.message}")
+            false
         }
     }
 }

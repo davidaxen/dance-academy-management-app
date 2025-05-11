@@ -32,4 +32,21 @@ class AcademyStudentsRepositoryImpl(
         val invitationModel = invitation.toFirebaseModel()
         return firebaseAcademyStudentsRepository.inviteStudentToAcademy(invitationModel)
     }
+    
+    override suspend fun deleteInvitation(invitation: Invitation): Boolean {
+        val success = firebaseAcademyStudentsRepository.deleteInvitation(
+            email = invitation.email,
+            academyId = invitation.academyId
+        )
+        
+        // Si se eliminó con éxito, actualizamos la lista local
+        if (success) {
+            val updatedList = _invitations.value.filter { 
+                it.email != invitation.email || it.academyId != invitation.academyId
+            }
+            _invitations.value = updatedList
+        }
+        
+        return success
+    }
 }
