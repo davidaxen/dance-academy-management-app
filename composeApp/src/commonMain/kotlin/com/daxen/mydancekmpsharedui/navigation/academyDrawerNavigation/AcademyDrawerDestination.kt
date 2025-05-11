@@ -2,11 +2,13 @@ package com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.AccountBox
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.People
@@ -48,7 +50,7 @@ sealed class AcademyDrawerDestination<T>(
     )
 
     @Serializable
-    data object ClassesList: AcademyDrawerDestination<AcademyClassesDestinations.AcademyClassesGraph>(
+    data object ClassesList: AcademyDrawerDestination<AcademyClassesDestinations.AcademyClassesListingGraph>(
         title = "Tus Clases",
         selectedIcon = {
             Icon(imageVector = Icons.Filled.Event, contentDescription = "")
@@ -57,7 +59,20 @@ sealed class AcademyDrawerDestination<T>(
             Icon(imageVector = Icons.Outlined.Event, contentDescription = "")
         },
         section = DrawerSection.Classes,
-        route = AcademyClassesDestinations.AcademyClassesGraph
+        route = AcademyClassesDestinations.AcademyClassesListingGraph
+    )
+
+    @Serializable
+    data object ClassesCreation: AcademyDrawerDestination<AcademyClassesDestinations.CreateClassRoute>(
+        title = "Invitaciones Profesores",
+        selectedIcon = {
+            Icon(imageVector = Icons.Filled.Add, contentDescription = "")
+        },
+        unselectedIcon = {
+            Icon(imageVector = Icons.Outlined.Add, contentDescription = "")
+        },
+        section = DrawerSection.Classes,
+        route = AcademyClassesDestinations.CreateClassRoute
     )
 
     @Serializable
