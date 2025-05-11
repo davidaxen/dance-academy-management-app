@@ -84,6 +84,7 @@ fun AcademyMainScreen(appNavController: NavHostController) {
         listOf(
             AcademyDrawerDestination.User,
             AcademyDrawerDestination.StudentsList,
+            AcademyDrawerDestination.StudentsInvitation,
         )
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -104,7 +105,8 @@ fun AcademyMainScreen(appNavController: NavHostController) {
 
     // Variable para rastrear si estamos en la pantalla de estudiantes
     val isStudentsScreen = currentDestination?.hierarchy?.any { 
-        it.hasRoute(AcademyStudentsDestinations.AcademyStudentsGraph::class) 
+        it.hasRoute(AcademyStudentsDestinations.AcademyStudentsGraph::class)
+                || it.hasRoute(AcademyDrawerDestination.StudentsInvitation::class)
     } == true
 
     ModalNavigationDrawer(
@@ -175,11 +177,14 @@ private fun getScreenInfo(
     drawerScreens.forEach { destination ->
         if (currentDestination?.hierarchy?.any { it.hasRoute(destination.route::class) } == true) {
             screenTitle = destination.title
-            
             // Configurar botones según la pantalla
             topBarConfig = when (destination.route) {
                 is AcademyStudentsDestinations.AcademyStudentsGraph -> TopBarConfig(
                     showSearch = true, 
+                    showFilter = true
+                )
+                is AcademyStudentsDestinations.InviteStudentGraph -> TopBarConfig(
+                    showSearch = true,
                     showFilter = true
                 )
                 is UserGraph -> TopBarConfig(

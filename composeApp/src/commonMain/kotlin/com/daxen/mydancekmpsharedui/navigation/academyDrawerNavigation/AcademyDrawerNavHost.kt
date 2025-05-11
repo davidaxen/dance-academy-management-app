@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.academy.students.academyStudentsGraph
+import com.daxen.mydancekmpsharedui.features.academy.students.academyInvitationStudentsGraph
 import com.daxen.mydancekmpsharedui.features.user.userNavGraph
 import com.daxen.mydancekmpsharedui.navigation.CentralAppDestination
 
@@ -21,9 +22,9 @@ fun AcademyDrawerNavHost(drawerNavController: NavHostController, appNavControlle
                 appNavController.navigate(CentralAppDestination.Auth.route)
             },
         )
-        academyStudentsGraph(
-            appNavController = appNavController,
-        )
+        academyStudentsGraph(appNavController = appNavController)
+
+        academyInvitationStudentsGraph()
 //        teachersListNavGraph()
     }
 }

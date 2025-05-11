@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.StateFlow
 interface AcademyStudentsRepository {
     val students: StateFlow<List<Student>>
     suspend fun getStudentsByAcademyID(id: String)
-    suspend fun inviteStudentToAcademy(academyId: String, studentId: String): Boolean
+    suspend fun inviteStudentToAcademy(academyId: String, studentId: String, academyName: String): Boolean
 }

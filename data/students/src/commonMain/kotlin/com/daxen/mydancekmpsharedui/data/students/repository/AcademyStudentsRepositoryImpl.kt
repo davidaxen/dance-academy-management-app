@@ -17,8 +17,11 @@ class AcademyStudentsRepositoryImpl(
         _students.value = studentsResponse.map { it.toStudent() }
     }
 
-    override suspend fun inviteStudentToAcademy(academyId: String, studentId: String): Boolean {
-        return true
+    override suspend fun inviteStudentToAcademy(academyId: String, studentId: String, academyName: String): Boolean {
+        return firebaseAcademyStudentsRepository.inviteStudentToAcademy(
+            userId = studentId,
+            academyId = academyId,
+            academyName = academyName
+        )
     }
-
 }

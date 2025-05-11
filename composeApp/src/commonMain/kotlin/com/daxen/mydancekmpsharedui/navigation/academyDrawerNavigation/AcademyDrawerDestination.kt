@@ -3,8 +3,10 @@ package com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
@@ -48,5 +50,18 @@ sealed class AcademyDrawerDestination<T>(
         },
         section = DrawerSection.Students,
         route = AcademyStudentsDestinations.AcademyStudentsGraph
+    )
+
+    @Serializable
+    data object StudentsInvitation: AcademyDrawerDestination<AcademyStudentsDestinations.InviteStudentGraph>(
+        title = "Invitaciones",
+        selectedIcon = {
+             Icon(imageVector = Icons.Filled.PersonAdd, contentDescription = "")
+        },
+        unselectedIcon = {
+             Icon(imageVector = Icons.Outlined.PersonAdd, contentDescription = "")
+        },
+        section = DrawerSection.Students,
+        route = AcademyStudentsDestinations.InviteStudentGraph
     )
 }

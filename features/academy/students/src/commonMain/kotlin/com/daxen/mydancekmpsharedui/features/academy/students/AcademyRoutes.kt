@@ -11,9 +11,12 @@ import androidx.navigation.toRoute
 import com.daxen.mydancekmpsharedui.data.students.model.DanceRole
 import com.daxen.mydancekmpsharedui.data.students.model.Student
 import com.daxen.mydancekmpsharedui.features.academy.students.detail.ui.StudentDetailScreen
+import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentScreen
+import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentViewModel
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingScreen
 import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.StudentsListingViewModelProvider
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
 sealed class AcademyStudentsDestinations {
@@ -35,6 +38,12 @@ sealed class AcademyStudentsDestinations {
         val danceRole: DanceRole,
         val profileImageUrl: String? = null
     ): AcademyStudentsDestinations()
+
+    @Serializable
+    data object InviteStudentGraph: AcademyStudentsDestinations()
+
+    @Serializable
+    data object InviteStudentRoute: AcademyStudentsDestinations()
 }
 
 fun NavGraphBuilder.academyStudentsGraph(
@@ -65,7 +74,20 @@ fun NavGraphBuilder.academyStudentsGraph(
     }
 }
 
-fun NavGraphBuilder.studentDetailGraph(
+fun NavGraphBuilder.academyInvitationStudentsGraph() {
+    navigation<AcademyStudentsDestinations.InviteStudentGraph>(
+        startDestination = AcademyStudentsDestinations.InviteStudentRoute
+    ) {
+        composable<AcademyStudentsDestinations.InviteStudentRoute> {
+            val viewModel: InvitationStudentViewModel = koinViewModel()
+            InvitationStudentScreen(
+                viewModel = viewModel,
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.academyStudentsSectionsGraph(
     onBackClick: () -> Unit = {},
 ) {
     composable<AcademyStudentsDestinations.StudentDetailRoute>(
