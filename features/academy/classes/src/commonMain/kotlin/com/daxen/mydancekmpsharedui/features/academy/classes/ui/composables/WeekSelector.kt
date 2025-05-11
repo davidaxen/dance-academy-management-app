@@ -148,8 +148,7 @@ private fun DayItem(
         // Número del día
         Surface(
             modifier = Modifier
-                .size(28.dp)
-                .clickable(onClick = onClick),
+                .size(28.dp),
             shape = CircleShape,
             color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
             border = if (isSelected) null else BorderStroke(
@@ -158,7 +157,7 @@ private fun DayItem(
             ),
             contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         ) {
-            Box(contentAlignment = Alignment.Center) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable(onClick = onClick)) {
                 Text(
                     text = date.dayOfMonth.toString(),
                     style = MaterialTheme.typography.bodySmall,
