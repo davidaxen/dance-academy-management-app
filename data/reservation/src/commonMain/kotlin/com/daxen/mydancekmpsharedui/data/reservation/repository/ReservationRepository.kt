@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.StateFlow
 interface ReservationRepository {
     val daysWithReservationsList: StateFlow<List<String>>
     suspend fun reserveClass(academyId: String, studentId: String, classId: String, name: String, hour: String, selectedDate: String)
-    suspend fun getReservationDates(userId: String)
+    suspend fun getReservationDates(userId: String, academyId: String)
 }

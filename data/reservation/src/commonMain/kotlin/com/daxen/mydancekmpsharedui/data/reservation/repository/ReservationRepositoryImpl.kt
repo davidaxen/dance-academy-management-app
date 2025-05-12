@@ -12,11 +12,11 @@ class ReservationRepositoryImpl(
 
     override suspend fun reserveClass(academyId: String, studentId: String, classId: String, name: String, hour: String, selectedDate: String) {
         firebaseReservationService.reserveClass(academyId, studentId, classId, name, hour, selectedDate)
-        getReservationDates(studentId)
+        getReservationDates(studentId, academyId)
     }
 
-    override suspend fun getReservationDates(userId: String) {
-        val datesList = firebaseReservationService.getReservationDates(userId)
+    override suspend fun getReservationDates(userId: String, academyId: String) {
+        val datesList = firebaseReservationService.getReservationDates(userId, academyId)
         _daysWithReservationsList.value = datesList
     }
 }

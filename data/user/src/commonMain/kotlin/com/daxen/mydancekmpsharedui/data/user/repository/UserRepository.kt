@@ -9,6 +9,7 @@ interface UserRepository {
     val currentUser: StateFlow<User>
     suspend fun updateCurrentUser()
     suspend fun getUserToCheck(): User
+    fun setUserAcademyId(academyId: String)
     fun logOut()
     fun setPersonalInfo(
         firstName: String,

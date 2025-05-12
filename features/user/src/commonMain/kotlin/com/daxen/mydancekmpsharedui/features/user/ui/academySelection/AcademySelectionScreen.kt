@@ -47,6 +47,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun AcademySelectionScreen(
     viewModel: AcademySelectionViewModel,
     modifier: Modifier = Modifier,
+    navigateToAcademy: () -> Unit,
     navigateToLogin: () -> Unit,
     navigateToSection: (ProfileAction) -> Unit
 ) {
@@ -175,7 +176,10 @@ fun AcademySelectionScreen(
                                     imageUrl = academy.imageUrl,
                                     schedule = academy.schedule,
                                     role = academy.role.toSpanishText(),
-                                    onClick = { /* TODO: Navegar a la academia */ }
+                                    onClick = {
+                                        viewModel.onAcademySelected(academy.id)
+                                        navigateToAcademy()
+                                    }
                                 )
                             }
                         }

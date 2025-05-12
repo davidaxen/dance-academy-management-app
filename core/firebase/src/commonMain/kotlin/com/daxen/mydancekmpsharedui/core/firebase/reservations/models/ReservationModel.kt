@@ -8,5 +8,6 @@ data class ReservationModel(
     val classId: String,
     val date: String,
     val className: String,
+    val academyId: String,
     val hour: String
 )

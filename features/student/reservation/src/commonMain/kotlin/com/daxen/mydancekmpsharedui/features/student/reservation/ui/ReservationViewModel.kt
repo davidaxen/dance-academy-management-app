@@ -51,7 +51,7 @@ internal class ReservationViewModel(
             _classesListState.value = ClassesListUiState.Loading
 
             try {
-                classesRepository.getClassesByAcademyId("CJK3TNrlIeIXdKYeI5Ee")
+                classesRepository.getClassesByAcademyId(currentUser.value.currentAcademyId)
 
                 val weekly = classesRepository.weeklyClassesList.value
                 val specific = classesRepository.specificClassesList.value

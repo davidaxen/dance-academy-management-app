@@ -56,7 +56,7 @@ class CalendarViewModel(
             try {
                 if (repository.daysWithReservationsList.value.isEmpty()) {
                     _daysWithReservationsList.value = CalendarDatesListUiState.Loading
-                    repository.getReservationDates(currentUser.value.uid)
+                    repository.getReservationDates(currentUser.value.uid, currentUser.value.currentAcademyId)
                 }
 
                 val dateStrings = repository.daysWithReservationsList.value

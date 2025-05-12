@@ -150,6 +150,7 @@ fun NavGraphBuilder.academyUserNavGraph(navigateToLogin: () -> Unit, appNavContr
 
 fun NavGraphBuilder.academySelectionNavGraph(
     appNavController: NavController,
+    navigateToAcademy: () -> Unit,
     navigateToLogin: () -> Unit
 ) {
     navigation<AcademySelectionGraph>(startDestination = AcademySelectionRoute) {
@@ -159,6 +160,7 @@ fun NavGraphBuilder.academySelectionNavGraph(
                 AcademySelectionScreen(
                     viewModel = viewModel,
                     navigateToLogin = navigateToLogin,
+                    navigateToAcademy = navigateToAcademy,
                     modifier = Modifier.align(Alignment.TopCenter),
                     navigateToSection = { action ->
                         when (action) {

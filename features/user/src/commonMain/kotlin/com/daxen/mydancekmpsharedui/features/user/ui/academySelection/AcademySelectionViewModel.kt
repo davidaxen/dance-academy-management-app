@@ -146,4 +146,8 @@ class AcademySelectionViewModel(
             }
         }
     }
+
+    fun onAcademySelected(id: String) {
+        userRepository.setUserAcademyId(id)
+    }
 }
