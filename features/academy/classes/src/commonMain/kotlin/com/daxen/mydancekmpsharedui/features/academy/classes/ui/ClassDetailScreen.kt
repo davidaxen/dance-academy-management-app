@@ -8,6 +8,7 @@ import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -51,7 +52,7 @@ fun ClassDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Volver atrás"
                         )
                     }
@@ -135,7 +136,7 @@ fun ClassDetailContent(
             isWeekly = isWeekly
         )
 
-        Divider()
+        HorizontalDivider()
 
         // Información básica
         ClassInfoSection(
@@ -143,12 +144,12 @@ fun ClassDetailContent(
             isWeekly = isWeekly
         )
 
-        Divider()
+        HorizontalDivider()
 
         // Profesores
         TeachersSection(teachers = classModel.teachers)
 
-        Divider()
+        HorizontalDivider()
 
         // Status y plazas disponibles
         ClassStatusSection(

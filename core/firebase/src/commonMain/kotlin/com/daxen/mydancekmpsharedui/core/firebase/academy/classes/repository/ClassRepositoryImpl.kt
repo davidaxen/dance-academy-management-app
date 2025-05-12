@@ -106,4 +106,28 @@ class ClassRepositoryImpl(
             Result.failure(e)
         }
     }
+    
+    override suspend fun deleteWeeklyClass(academyId: String, classId: String): Result<Unit> {
+        return try {
+            firestore.collection("/academies/$academyId/classes")
+                .document(classId)
+                .delete()
+            
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    override suspend fun deleteSpecificClass(academyId: String, classId: String): Result<Unit> {
+        return try {
+            firestore.collection("/academies/$academyId/specificClasses")
+                .document(classId)
+                .delete()
+            
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 } 

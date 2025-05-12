@@ -31,7 +31,7 @@ class AcademyClassesViewModel(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
-    private val _selectedWeekStartDate = MutableStateFlow<LocalDate>(getCurrentWeekMonday())
+    private val _selectedWeekStartDate = MutableStateFlow(getCurrentWeekMonday())
     val selectedWeekStartDate: StateFlow<LocalDate> = _selectedWeekStartDate
 
     private val _selectedDate =

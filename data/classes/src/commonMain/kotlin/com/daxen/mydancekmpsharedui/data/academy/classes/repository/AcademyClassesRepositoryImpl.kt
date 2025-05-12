@@ -43,4 +43,32 @@ class AcademyClassesRepositoryImpl(
         return classRepository.saveSpecificClass(academyId, specificClass.toFirebaseModel())
             .map { it.toSpecificClassModel() }
     }
+    
+    override suspend fun deleteWeeklyClass(academyId: String, classId: String): Result<Boolean> {
+        return classRepository.deleteWeeklyClass(academyId, classId).fold(
+            onSuccess = {
+                // Actualizamos la lista después de eliminar
+                val updatedList = _weeklyClassesList.value.filter { it.id != classId }
+                _weeklyClassesList.value = updatedList
+                Result.success(true)
+            },
+            onFailure = {
+                Result.failure(it)
+            }
+        )
+    }
+    
+    override suspend fun deleteSpecificClass(academyId: String, classId: String): Result<Boolean> {
+        return classRepository.deleteSpecificClass(academyId, classId).fold(
+            onSuccess = {
+                // Actualizamos la lista después de eliminar
+                val updatedList = _specificClassesList.value.filter { it.id != classId }
+                _specificClassesList.value = updatedList
+                Result.success(true)
+            },
+            onFailure = {
+                Result.failure(it)
+            }
+        )
+    }
 } 

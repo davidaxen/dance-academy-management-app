@@ -96,13 +96,30 @@ class ClassDetailViewModel(
             try {
                 val academyId = currentAcademy.value.academyId
                 
-                // TODO: Implementar la función de borrar clase en el repositorio
-                // Por ahora, simularemos que se borró correctamente
+                val result = if (state.isWeeklyClass) {
+                    state.weeklyClass?.id?.let { classId ->
+                        academyClassesRepository.deleteWeeklyClass(academyId, classId)
+                    } ?: Result.failure(Exception("ID de clase no disponible"))
+                } else {
+                    state.specificClass?.id?.let { classId ->
+                        academyClassesRepository.deleteSpecificClass(academyId, classId)
+                    } ?: Result.failure(Exception("ID de clase no disponible"))
+                }
                 
-                _uiState.update { it.copy(
-                    isLoading = false,
-                    classDeleted = true
-                ) }
+                result.fold(
+                    onSuccess = {
+                        _uiState.update { it.copy(
+                            isLoading = false,
+                            classDeleted = true
+                        )}
+                    },
+                    onFailure = { error ->
+                        _uiState.update { it.copy(
+                            isLoading = false,
+                            error = error.message ?: "Error al eliminar la clase"
+                        )}
+                    }
+                )
                 
                 _showDeleteConfirmation.value = false
             } catch (e: Exception) {

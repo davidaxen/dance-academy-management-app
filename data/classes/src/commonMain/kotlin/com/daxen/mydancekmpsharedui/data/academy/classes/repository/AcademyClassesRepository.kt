@@ -11,6 +11,9 @@ interface AcademyClassesRepository {
     suspend fun saveWeeklyClass(academyId: String, weeklyClass: WeeklyClassModel): Result<WeeklyClassModel>
     suspend fun saveSpecificClass(academyId: String, specificClass: SpecificClassModel): Result<SpecificClassModel>
     
+    suspend fun deleteWeeklyClass(academyId: String, classId: String): Result<Boolean>
+    suspend fun deleteSpecificClass(academyId: String, classId: String): Result<Boolean>
+    
     val weeklyClassesList: StateFlow<List<WeeklyClassModel>>
     val specificClassesList: StateFlow<List<SpecificClassModel>>
 } 
