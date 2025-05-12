@@ -41,6 +41,9 @@ kotlin {
             implementation(projects.features.user)
             implementation(projects.features.student.reservation)
             implementation(projects.features.student.calendar)
+            implementation(projects.features.academy.students)
+            implementation(projects.features.academy.teachers)
+            implementation(projects.features.academy.classes)
 
             implementation(libs.navigation.compose)
 

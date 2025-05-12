@@ -1,8 +1,13 @@
 package com.daxen.mydancekmpsharedui.data.user.repository
 
 import com.daxen.mydancekmpsharedui.data.user.model.Subscription
+import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
+import kotlinx.coroutines.flow.StateFlow
 
 interface AcademyUserRepository {
+    val currentAcademy: StateFlow<UserAcademy>
+    suspend fun updateCurrentAcademy()
+    fun logOut()
     fun setAcademyInfo(
         name: String,
         nif: String,
@@ -13,4 +18,5 @@ interface AcademyUserRepository {
     fun setLogo(image: ByteArray)
     fun setSubscription(subscription: Subscription)
     suspend fun saveToDatabase()
+    suspend fun getAcademyLogoUrl(academyId: String? = null): String
 }

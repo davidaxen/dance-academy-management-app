@@ -3,6 +3,10 @@ package com.daxen.mydancekmpsharedui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.daxen.mydancekmpsharedui.features.academy.classes.academyClassDetailGraph
+import com.daxen.mydancekmpsharedui.features.academy.classes.academyEditClassGraph
+import com.daxen.mydancekmpsharedui.features.academy.students.academyStudentsSectionsGraph
+import com.daxen.mydancekmpsharedui.features.academy.teachers.academyTeachersSectionsGraph
 import com.daxen.mydancekmpsharedui.features.auth.AcademyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.DanceRoleSelectionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
@@ -16,6 +20,7 @@ import com.daxen.mydancekmpsharedui.features.auth.academyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.registerProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph
+import com.daxen.mydancekmpsharedui.features.user.academyOptionsNavGraph
 import com.daxen.mydancekmpsharedui.features.user.academySelectionNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userOptionsNavGraph
 import com.daxen.mydancekmpsharedui.main.AcademyMainGraph
@@ -83,6 +88,23 @@ fun CentralAppNavHost(
             navigateToLogin = { navController.navigate(LoginScreenRoute) }
         )
 
+        academyStudentsSectionsGraph(
+            onBackClick = { navController.popBackStack() }
+        )
+        academyTeachersSectionsGraph(
+            onBackClick = { navController.popBackStack() }
+        )
+
+        academyClassDetailGraph(
+            appNavController = navController,
+            onBackClick = { navController.popBackStack() }
+        )
+        
+        academyEditClassGraph(
+            onBackClick = { navController.popBackStack() }
+        )
+
         userOptionsNavGraph(appNavController = navController)
+        academyOptionsNavGraph(appNavController = navController)
     }
 }

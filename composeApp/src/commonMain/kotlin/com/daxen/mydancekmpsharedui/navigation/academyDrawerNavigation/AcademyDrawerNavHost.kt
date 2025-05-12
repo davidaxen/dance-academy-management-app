@@ -1,24 +1,38 @@
 package com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
-import com.daxen.mydancekmpsharedui.features.user.userNavGraph
+import androidx.navigation.compose.NavHost
+import com.daxen.mydancekmpsharedui.features.academy.classes.academyClassesGraph
+import com.daxen.mydancekmpsharedui.features.academy.classes.academyCreateClassGraph
+import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
+import com.daxen.mydancekmpsharedui.features.academy.students.academyInvitationStudentsGraph
+import com.daxen.mydancekmpsharedui.features.academy.students.academyStudentsGraph
+import com.daxen.mydancekmpsharedui.features.academy.teachers.academyInvitationTeachersGraph
+import com.daxen.mydancekmpsharedui.features.academy.teachers.academyTeachersGraph
+import com.daxen.mydancekmpsharedui.features.user.academyUserNavGraph
 import com.daxen.mydancekmpsharedui.navigation.CentralAppDestination
 
 @Composable
 fun AcademyDrawerNavHost(drawerNavController: NavHostController, appNavController: NavHostController) {
     NavHost(
         navController = drawerNavController,
-        startDestination = AcademyDrawerDestination.User.route
+//        startDestination = AcademyDrawerDestination.User.route
+        startDestination = AcademyStudentsDestinations.AcademyStudentsGraph
     ) {
-        userNavGraph(
+        academyUserNavGraph(
             appNavController = appNavController,
             navigateToLogin = {
                 appNavController.navigate(CentralAppDestination.Auth.route)
             },
         )
 
-//        teachersListNavGraph()
+        academyStudentsGraph(appNavController = appNavController)
+        academyTeachersGraph(appNavController = appNavController)
+        academyClassesGraph(appNavController = appNavController)
+        academyCreateClassGraph()
+
+        academyInvitationStudentsGraph()
+        academyInvitationTeachersGraph()
     }
 }
