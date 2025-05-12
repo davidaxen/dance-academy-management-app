@@ -10,6 +10,7 @@ import com.daxen.mydancekmpsharedui.features.student.calendar.ui.models.Reserved
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -47,6 +48,15 @@ class CalendarViewModel(
     init {
         // Cargar los datos inicialmente
         loadDaysWithReservations()
+        
+        // Observar cambios en la lista de reservas para actualizar el estado
+        viewModelScope.launch {
+            repository.daysWithReservationsList.collectLatest { datesList ->
+                if (datesList.isNotEmpty()) {
+                    updateDaysWithReservations(datesList)
+                }
+            }
+        }
     }
 
     fun loadDaysWithReservations() {
@@ -56,23 +66,23 @@ class CalendarViewModel(
                 repository.getReservationDates(currentUser.value.uid, currentUser.value.currentAcademyId)
 
                 val dateStrings = repository.daysWithReservationsList.value
-
-                if (dateStrings.isEmpty()) {
-                    _daysWithReservationsList.value = CalendarDatesListUiState.Empty
-                } else {
-                    _daysWithReservationsList.value = CalendarDatesListUiState.Success(
-                        dateStrings.map { dateString ->
-                            try {
-                                LocalDate.parse(dateString)
-                            } catch (e: Exception) {
-                                throw IllegalArgumentException("Invalid date format: $dateString", e)
-                            }
-                        }
-                    )
-                }
-                
-                // Cargar las reservas para la fecha seleccionada
+                updateDaysWithReservations(dateStrings)
                 loadReservationsForSelectedDate()
+            } catch (e: Exception) {
+                _daysWithReservationsList.value = CalendarDatesListUiState.Error
+            }
+        }
+    }
+    
+    private fun updateDaysWithReservations(dateStrings: List<String>) {
+        if (dateStrings.isEmpty()) {
+            _daysWithReservationsList.value = CalendarDatesListUiState.Empty
+        } else {
+            try {
+                val reservationDates = dateStrings.map { dateString ->
+                    LocalDate.parse(dateString)
+                }
+                _daysWithReservationsList.value = CalendarDatesListUiState.Success(reservationDates)
             } catch (e: Exception) {
                 _daysWithReservationsList.value = CalendarDatesListUiState.Error
             }

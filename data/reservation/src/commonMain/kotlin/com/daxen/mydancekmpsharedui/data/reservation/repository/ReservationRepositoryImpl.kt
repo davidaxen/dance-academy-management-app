@@ -1,5 +1,6 @@
 package com.daxen.mydancekmpsharedui.data.reservation.repository
 
+import com.daxen.mydancekmpsharedui.core.firebase.classes.FirebaseClassesService
 import com.daxen.mydancekmpsharedui.core.firebase.reservations.FirebaseReservationService
 import com.daxen.mydancekmpsharedui.core.firebase.user.FirebaseUserService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -7,7 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 class ReservationRepositoryImpl(
     private val firebaseReservationService: FirebaseReservationService,
-    private val firebaseUserService: FirebaseUserService
+    private val firebaseUserService: FirebaseUserService,
+    private val firebaseClassesService: FirebaseClassesService
 ): ReservationRepository {
     private val _daysWithReservationsList = MutableStateFlow<List<String>>(emptyList())
     override val daysWithReservationsList: StateFlow<List<String>> = _daysWithReservationsList
@@ -25,15 +27,37 @@ class ReservationRepositoryImpl(
     override suspend fun getReservationsByDate(userId: String, academyId: String, date: String): List<ReservationDetails> {
         val reservations = firebaseReservationService.getReservationsByDate(userId, academyId, date)
         
+        // Obtener todas las clases para buscar información de profesores
+        val weeklyClasses = firebaseClassesService.getWeeklyClassesByAcademyId(academyId)
+        val specificClasses = firebaseClassesService.getSpecificClassesByAcademyId(academyId)
+        
+        // Crear un mapa de ID de clase a profesor para búsqueda rápida
+        val classIdToTeacherMap = mutableMapOf<String, String>()
+        
+        // Llenar mapa con clases semanales
+        weeklyClasses.forEach { weeklyClass ->
+            if (weeklyClass.teachers.isNotEmpty()) {
+                classIdToTeacherMap[weeklyClass.id] = weeklyClass.teachers[0].name
+            }
+        }
+        
+        // Llenar mapa con clases específicas
+        specificClasses.forEach { specificClass ->
+            if (specificClass.teachers.isNotEmpty()) {
+                classIdToTeacherMap[specificClass.id] = specificClass.teachers[0].name
+            }
+        }
+        
         return reservations.map { reservation ->
-            // Por ahora establecemos un nombre de profesor genérico ya que no tenemos acceso a la info del profesor
-            // En una implementación más completa, aquí buscaríamos el nombre del profesor por su ID
+            // Buscar el nombre del profesor usando el ID de la clase
+            val teacherName = classIdToTeacherMap[reservation.classId] ?: "Profesor sin asignar"
+            
             ReservationDetails(
                 id = reservation.classId,
                 classId = reservation.classId,
                 className = reservation.className,
                 hour = reservation.hour,
-                teacherName = "Profesor asignado" // En el futuro, obtener el nombre real del profesor
+                teacherName = teacherName
             )
         }
     }
