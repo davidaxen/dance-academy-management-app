@@ -170,12 +170,12 @@ fun AcademySelectionScreen(
                     ) {
                         items(invitations) { invitation ->
                             InvitationCard(
-                                academyName = invitation.name,
+                                academyName = invitation.academyName,
                                 academyImage = invitation.imageUrl,
                                 role = invitation.role.toSpanishText(),
                                 onAccept = { viewModel.acceptInvitation(invitation) },
                                 onReject = { viewModel.rejectInvitation(invitation) },
-                                isLoading = loadingInvitations.contains(invitation)
+                                isLoading = loadingInvitations.contains(invitation.id)
                             )
                         }
                     }
