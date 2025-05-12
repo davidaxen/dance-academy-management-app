@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface AcademyUserRepository {
     val currentAcademy: StateFlow<UserAcademy>
     suspend fun updateCurrentAcademy()
+    fun logOut()
     fun setAcademyInfo(
         name: String,
         nif: String,

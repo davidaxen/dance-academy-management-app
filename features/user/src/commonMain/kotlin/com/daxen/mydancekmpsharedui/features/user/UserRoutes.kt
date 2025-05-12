@@ -22,6 +22,9 @@ import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserViewModel
 import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.AcademySelectionScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.AcademySelectionViewModel
+import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.AcademyUserScreen
+import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.AcademyUserViewModel
+import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.sections.academyData.AcademyDataScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.components.UserDataSummary
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
@@ -51,11 +54,47 @@ data object AcademySelectionGraph
 @Serializable
 private data object AcademySelectionRoute
 
+@Serializable
+data object AcademyUserGraph
+
+@Serializable
+private data object AcademyUserScreenRoute
+
+@Serializable
+data object AcademyOptionsGraph
+
 fun NavGraphBuilder.userNavGraph(navigateToLogin: () -> Unit, appNavController: NavController) {
     navigation<UserGraph>(startDestination = UserScreenRoute) {
         composable<UserScreenRoute> {
             val viewModel: UserViewModel = koinViewModel()
             UserScreen(
+                viewModel = viewModel,
+                showTopSection = true,
+                navigateToLogin = navigateToLogin,
+                navigateToSection = { action ->
+                    when (action) {
+                        is ProfileAction.PersonalInfoRoute -> {
+                            appNavController.navigate(ProfileAction.PersonalInfoRoute)
+                        }
+                        is ProfileAction.LogOut -> {
+                            viewModel.signOut()
+                            navigateToLogin()
+                        }
+                        is ProfileAction.DeleteAccount -> {
+
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.academyUserNavGraph(navigateToLogin: () -> Unit, appNavController: NavController) {
+    navigation<AcademyUserGraph>(startDestination = AcademyUserScreenRoute) {
+        composable<AcademyUserScreenRoute> {
+            val viewModel: AcademyUserViewModel = koinViewModel()
+            AcademyUserScreen(
                 viewModel = viewModel,
                 showTopSection = true,
                 navigateToLogin = navigateToLogin,
@@ -134,6 +173,27 @@ fun NavGraphBuilder.userOptionsNavGraph(appNavController: NavController) {
             }
         ) {
             PersonalDataScreen(navigateBack = { appNavController.popBackStack() })
+        }
+    }
+}
+
+fun NavGraphBuilder.academyOptionsNavGraph(appNavController: NavController) {
+    navigation<AcademyOptionsGraph>(startDestination = ProfileAction.PersonalInfoRoute) {
+        composable<ProfileAction.PersonalInfoRoute>(
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(300),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                ) + fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(300),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                ) + fadeOut(animationSpec = tween(300, easing = EaseIn))
+            }
+        ) {
+            AcademyDataScreen(navigateBack = { appNavController.popBackStack() })
         }
     }
 }

@@ -29,6 +29,10 @@ class AcademyUserRepositoryImpl(
         )
     }
 
+    override fun logOut() {
+        _currentAcademy.value = UserAcademy.EMPTY
+    }
+
     override fun setAcademyInfo(
         name: String,
         nif: String,

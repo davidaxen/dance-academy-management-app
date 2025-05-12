@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
 import com.daxen.mydancekmpsharedui.features.academy.classes.AcademyClassesDestinations
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.academy.teachers.AcademyTeachersDestinations
-import com.daxen.mydancekmpsharedui.features.user.UserGraph
+import com.daxen.mydancekmpsharedui.features.user.AcademyUserGraph
 import kotlinx.serialization.Serializable
 
 enum class DrawerSection(val title: String) {
@@ -37,7 +37,7 @@ sealed class AcademyDrawerDestination<T>(
     val route: T //graphs defined in feature module for each tab
 ){
     @Serializable
-    data object User: AcademyDrawerDestination<UserGraph>(
+    data object User: AcademyDrawerDestination<AcademyUserGraph>(
         title = "Perfil",
         selectedIcon = {
              Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "")
@@ -46,7 +46,7 @@ sealed class AcademyDrawerDestination<T>(
              Icon(imageVector = Icons.Outlined.AccountBox, contentDescription = "")
         },
         section = DrawerSection.User,
-        route = UserGraph
+        route = AcademyUserGraph
     )
 
     @Serializable
