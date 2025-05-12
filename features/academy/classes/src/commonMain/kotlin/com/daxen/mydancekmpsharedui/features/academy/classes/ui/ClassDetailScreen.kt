@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessStarted
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
@@ -30,7 +31,8 @@ fun ClassDetailScreen(
     classId: String,
     isWeekly: Boolean,
     onBackClick: () -> Unit,
-    onDeletedSuccess: () -> Unit
+    onDeletedSuccess: () -> Unit,
+    onEditClick: (String, Boolean) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val showDeleteConfirmation by viewModel.showDeleteConfirmation.collectAsState()
@@ -49,18 +51,24 @@ fun ClassDetailScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Detalle de Clase") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = "Volver atrás"
                         )
                     }
                 },
                 actions = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = dropUnlessStarted{ onEditClick(classId, isWeekly) }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = "Editar clase"
                         )
                     }

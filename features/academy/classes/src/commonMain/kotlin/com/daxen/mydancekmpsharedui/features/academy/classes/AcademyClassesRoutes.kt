@@ -11,9 +11,11 @@ import com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel
 import com.daxen.mydancekmpsharedui.features.academy.classes.ui.AcademyClassesScreen
 import com.daxen.mydancekmpsharedui.features.academy.classes.ui.ClassDetailScreen
 import com.daxen.mydancekmpsharedui.features.academy.classes.ui.CreateClassScreen
+import com.daxen.mydancekmpsharedui.features.academy.classes.ui.EditClassScreen
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.AcademyClassesViewModel
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.ClassDetailViewModel
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.CreateClassViewModel
+import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.EditClassViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -30,6 +32,12 @@ sealed class AcademyClassesDestinations {
 
     @Serializable
     data class ClassDetailRoute(
+        val classId: String,
+        val isWeekly: Boolean
+    ) : AcademyClassesDestinations()
+    
+    @Serializable
+    data class EditClassRoute(
         val classId: String,
         val isWeekly: Boolean
     ) : AcademyClassesDestinations()
@@ -67,6 +75,7 @@ fun NavGraphBuilder.academyClassesGraph(
 }
 
 fun NavGraphBuilder.academyClassDetailGraph(
+    appNavController: NavController,
     onBackClick: () -> Unit
 ) {
     composable<AcademyClassesDestinations.ClassDetailRoute> { backStackEntry ->
@@ -80,6 +89,33 @@ fun NavGraphBuilder.academyClassDetailGraph(
                 onBackClick()
             },
             onDeletedSuccess = dropUnlessResumed {
+                onBackClick()
+            },
+            onEditClick = { classId, isWeekly ->
+                val navDestination = AcademyClassesDestinations.EditClassRoute(
+                    classId = classId,
+                    isWeekly = isWeekly
+                )
+                appNavController.navigate(navDestination)
+            }
+        )
+    }
+}
+
+fun NavGraphBuilder.academyEditClassGraph(
+    onBackClick: () -> Unit
+) {
+    composable<AcademyClassesDestinations.EditClassRoute> { backStackEntry ->
+        val classEdit = backStackEntry.toRoute<AcademyClassesDestinations.EditClassRoute>()
+        val viewModel: EditClassViewModel = koinViewModel()
+        EditClassScreen(
+            viewModel = viewModel,
+            classId = classEdit.classId,
+            isWeeklyClass = classEdit.isWeekly,
+            onBackClick = dropUnlessResumed {
+                onBackClick()
+            },
+            onUpdateSuccess = dropUnlessResumed {
                 onBackClick()
             }
         )
