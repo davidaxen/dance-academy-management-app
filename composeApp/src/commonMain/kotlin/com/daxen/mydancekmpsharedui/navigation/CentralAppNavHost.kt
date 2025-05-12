@@ -20,6 +20,7 @@ import com.daxen.mydancekmpsharedui.features.auth.academyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.registerProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph
+import com.daxen.mydancekmpsharedui.features.user.academyOptionsNavGraph
 import com.daxen.mydancekmpsharedui.features.user.academySelectionNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userOptionsNavGraph
 import com.daxen.mydancekmpsharedui.main.AcademyMainGraph
@@ -104,5 +105,6 @@ fun CentralAppNavHost(
         )
 
         userOptionsNavGraph(appNavController = navController)
+        academyOptionsNavGraph(appNavController = navController)
     }
 }

@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
-import com.daxen.mydancekmpsharedui.features.user.ProfileAction
+import com.daxen.mydancekmpsharedui.features.user.AcademyProfileAction
 import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.components.MainAcademyUserSection
 
 @Composable
@@ -17,7 +17,7 @@ internal fun AcademyUserScreen(
     viewModel: AcademyUserViewModel,
     showTopSection: Boolean = false,
     navigateToLogin: () -> Unit,
-    navigateToSection: (ProfileAction) -> Unit
+    navigateToSection: (AcademyProfileAction) -> Unit
 ) {
     val userState by viewModel.userState.collectAsState()
 

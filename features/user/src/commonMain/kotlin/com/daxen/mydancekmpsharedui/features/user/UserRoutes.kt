@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.dropUnlessStarted
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -46,6 +47,24 @@ sealed class ProfileAction {
     data object LogOut : ProfileAction()
     @Serializable
     data object DeleteAccount : ProfileAction()
+}
+
+@Serializable
+sealed class AcademyProfileAction {
+    @Serializable
+    data object AcademyInfoRoute : AcademyProfileAction()
+    @Serializable
+    data object ManageTeachersRoute : AcademyProfileAction()
+    @Serializable
+    data object ManageStudentsRoute : AcademyProfileAction()
+    @Serializable
+    data object ManageScheduleRoute : AcademyProfileAction()
+    @Serializable
+    data object CustomizationRoute : AcademyProfileAction()
+    @Serializable
+    data object LogOut : AcademyProfileAction()
+    @Serializable
+    data object DeleteAccount : AcademyProfileAction()
 }
 
 @Serializable
@@ -100,15 +119,27 @@ fun NavGraphBuilder.academyUserNavGraph(navigateToLogin: () -> Unit, appNavContr
                 navigateToLogin = navigateToLogin,
                 navigateToSection = { action ->
                     when (action) {
-                        is ProfileAction.PersonalInfoRoute -> {
-                            appNavController.navigate(ProfileAction.PersonalInfoRoute)
+                        is AcademyProfileAction.AcademyInfoRoute -> {
+                            appNavController.navigate(AcademyProfileAction.AcademyInfoRoute)
                         }
-                        is ProfileAction.LogOut -> {
+                        is AcademyProfileAction.ManageTeachersRoute -> {
+                            // Navegación futura a pantalla de gestión de profesores
+                        }
+                        is AcademyProfileAction.ManageStudentsRoute -> {
+                            // Navegación futura a pantalla de gestión de estudiantes
+                        }
+                        is AcademyProfileAction.ManageScheduleRoute -> {
+                            // Navegación futura a pantalla de gestión de horarios
+                        }
+                        is AcademyProfileAction.CustomizationRoute -> {
+                            // Navegación futura a pantalla de personalización
+                        }
+                        is AcademyProfileAction.LogOut -> {
                             viewModel.signOut()
                             navigateToLogin()
                         }
-                        is ProfileAction.DeleteAccount -> {
-
+                        is AcademyProfileAction.DeleteAccount -> {
+                            // Lógica para borrar cuenta
                         }
                     }
                 }
@@ -172,14 +203,14 @@ fun NavGraphBuilder.userOptionsNavGraph(appNavController: NavController) {
                 ) + fadeOut(animationSpec = tween(300, easing = EaseIn))
             }
         ) {
-            PersonalDataScreen(navigateBack = { appNavController.popBackStack() })
+            PersonalDataScreen(navigateBack = dropUnlessStarted { appNavController.popBackStack() })
         }
     }
 }
 
 fun NavGraphBuilder.academyOptionsNavGraph(appNavController: NavController) {
-    navigation<AcademyOptionsGraph>(startDestination = ProfileAction.PersonalInfoRoute) {
-        composable<ProfileAction.PersonalInfoRoute>(
+    navigation<AcademyOptionsGraph>(startDestination = AcademyProfileAction.AcademyInfoRoute) {
+        composable<AcademyProfileAction.AcademyInfoRoute>(
             enterTransition = {
                 slideIntoContainer(
                     animationSpec = tween(300),
@@ -193,7 +224,7 @@ fun NavGraphBuilder.academyOptionsNavGraph(appNavController: NavController) {
                 ) + fadeOut(animationSpec = tween(300, easing = EaseIn))
             }
         ) {
-            AcademyDataScreen(navigateBack = { appNavController.popBackStack() })
+            AcademyDataScreen(navigateBack = dropUnlessStarted { appNavController.popBackStack() })
         }
     }
 }

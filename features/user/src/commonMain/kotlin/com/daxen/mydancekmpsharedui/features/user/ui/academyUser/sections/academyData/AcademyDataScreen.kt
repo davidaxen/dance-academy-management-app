@@ -14,10 +14,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -29,13 +29,13 @@ internal fun AcademyDataScreen(
     Scaffold (
         topBar = {
             TopAppBar(
-                title = { Text("Datos de la academia") },
+                title = { Text("Datos de la academia", color = MaterialTheme.colorScheme.onPrimary) },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, tint = MaterialTheme.colorScheme.onPrimary, contentDescription = "Atrás")
                     }
                 },
-                backgroundColor = Color.White,
+                backgroundColor = MaterialTheme.colorScheme.primary,
             )
         }
     ) { padding ->

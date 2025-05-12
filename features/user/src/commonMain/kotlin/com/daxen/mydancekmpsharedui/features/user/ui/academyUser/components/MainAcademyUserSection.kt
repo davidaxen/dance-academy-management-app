@@ -20,17 +20,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
-import com.daxen.mydancekmpsharedui.features.user.ProfileAction
+import com.daxen.mydancekmpsharedui.features.user.AcademyProfileAction
 import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.utils.AcademyConstants
-import com.daxen.mydancekmpsharedui.features.user.ui.components.ProfileSectionCard
-import com.daxen.mydancekmpsharedui.features.user.utils.ProfileItem
+import com.daxen.mydancekmpsharedui.features.user.utils.AcademyProfileItem
 
 @Composable
 internal fun MainAcademyUserSection(
     user: UserAcademy,
     showTopSection: Boolean = false,
     navigateToLogin: () -> Unit,
-    navigateToSection: (ProfileAction) -> Unit
+    navigateToSection: (AcademyProfileAction) -> Unit
 ) {
     val dialogState = remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxSize()) {
@@ -74,15 +73,25 @@ internal fun MainAcademyUserSection(
 }
 
 @Composable
-private fun AcademyCardsSection(navigateToSection: (ProfileAction) -> Unit) {
+private fun AcademyCardsSection(navigateToSection: (AcademyProfileAction) -> Unit) {
     var currentSectionTitle: String? = null
-    val currentOptions = mutableListOf<ProfileItem.Option>()
+    val currentOptions = mutableListOf<AcademyProfileItem.Option>()
 
-    AcademyConstants.profileItems.forEachIndexed { index, item ->
+    AcademyConstants.AcademyProfileItems.forEachIndexed { index, item ->
         when (item) {
-            is ProfileItem.Section -> {
+            is AcademyProfileItem.Option -> {
+                currentOptions.add(item)
+                if (index == AcademyConstants.AcademyProfileItems.lastIndex) {
+                    AcademyProfileSectionCard(
+                        title = currentSectionTitle ?: "",
+                        options = currentOptions,
+                        navigateToSection = navigateToSection,
+                    )
+                }
+            }
+            is AcademyProfileItem.Section -> {
                 if (currentSectionTitle != null && currentOptions.isNotEmpty()) {
-                    ProfileSectionCard(
+                    AcademyProfileSectionCard(
                         title = currentSectionTitle!!,
                         options = currentOptions,
                         navigateToSection = navigateToSection,
@@ -90,17 +99,6 @@ private fun AcademyCardsSection(navigateToSection: (ProfileAction) -> Unit) {
                     currentOptions.clear()
                 }
                 currentSectionTitle = item.title
-            }
-
-            is ProfileItem.Option -> {
-                currentOptions.add(item)
-                if (index == AcademyConstants.profileItems.lastIndex) {
-                    ProfileSectionCard(
-                        title = currentSectionTitle ?: "",
-                        options = currentOptions,
-                        navigateToSection = navigateToSection,
-                    )
-                }
             }
         }
     }
