@@ -130,7 +130,7 @@ fun ClassFormContent(
             onTypeSelected = viewModel::onClassTypeSelected
         )
         
-        Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+        Spacer(modifier = Modifier.height(6.dp))
         
         // Formulario común para ambos tipos
         OutlinedTextField(
@@ -192,11 +192,11 @@ fun ClassFormContent(
             )
         }
         
-        Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+        Spacer(modifier = Modifier.height(LocalPadding.current.tiny))
         
         Button(
             onClick = viewModel::createClass,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(bottom = LocalPadding.current.normal),
         ) {
             Text("Crear Clase")
         }
@@ -344,7 +344,8 @@ fun WeeklyClassForm(
         
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            containerColor = MaterialTheme.colorScheme.background
         ) {
             daysOfWeek.forEach { day ->
                 val displayDay = when (day) {
@@ -359,7 +360,7 @@ fun WeeklyClassForm(
                 }
                 
                 DropdownMenuItem(
-                    text = { Text(displayDay) },
+                    text = { Text(displayDay, color = MaterialTheme.colorScheme.onBackground) },
                     onClick = {
                         onDayOfWeekChanged(day)
                         expanded = false

@@ -22,10 +22,10 @@ import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import kotlinx.serialization.Serializable
 
 enum class DrawerSection(val title: String) {
-    User("Usuario"),
     Students("Alumnos"),
     Teachers("Profesores"),
     Classes("Clases"),
+    User("Usuario"),
 }
 
 @Serializable
@@ -64,7 +64,7 @@ sealed class AcademyDrawerDestination<T>(
 
     @Serializable
     data object ClassesCreation: AcademyDrawerDestination<AcademyClassesDestinations.CreateClassRoute>(
-        title = "Invitaciones Profesores",
+        title = "Añadir Clase",
         selectedIcon = {
             Icon(imageVector = Icons.Filled.Add, contentDescription = "")
         },

@@ -86,13 +86,13 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     val drawerNavController = rememberNavController()
     val drawerScreens = remember {
         listOf(
-            AcademyDrawerDestination.User,
             AcademyDrawerDestination.StudentsList,
             AcademyDrawerDestination.StudentsInvitation,
             AcademyDrawerDestination.TeachersList,
             AcademyDrawerDestination.TeachersInvitation,
             AcademyDrawerDestination.ClassesList,
             AcademyDrawerDestination.ClassesCreation,
+            AcademyDrawerDestination.User,
         )
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
