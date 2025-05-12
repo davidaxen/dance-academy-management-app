@@ -1,6 +1,9 @@
 package com.daxen.mydancekmpsharedui.core.firebase.user
 
 import com.daxen.mydancekmpsharedui.core.firebase.academy.students.model.InvitationModel
+import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyDetailsModel
+import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyWithRoleModel
+import com.daxen.mydancekmpsharedui.core.firebase.user.models.UserWithAcademyRolesModel
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 
 class FirebaseUserInvitationsServiceImpl(
@@ -108,11 +111,11 @@ class FirebaseUserInvitationsServiceImpl(
                 val userId = userDocuments.first().id
                 val userDoc = firestore.collection("users").document(userId).get()
                 
-                // Obtenemos el mapa de academyRoles
-                val data = userDoc.data() as? Map<String, Any>
-                val academyRoles = data?.get("academyRoles") as? Map<String, Any>
+                // Obtenemos el documento del usuario con sus roles en academias
+                val userWithRoles = userDoc.data(UserWithAcademyRolesModel.serializer())
                 
-                academyRoles?.keys?.toList() ?: emptyList()
+                // Devolvemos las claves (IDs de academias) del mapa de roles
+                userWithRoles.academyRoles.keys.toList()
             } else {
                 emptyList()
             }
@@ -122,14 +125,14 @@ class FirebaseUserInvitationsServiceImpl(
         }
     }
     
-    override suspend fun getAcademyDetails(academyId: String, userId: String): Map<String, Any> {
+    override suspend fun getAcademyDetails(academyId: String, userId: String): AcademyWithRoleModel {
         return try {
             // 1. Primero obtenemos los datos básicos de la academia
             val academyDoc = firestore.collection("academies")
                 .document(academyId)
                 .get()
                 
-            val academyData = academyDoc.data() ?: emptyMap<String, Any>()
+            val academyDetails = academyDoc.data(AcademyDetailsModel.serializer())
             
             // 2. Obtenemos el rol del usuario en esta academia
             val userDoc = firestore.collection("users")
@@ -143,35 +146,37 @@ class FirebaseUserInvitationsServiceImpl(
             var userRole = "student" // Por defecto, consideramos que es estudiante
             
             if (userDoc != null) {
-                val userData = userDoc.data() as? Map<String, Any>
-                val academyRoles = userData?.get("academyRoles") as? Map<String, Any>
-                val roles = academyRoles?.get(academyId) as? List<String>
+                val userWithRoles = userDoc.data(UserWithAcademyRolesModel.serializer())
+                val roles = userWithRoles.academyRoles[academyId]
                 
                 // Si tiene rol, usamos el primero (normalmente solo tendrá uno)
-                if (roles != null && roles.isNotEmpty()) {
+                if (!roles.isNullOrEmpty()) {
                     userRole = roles.first()
                 }
             }
             
-            // 3. Construimos el mapa de respuesta
-            mapOf(
-                "id" to academyId,
-                "name" to (academyData["name"] as? String ?: "Academia sin nombre"),
-                "location" to (academyData["location"] as? String ?: ""),
-                "imageUrl" to (academyData["imageUrl"] as? String ?: ""),
-                "schedule" to (academyData["schedule"] as? String ?: ""),
-                "role" to userRole
+            // Formateamos el horario como una cadena
+            val schedule = "${academyDetails.openingTime} - ${academyDetails.closingTime}"
+            
+            // 3. Devolvemos un objeto AcademyWithRoleModel con los datos obtenidos
+            AcademyWithRoleModel(
+                id = academyId,
+                name = academyDetails.name,
+                location = academyDetails.address, // Usamos address en lugar de location
+                imageUrl = academyDetails.imageUrl,
+                schedule = schedule, // Combinamos horarios de apertura y cierre
+                role = userRole
             )
         } catch (e: Exception) {
             println("Error obteniendo detalles de la academia: $academyId - ${e.message}")
-            // Devolvemos un mapa con valores por defecto
-            mapOf(
-                "id" to academyId,
-                "name" to "Academia $academyId",
-                "location" to "",
-                "imageUrl" to "",
-                "schedule" to "",
-                "role" to "student"
+            // Devolvemos un modelo con valores por defecto
+            AcademyWithRoleModel(
+                id = academyId,
+                name = "Academia $academyId",
+                location = "",
+                imageUrl = "",
+                schedule = "",
+                role = "student"
             )
         }
     }

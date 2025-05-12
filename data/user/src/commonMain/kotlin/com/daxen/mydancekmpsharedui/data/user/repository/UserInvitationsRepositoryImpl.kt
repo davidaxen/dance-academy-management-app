@@ -41,15 +41,15 @@ class UserInvitationsRepositoryImpl(
             firebaseUserInvitationsService.getAcademyDetails(academyId, email)
         }
         
-        // Convertimos los detalles a nuestro modelo
-        _academies.value = academyDetailsList.map { details ->
+        // Convertimos los modelos de Firebase a nuestros modelos de dominio
+        _academies.value = academyDetailsList.map { academyWithRole ->
             Academy(
-                id = details["id"] as String,
-                name = details["name"] as String,
-                location = details["location"] as String,
-                imageUrl = details["imageUrl"] as String,
-                schedule = details["schedule"] as String,
-                role = UserRole.fromString(details["role"] as String)
+                id = academyWithRole.id,
+                name = academyWithRole.name,
+                location = academyWithRole.location,
+                imageUrl = academyWithRole.imageUrl,
+                schedule = academyWithRole.schedule,
+                role = UserRole.fromString(academyWithRole.role)
             )
         }
     }
