@@ -26,7 +26,8 @@ fun UserAcademy.toAcademyModel(): AcademyModel {
         address = this.address,
         openingTime = this.openingTime,
         closingTime = this.closingTime,
-        subscription = this.subscription?.toSubscriptionModel()
+        subscription = this.subscription?.toSubscriptionModel(),
+        logoUrl = this.logoUrl
     )
 }
 
@@ -59,6 +60,7 @@ fun toUserAcademy(academyUserModel: AcademyUserModel, academyModel: AcademyModel
         openingTime = academyModel.openingTime,
         closingTime = academyModel.closingTime,
         subscription = academyModel.subscription?.toSubscription(),
+        logoUrl = academyModel.logoUrl,
         role = UserRole.ACADEMY
     )
 }

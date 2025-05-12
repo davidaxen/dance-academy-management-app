@@ -10,4 +10,5 @@ data class AcademyModel (
     var openingTime: String = "",
     var closingTime: String = "",
     var subscription: SubscriptionModel? = null,
+    var logoUrl: String = "",
 )

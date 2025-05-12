@@ -18,4 +18,5 @@ interface AcademyUserRepository {
     fun setLogo(image: ByteArray)
     fun setSubscription(subscription: Subscription)
     suspend fun saveToDatabase()
+    suspend fun getAcademyLogoUrl(academyId: String? = null): String
 }

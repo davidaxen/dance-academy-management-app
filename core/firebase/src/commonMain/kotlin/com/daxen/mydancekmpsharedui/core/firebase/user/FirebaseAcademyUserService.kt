@@ -7,4 +7,5 @@ interface FirebaseAcademyUserService {
     suspend fun saveUserToDatabase(academyUserModel: AcademyUserModel, academyModel: AcademyModel, image: ByteArray)
     suspend fun getCurrentAcademyUserData(): AcademyUserModel
     suspend fun getCurrentAcademyData(academyId: String): AcademyModel
+    suspend fun getAcademyLogoUrl(academyId: String): String
 }
