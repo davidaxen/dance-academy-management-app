@@ -86,7 +86,7 @@ fun NavGraphBuilder.academyInvitationTeachersGraph() {
 }
 
 fun NavGraphBuilder.academyTeachersSectionsGraph(
-    onBackClick: () -> Unit = {},
+    onBackClick: () -> Unit,
 ) {
     composable<AcademyTeachersDestinations.TeacherDetailRoute>(
         enterTransition = {

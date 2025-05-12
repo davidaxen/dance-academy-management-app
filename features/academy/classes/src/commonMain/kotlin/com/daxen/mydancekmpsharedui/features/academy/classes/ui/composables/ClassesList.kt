@@ -24,7 +24,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
@@ -44,7 +43,7 @@ data class ClassesGroup(
 @Composable
 fun ClassesList(
     classesGroups: List<ClassesGroup>,
-    onClassClick: (classId: String, isWeekly: Boolean) -> Unit,
+    onClassClick: (classData: Any, isWeekly: Boolean) -> Unit,
     onRefresh: () -> Unit,
     isRefreshing: Boolean
 ) {
@@ -75,7 +74,7 @@ fun ClassesList(
                             status = weeklyClass.status,
                             isWeekly = true,
                             onClick = dropUnlessResumed {
-                                onClassClick(weeklyClass.id, true)
+                                onClassClick(weeklyClass, true)
                             }
                         )
                     } else {
@@ -88,7 +87,7 @@ fun ClassesList(
                             isWeekly = false,
                             dateInfo = "Fecha: ${specificClass.date}",
                             onClick = dropUnlessResumed {
-                                onClassClick(specificClass.id, false)
+                                onClassClick(specificClass, false)
                             }
                         )
                     }
@@ -119,24 +118,6 @@ fun ClassesList(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun DayHeader(dayOfWeek: DayOfWeek) {
-    Surface(
-        color = MaterialTheme.colorScheme.primaryContainer,
-        tonalElevation = 2.dp
-    ) {
-        Text(
-            text = getDayName(dayOfWeek),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        )
     }
 }
 
@@ -251,16 +232,3 @@ private fun ClassStatusIndicator(status: String) {
         )
     }
 }
-
-private fun getDayName(dayOfWeek: DayOfWeek): String {
-    return when (dayOfWeek) {
-        DayOfWeek.MONDAY -> "Lunes"
-        DayOfWeek.TUESDAY -> "Martes"
-        DayOfWeek.WEDNESDAY -> "Miércoles"
-        DayOfWeek.THURSDAY -> "Jueves"
-        DayOfWeek.FRIDAY -> "Viernes"
-        DayOfWeek.SATURDAY -> "Sábado"
-        DayOfWeek.SUNDAY -> "Domingo"
-        else -> "Lunes"
-    }
-} 

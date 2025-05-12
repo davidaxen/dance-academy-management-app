@@ -33,7 +33,8 @@ import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.AcademyCl
 
 @Composable
 fun AcademyClassesScreen(
-    viewModel: AcademyClassesViewModel
+    viewModel: AcademyClassesViewModel,
+    onClassClick: (classData: Any, isWeekly: Boolean) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
@@ -46,7 +47,6 @@ fun AcademyClassesScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Week selector siempre visible
             WeekSelector(
                 weekStartDate = selectedWeekStartDate,
                 selectedDate = selectedDate,
@@ -63,7 +63,9 @@ fun AcademyClassesScreen(
                     
                     is AcademyClassesUiState.Success -> ClassesList(
                         classesGroups = state.classesGroups,
-                        onClassClick = { classId, isWeekly -> /* Implementar navegación a detalle */ },
+                        onClassClick = { classData, isWeekly -> 
+                            onClassClick(classData, isWeekly)
+                        },
                         onRefresh = { viewModel.refreshClasses() },
                         isRefreshing = isRefreshing
                     )

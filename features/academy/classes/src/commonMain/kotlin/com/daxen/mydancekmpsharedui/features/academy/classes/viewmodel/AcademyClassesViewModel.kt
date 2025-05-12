@@ -93,17 +93,10 @@ class AcademyClassesViewModel(
                 _uiState.value = AcademyClassesUiState.Loading
 
                 // Obtenemos clases del repositorio
-                var weeklyClasses =
+                val weeklyClasses =
                     academyClassesRepository.getWeeklyClassesByAcademyId(currentAcademy.value.academyId)
-                var specificClasses =
+                val specificClasses =
                     academyClassesRepository.getSpecificClassesByAcademyId(currentAcademy.value.academyId)
-
-                // Si no hay clases, añadimos datos de prueba
-                if (weeklyClasses.isEmpty() && specificClasses.isEmpty()) {
-                    val mockClasses = createMockClasses()
-                    weeklyClasses = mockClasses.first
-                    specificClasses = mockClasses.second
-                }
 
                 // Filtrar las clases semanales para el día seleccionado
                 val selectedDayOfWeek = when (_selectedDate.value.dayOfWeek) {
@@ -152,50 +145,4 @@ class AcademyClassesViewModel(
         }
     }
 
-    private fun createMockClasses(): Pair<List<com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel>, List<com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassModel>> {
-        // Crear profesores de prueba
-        val teacher1 = com.daxen.mydancekmpsharedui.data.academy.classes.models.TeacherModel(
-            id = "teacher1",
-            name = "Carlos Rodríguez"
-        )
-
-        val teacher2 = com.daxen.mydancekmpsharedui.data.academy.classes.models.TeacherModel(
-            id = "teacher2",
-            name = "Laura Gómez"
-        )
-
-        // Crear clase semanal para los lunes
-        val weeklyClasses = listOf(
-            com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel(
-                id = "weekly1",
-                name = "Bachata Intermedio",
-                dayOfWeek = "MONDAY",
-                hour = "19:00",
-                teachers = listOf(teacher1),
-                status = "available"
-            ),
-            com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel(
-                id = "weekly2",
-                name = "Salsa Avanzada",
-                dayOfWeek = "MONDAY",
-                hour = "20:30",
-                teachers = listOf(teacher1, teacher2),
-                status = "waitlist"
-            )
-        )
-
-        // Crear clase específica para el 12 de mayo de 2025
-        val specificClasses = listOf(
-            com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassModel(
-                id = "specific1",
-                name = "Taller Especial de Bachata Sensual",
-                date = "2025-05-12", // 12 de mayo de 2025
-                hour = "18:00",
-                teachers = listOf(teacher2),
-                status = "available"
-            )
-        )
-
-        return Pair(weeklyClasses, specificClasses)
-    }
 } 

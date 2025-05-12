@@ -30,10 +30,9 @@ fun AcademyDrawerNavHost(drawerNavController: NavHostController, appNavControlle
         academyStudentsGraph(appNavController = appNavController)
         academyTeachersGraph(appNavController = appNavController)
         academyClassesGraph(appNavController = appNavController)
-        academyCreateClassGraph(appNavController = appNavController)
+        academyCreateClassGraph()
 
         academyInvitationStudentsGraph()
         academyInvitationTeachersGraph()
-//        teachersListNavGraph()
     }
 }

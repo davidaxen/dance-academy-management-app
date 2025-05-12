@@ -4,6 +4,7 @@ import com.daxen.mydancekmpsharedui.data.academy.classes.dataAcademyClassesModul
 import com.daxen.mydancekmpsharedui.data.teachers.dataTeachersModule
 import com.daxen.mydancekmpsharedui.data.user.dataUserModule
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.AcademyClassesViewModel
+import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.ClassDetailViewModel
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.CreateClassViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -15,4 +16,5 @@ val academyClassesModule = module {
 
     viewModelOf(::AcademyClassesViewModel)
     viewModelOf(::CreateClassViewModel)
-} 
+    viewModelOf(::ClassDetailViewModel)
+}

@@ -73,6 +73,11 @@ class ClassRepositoryImpl(
             }
             
             val savedClass = weeklyClass.copy(id = docRef.id)
+            if (weeklyClass.id.isEmpty()) {
+                firestore.collection("/academies/$academyId/classes")
+                    .document(savedClass.id)
+                    .set(savedClass)
+            }
             Result.success(savedClass)
         } catch (e: Exception) {
             Result.failure(e)
@@ -91,6 +96,11 @@ class ClassRepositoryImpl(
             }
             
             val savedClass = specificClass.copy(id = docRef.id)
+            if (specificClass.id.isEmpty()) {
+                firestore.collection("/academies/$academyId/classes")
+                    .document(savedClass.id)
+                    .set(savedClass)
+            }
             Result.success(savedClass)
         } catch (e: Exception) {
             Result.failure(e)
