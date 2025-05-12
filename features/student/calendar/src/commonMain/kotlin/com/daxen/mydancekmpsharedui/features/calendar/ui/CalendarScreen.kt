@@ -38,6 +38,7 @@ fun CalendarScreen(
             is CalendarDatesListUiState.Success, CalendarDatesListUiState.Empty -> {
                 CalendarScreenSuccess(viewModel = viewModel, daysWithReservations = daysWithReservations)
             }
+            else -> {}
         }
     }
 }
@@ -46,7 +47,7 @@ fun CalendarScreen(
 fun CalendarScreenSuccess(viewModel: CalendarViewModel, daysWithReservations: CalendarDatesListUiState) {
     val selectedDate by viewModel.selectedDate.collectAsState()
     val currentMonth by viewModel.currentMonth.collectAsState()
-    val reservedClasses by viewModel.reservedClasses.collectAsState()
+    val reservedClassesState by viewModel.reservedClassesState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -81,7 +82,8 @@ fun CalendarScreenSuccess(viewModel: CalendarViewModel, daysWithReservations: Ca
 
         ReservedClassesList(
             selectedDate = selectedDate,
-            reservedClasses = viewModel.getReservedClassesForDate(selectedDate),
+            reservedClassesState = reservedClassesState,
+            onRetry = { viewModel.loadReservationsForSelectedDate() },
             modifier = Modifier.weight(1f)
         )
     }

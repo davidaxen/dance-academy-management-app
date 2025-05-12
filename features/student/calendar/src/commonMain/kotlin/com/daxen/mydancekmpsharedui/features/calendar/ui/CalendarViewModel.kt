@@ -33,16 +33,27 @@ class CalendarViewModel(
     private val _daysWithReservationsList = MutableStateFlow<CalendarDatesListUiState>(CalendarDatesListUiState.Loading)
     val daysWithReservationsList: StateFlow<CalendarDatesListUiState> = _daysWithReservationsList.asStateFlow()
 
-    private val _reservedClasses = MutableStateFlow<List<ReservedClass>>(emptyList())
-    val reservedClasses: StateFlow<List<ReservedClass>> = _reservedClasses.asStateFlow()
+    // Estado para las clases reservadas específicas del día
+    sealed class ReservedClassesState {
+        data object Loading : ReservedClassesState()
+        data object Empty : ReservedClassesState()
+        data class Success(val reservedClasses: List<ReservedClass>) : ReservedClassesState()
+        data object Error : ReservedClassesState()
+    }
+
+    private val _reservedClassesState = MutableStateFlow<ReservedClassesState>(ReservedClassesState.Empty)
+    val reservedClassesState: StateFlow<ReservedClassesState> = _reservedClassesState.asStateFlow()
+
+    init {
+        // Cargar los datos inicialmente
+        loadDaysWithReservations()
+    }
 
     fun loadDaysWithReservations() {
         viewModelScope.launch {
             try {
-                if (repository.daysWithReservationsList.value.isEmpty()) {
-                    _daysWithReservationsList.value = CalendarDatesListUiState.Loading
-                    repository.getReservationDates(currentUser.value.uid, currentUser.value.currentAcademyId)
-                }
+                _daysWithReservationsList.value = CalendarDatesListUiState.Loading
+                repository.getReservationDates(currentUser.value.uid, currentUser.value.currentAcademyId)
 
                 val dateStrings = repository.daysWithReservationsList.value
 
@@ -58,10 +69,10 @@ class CalendarViewModel(
                             }
                         }
                     )
-                    
-                    // Cargar las reservas para la fecha seleccionada
-                    loadReservationsForSelectedDate()
                 }
+                
+                // Cargar las reservas para la fecha seleccionada
+                loadReservationsForSelectedDate()
             } catch (e: Exception) {
                 _daysWithReservationsList.value = CalendarDatesListUiState.Error
             }
@@ -86,44 +97,45 @@ class CalendarViewModel(
             return when (state) {
                 is CalendarDatesListUiState.Success -> state.reservationsDatesList.contains(date)
                 is CalendarDatesListUiState.Error, CalendarDatesListUiState.Loading, CalendarDatesListUiState.Empty -> false
-                else -> {
-                    false
-                }
+                else -> false
             }
         }
     }
-
-    fun getReservedClassesForDate(date: LocalDate): List<ReservedClass> {
-        return _reservedClasses.value.filter { it.date == date }
-    }
     
-    private fun loadReservationsForSelectedDate() {
+    // Carga las reservas para la fecha seleccionada
+    fun loadReservationsForSelectedDate() {
         viewModelScope.launch {
             try {
+                _reservedClassesState.value = ReservedClassesState.Loading
                 val date = _selectedDate.value.toString()
+                
                 val reservations = repository.getReservationsByDate(
                     userId = currentUser.value.uid,
                     academyId = currentUser.value.currentAcademyId,
                     date = date
                 )
                 
-                _reservedClasses.value = reservations.map { reservation ->
-                    ReservedClass(
-                        id = reservation.id,
-                        name = reservation.className,
-                        date = _selectedDate.value,
-                        time = try {
-                            LocalTime.parse(reservation.hour)
-                        } catch (e: Exception) {
-                            LocalTime(0, 0)
-                        },
-                        teacher = reservation.teacherName,
-                        room = "Sala Principal" // Por defecto, ya que no tenemos esta información todavía
-                    )
+                if (reservations.isEmpty()) {
+                    _reservedClassesState.value = ReservedClassesState.Empty
+                } else {
+                    val reservedClasses = reservations.map { reservation ->
+                        ReservedClass(
+                            id = reservation.id,
+                            name = reservation.className,
+                            date = _selectedDate.value,
+                            time = try {
+                                LocalTime.parse(reservation.hour)
+                            } catch (e: Exception) {
+                                LocalTime(0, 0)
+                            },
+                            teacher = reservation.teacherName,
+                            room = "Sala Principal" // Por defecto, ya que no tenemos esta información todavía
+                        )
+                    }
+                    _reservedClassesState.value = ReservedClassesState.Success(reservedClasses)
                 }
             } catch (e: Exception) {
-                // Si hay un error, mostramos una lista vacía
-                _reservedClasses.value = emptyList()
+                _reservedClassesState.value = ReservedClassesState.Error
             }
         }
     }
