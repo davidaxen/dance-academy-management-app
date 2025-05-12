@@ -5,12 +5,15 @@ import com.daxen.mydancekmpsharedui.data.user.model.InvitationStatus
 import com.daxen.mydancekmpsharedui.data.user.model.UserInvitation
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 
-fun InvitationModel.toUserInvitation(): UserInvitation {
+suspend fun InvitationModel.toUserInvitation(getLogoUrl: suspend (String) -> String): UserInvitation {
+    // Obtenemos la URL del logo de la academia
+    val logoUrl = getLogoUrl(academyId)
+    
     return UserInvitation(
         id = id,
         academyId = academyId,
         academyName = academyName,
-        imageUrl = "", // La imagen se tendrá que obtener de otra colección
+        imageUrl = logoUrl, // Usamos la URL del logo obtenida
         role = UserRole.fromString(role),
         status = InvitationStatus.fromString(status),
         createdAt = createdAt

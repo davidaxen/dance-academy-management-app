@@ -9,4 +9,5 @@ interface FirebaseUserInvitationsService {
     suspend fun rejectInvitation(invitationId: String): Boolean
     suspend fun getUserAcademies(email: String): List<String> // Devuelve los IDs de las academias
     suspend fun getAcademyDetails(academyId: String, userId: String): AcademyWithRoleModel // Devuelve los detalles de una academia con el rol del usuario
+    suspend fun getAcademyLogoUrl(academyId: String): String // Devuelve la URL de la imagen de logo de la academia
 } 

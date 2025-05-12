@@ -4,7 +4,9 @@ import com.daxen.mydancekmpsharedui.core.firebase.academy.students.model.Invitat
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyDetailsModel
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyWithRoleModel
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.UserWithAcademyRolesModel
+import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.FirebaseFirestore
+import dev.gitlive.firebase.storage.storage
 
 class FirebaseUserInvitationsServiceImpl(
     private val firestore: FirebaseFirestore
@@ -155,15 +157,18 @@ class FirebaseUserInvitationsServiceImpl(
                 }
             }
             
+            // 3. Obtenemos la URL del logo de la academia
+            val logoUrl = getAcademyLogoUrl(academyId)
+            
             // Formateamos el horario como una cadena
             val schedule = "${academyDetails.openingTime} - ${academyDetails.closingTime}"
             
-            // 3. Devolvemos un objeto AcademyWithRoleModel con los datos obtenidos
+            // 4. Devolvemos un objeto AcademyWithRoleModel con los datos obtenidos
             AcademyWithRoleModel(
                 id = academyId,
                 name = academyDetails.name,
                 location = academyDetails.address, // Usamos address en lugar de location
-                imageUrl = academyDetails.imageUrl,
+                imageUrl = logoUrl, // Usamos la URL del logo
                 schedule = schedule, // Combinamos horarios de apertura y cierre
                 role = userRole
             )
@@ -178,6 +183,21 @@ class FirebaseUserInvitationsServiceImpl(
                 schedule = "",
                 role = "student"
             )
+        }
+    }
+    
+    override suspend fun getAcademyLogoUrl(academyId: String): String {
+        return try {
+            // Obtenemos la referencia a la imagen en Storage
+            val storageRef = Firebase.storage.reference
+                .child("academyLogos")
+                .child(academyId)
+            
+            // Obtenemos la URL de descarga
+            storageRef.getDownloadUrl()
+        } catch (e: Exception) {
+            println("Error obteniendo URL del logo de la academia: $academyId - ${e.message}")
+            "" // Devolvemos una cadena vacía en caso de error
         }
     }
 } 
