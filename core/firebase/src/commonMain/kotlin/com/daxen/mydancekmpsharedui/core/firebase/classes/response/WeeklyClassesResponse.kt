@@ -9,5 +9,5 @@ data class WeeklyClassesResponse(
     override val name: String,
     override val hour: String,
     override val status: String,
-    override val teacherId: String,
+    override val teachers: List<TeacherInfo> = emptyList(),
 ): BaseClassResponse

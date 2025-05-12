@@ -5,6 +5,12 @@ data class ClassModel(
     val name: String,
     val hour: String,
     val status: String,
-    val teacherId: String,
-    val availableSpots: Int = 10
+    val teacherId: String = "",
+    val availableSpots: Int = 10,
+    val teachers: List<TeacherInfo> = emptyList()
+)
+
+data class TeacherInfo(
+    val id: String,
+    val name: String
 )
