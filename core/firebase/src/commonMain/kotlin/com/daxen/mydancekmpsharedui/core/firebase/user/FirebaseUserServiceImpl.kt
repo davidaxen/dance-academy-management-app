@@ -28,33 +28,26 @@ class FirebaseUserServiceImpl(
     }
 
     override suspend fun saveUserToDatabase(userModel: UserModel) {
-//        val academyUserModel = AcademyUserModel(
-//            uid = userModel.uid,
-//            email = userModel.email,
-//            name = userModel.name,
-//            role = userModel.role
-//        )
-//        firestore.collection("academies")
-//            .document(userModel.academies.keys.first())
-//            .collection("students")
-//            .document(academyUserModel.uid)
-//            .set(academyUserModel)
-
         firestore.collection("users")
             .document(userModel.uid)
             .set(userModel)
     }
 
-    override suspend fun isUserInfoComplete(): Boolean {
+    override suspend fun getUserToCheck(): UserModel {
         val userId = firebaseAuthService.getCurrentUserId()
 
         if (userId != null) {
-            return firestore.collection("users")
+            val document = firestore.collection("users")
                 .document(userId)
                 .get()
-                .exists
+
+            return if (document.exists) {
+                document.data(UserModel.serializer())
+            } else {
+                UserModel()
+            }
         }
 
-        return false
+        return UserModel()
     }
 }

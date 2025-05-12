@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.dropUnlessStarted
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -22,6 +23,9 @@ import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserViewModel
 import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.AcademySelectionScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.AcademySelectionViewModel
+import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.AcademyUserScreen
+import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.AcademyUserViewModel
+import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.sections.academyData.AcademyDataScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.components.UserDataSummary
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
@@ -46,10 +50,37 @@ sealed class ProfileAction {
 }
 
 @Serializable
+sealed class AcademyProfileAction {
+    @Serializable
+    data object AcademyInfoRoute : AcademyProfileAction()
+    @Serializable
+    data object ManageTeachersRoute : AcademyProfileAction()
+    @Serializable
+    data object ManageStudentsRoute : AcademyProfileAction()
+    @Serializable
+    data object ManageScheduleRoute : AcademyProfileAction()
+    @Serializable
+    data object CustomizationRoute : AcademyProfileAction()
+    @Serializable
+    data object LogOut : AcademyProfileAction()
+    @Serializable
+    data object DeleteAccount : AcademyProfileAction()
+}
+
+@Serializable
 data object AcademySelectionGraph
 
 @Serializable
 private data object AcademySelectionRoute
+
+@Serializable
+data object AcademyUserGraph
+
+@Serializable
+private data object AcademyUserScreenRoute
+
+@Serializable
+data object AcademyOptionsGraph
 
 fun NavGraphBuilder.userNavGraph(navigateToLogin: () -> Unit, appNavController: NavController) {
     navigation<UserGraph>(startDestination = UserScreenRoute) {
@@ -70,6 +101,45 @@ fun NavGraphBuilder.userNavGraph(navigateToLogin: () -> Unit, appNavController: 
                         }
                         is ProfileAction.DeleteAccount -> {
 
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.academyUserNavGraph(navigateToLogin: () -> Unit, appNavController: NavController) {
+    navigation<AcademyUserGraph>(startDestination = AcademyUserScreenRoute) {
+        composable<AcademyUserScreenRoute> {
+            val viewModel: AcademyUserViewModel = koinViewModel()
+            AcademyUserScreen(
+                viewModel = viewModel,
+                showTopSection = true,
+                navigateToLogin = navigateToLogin,
+                navigateToSection = { action ->
+                    when (action) {
+                        is AcademyProfileAction.AcademyInfoRoute -> {
+                            appNavController.navigate(AcademyProfileAction.AcademyInfoRoute)
+                        }
+                        is AcademyProfileAction.ManageTeachersRoute -> {
+                            // Navegación futura a pantalla de gestión de profesores
+                        }
+                        is AcademyProfileAction.ManageStudentsRoute -> {
+                            // Navegación futura a pantalla de gestión de estudiantes
+                        }
+                        is AcademyProfileAction.ManageScheduleRoute -> {
+                            // Navegación futura a pantalla de gestión de horarios
+                        }
+                        is AcademyProfileAction.CustomizationRoute -> {
+                            // Navegación futura a pantalla de personalización
+                        }
+                        is AcademyProfileAction.LogOut -> {
+                            viewModel.signOut()
+                            navigateToLogin()
+                        }
+                        is AcademyProfileAction.DeleteAccount -> {
+                            // Lógica para borrar cuenta
                         }
                     }
                 }
@@ -133,7 +203,28 @@ fun NavGraphBuilder.userOptionsNavGraph(appNavController: NavController) {
                 ) + fadeOut(animationSpec = tween(300, easing = EaseIn))
             }
         ) {
-            PersonalDataScreen(navigateBack = { appNavController.popBackStack() })
+            PersonalDataScreen(navigateBack = dropUnlessStarted { appNavController.popBackStack() })
+        }
+    }
+}
+
+fun NavGraphBuilder.academyOptionsNavGraph(appNavController: NavController) {
+    navigation<AcademyOptionsGraph>(startDestination = AcademyProfileAction.AcademyInfoRoute) {
+        composable<AcademyProfileAction.AcademyInfoRoute>(
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(300),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                ) + fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(300),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                ) + fadeOut(animationSpec = tween(300, easing = EaseIn))
+            }
+        ) {
+            AcademyDataScreen(navigateBack = dropUnlessStarted { appNavController.popBackStack() })
         }
     }
 }

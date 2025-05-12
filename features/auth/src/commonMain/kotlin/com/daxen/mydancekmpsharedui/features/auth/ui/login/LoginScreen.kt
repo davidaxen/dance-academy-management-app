@@ -29,6 +29,7 @@ internal fun LoginScreen(
     viewModel: LoginViewModel,
     checkerViewModel: AuthViewModel,
     navigateToAcademySelection: () -> Unit,
+    navigateToAcademyHome: () -> Unit,
     navigateToRoleSelection: () -> Unit,
     navigateToRegister: () -> Unit,
     modifier: Modifier = Modifier
@@ -37,7 +38,7 @@ internal fun LoginScreen(
     val emailError by viewModel.emailError.collectAsState()
     val passwordError by viewModel.passwordError.collectAsState()
     val isLoggingIn by viewModel.isLoggingIn.collectAsState()
-    val afterLoginDestination by checkerViewModel.afterLoginDestination.collectAsState()
+    val startingDestination by checkerViewModel.startingDestination.collectAsState()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -50,21 +51,24 @@ internal fun LoginScreen(
         }
     }
 
-    LaunchedEffect(afterLoginDestination) {
-        when (afterLoginDestination) {
+    LaunchedEffect(startingDestination) {
+        when (startingDestination) {
             PostSplashDestination.CompleteProfile -> {
                 navigateToRoleSelection()
             }
             PostSplashDestination.AcademySelection -> {
                 navigateToAcademySelection()
             }
+            PostSplashDestination.AcademyHome -> {
+                navigateToAcademyHome()
+            }
             else -> {
                 isNavigating = false
-                viewModel.resetIsLogginIn()
+                viewModel.resetIsLoginIn()
                 return@LaunchedEffect
             }
         }
-        viewModel.resetIsLogginIn()
+        viewModel.resetIsLoginIn()
     }
 
     Box(
