@@ -7,10 +7,15 @@ import com.daxen.mydancekmpsharedui.data.user.model.User
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
 import com.daxen.mydancekmpsharedui.features.student.calendar.ui.models.CalendarMonth
 import com.daxen.mydancekmpsharedui.features.student.calendar.ui.models.ReservedClass
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class CalendarViewModel(
     userRepository: UserRepository,
@@ -28,27 +33,7 @@ class CalendarViewModel(
     private val _daysWithReservationsList = MutableStateFlow<CalendarDatesListUiState>(CalendarDatesListUiState.Loading)
     val daysWithReservationsList: StateFlow<CalendarDatesListUiState> = _daysWithReservationsList.asStateFlow()
 
-    // Datos simulados - En el futuro esto vendrá del repositorio
-    private val _reservedClasses = MutableStateFlow(
-        listOf(
-            ReservedClass(
-                id = "1",
-                name = "Bachata Intermedio",
-                date = currentDate,
-                time = LocalTime(20, 0),
-                teacher = "Lucía Gómez",
-                room = "Sala 1"
-            ),
-            ReservedClass(
-                id = "2",
-                name = "Salsa Avanzado",
-                date = currentDate,
-                time = LocalTime(21, 30),
-                teacher = "Carlos Pérez",
-                room = "Sala 2"
-            )
-        )
-    )
+    private val _reservedClasses = MutableStateFlow<List<ReservedClass>>(emptyList())
     val reservedClasses: StateFlow<List<ReservedClass>> = _reservedClasses.asStateFlow()
 
     fun loadDaysWithReservations() {
@@ -73,6 +58,9 @@ class CalendarViewModel(
                             }
                         }
                     )
+                    
+                    // Cargar las reservas para la fecha seleccionada
+                    loadReservationsForSelectedDate()
                 }
             } catch (e: Exception) {
                 _daysWithReservationsList.value = CalendarDatesListUiState.Error
@@ -82,6 +70,7 @@ class CalendarViewModel(
 
     fun onDateSelected(date: LocalDate) {
         _selectedDate.value = date
+        loadReservationsForSelectedDate()
     }
 
     fun onPreviousMonthClick() {
@@ -97,11 +86,45 @@ class CalendarViewModel(
             return when (state) {
                 is CalendarDatesListUiState.Success -> state.reservationsDatesList.contains(date)
                 is CalendarDatesListUiState.Error, CalendarDatesListUiState.Loading, CalendarDatesListUiState.Empty -> false
+                else -> {
+                    false
+                }
             }
         }
     }
 
     fun getReservedClassesForDate(date: LocalDate): List<ReservedClass> {
         return _reservedClasses.value.filter { it.date == date }
+    }
+    
+    private fun loadReservationsForSelectedDate() {
+        viewModelScope.launch {
+            try {
+                val date = _selectedDate.value.toString()
+                val reservations = repository.getReservationsByDate(
+                    userId = currentUser.value.uid,
+                    academyId = currentUser.value.currentAcademyId,
+                    date = date
+                )
+                
+                _reservedClasses.value = reservations.map { reservation ->
+                    ReservedClass(
+                        id = reservation.id,
+                        name = reservation.className,
+                        date = _selectedDate.value,
+                        time = try {
+                            LocalTime.parse(reservation.hour)
+                        } catch (e: Exception) {
+                            LocalTime(0, 0)
+                        },
+                        teacher = reservation.teacherName,
+                        room = "Sala Principal" // Por defecto, ya que no tenemos esta información todavía
+                    )
+                }
+            } catch (e: Exception) {
+                // Si hay un error, mostramos una lista vacía
+                _reservedClasses.value = emptyList()
+            }
+        }
     }
 } 

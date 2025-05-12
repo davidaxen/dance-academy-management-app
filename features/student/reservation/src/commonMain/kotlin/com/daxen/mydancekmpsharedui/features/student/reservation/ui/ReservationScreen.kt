@@ -123,6 +123,7 @@ private fun ClassScheduleScreen(
                     hour = it.data.hour,
                     name = it.data.name,
                     teacherId = it.data.teacherId,
+                    teacherName = viewModel.getTeacherName(it.data.teacherId),
                     status = it.data.status,
                     availableSpots = it.data.availableSpots,
                     origin = ClassOrigin.SPECIFIC
@@ -135,6 +136,7 @@ private fun ClassScheduleScreen(
                     hour = it.data.hour,
                     name = it.data.name,
                     teacherId = it.data.teacherId,
+                    teacherName = viewModel.getTeacherName(it.data.teacherId),
                     status = it.data.status,
                     availableSpots = it.data.availableSpots,
                     origin = ClassOrigin.WEEKLY
@@ -277,7 +279,7 @@ private fun ClassesListSection(
                             DetailRow(
                                 icon = Icons.Default.Person,
                                 title = "Profesor",
-                                content = "Marley & Leo"
+                                content = selectedClass!!.teacherName.ifEmpty { "Profesor sin asignar" }
                             )
 
                             Spacer(modifier = Modifier.height(LocalPadding.current.small))

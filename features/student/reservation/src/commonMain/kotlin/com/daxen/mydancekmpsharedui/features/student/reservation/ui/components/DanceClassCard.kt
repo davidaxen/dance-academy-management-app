@@ -95,7 +95,7 @@ internal fun DanceClassCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            "Marley & Leo",
+                            danceClass.teacherName.ifEmpty { "Profesor sin asignar" },
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )

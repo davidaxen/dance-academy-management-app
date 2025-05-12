@@ -6,6 +6,8 @@ import com.daxen.mydancekmpsharedui.data.classes.repository.ClassesRepository
 import com.daxen.mydancekmpsharedui.data.reservation.repository.ReservationRepository
 import com.daxen.mydancekmpsharedui.data.user.model.User
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
+import com.daxen.mydancekmpsharedui.features.student.reservation.utils.ClassOrigin
+import com.daxen.mydancekmpsharedui.features.student.reservation.utils.DisplayClass
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -43,9 +45,13 @@ internal class ReservationViewModel(
         week.last().minus(7, DateTimeUnit.DAY) >= today
     }.stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
+    // Almacén de profesores por ID
+    private val teachersMap = MutableStateFlow<Map<String, String>>(emptyMap())
+
     init {
         loadClasses()
     }
+
     private fun loadClasses() {
         viewModelScope.launch {
             _classesListState.value = ClassesListUiState.Loading
@@ -55,6 +61,14 @@ internal class ReservationViewModel(
 
                 val weekly = classesRepository.weeklyClassesList.value
                 val specific = classesRepository.specificClassesList.value
+
+                // Aquí crearíamos un mapa de ID de profesor a nombre
+                // Por ahora, asignamos nombres ficticios basados en los IDs
+                val teacherIds = (weekly.map { it.data.teacherId } + specific.map { it.data.teacherId }).distinct()
+                val teacherNames = teacherIds.associateWith { teacherId ->
+                    "Profesor $teacherId" // En el futuro, obtendríamos el nombre real
+                }
+                teachersMap.value = teacherNames
 
                 if (weekly.isEmpty() && specific.isEmpty()) {
                     _classesListState.value = ClassesListUiState.Empty
@@ -114,5 +128,9 @@ internal class ReservationViewModel(
     fun reloadClasses() {
         _classesListState.value = ClassesListUiState.Loading
         loadClasses()
+    }
+    
+    fun getTeacherName(teacherId: String): String {
+        return teachersMap.value[teacherId] ?: "Profesor sin asignar"
     }
 }

@@ -31,4 +31,17 @@ class FirebaseReservationServiceImpl(
             document.data(ClassDateModel.serializer()).date
         }
     }
+    
+    override suspend fun getReservationsByDate(userId: String, academyId: String, date: String): List<ReservationModel> {
+        val snapshot = firestore.collection("users/$userId/reservations")
+            .where {
+                "academyId" equalTo academyId
+                "date" equalTo date
+            }
+            .get()
+            
+        return snapshot.documents.map { document ->
+            document.data(ReservationModel.serializer())
+        }
+    }
 }
