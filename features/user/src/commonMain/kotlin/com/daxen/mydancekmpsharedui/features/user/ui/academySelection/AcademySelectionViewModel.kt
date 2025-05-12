@@ -29,47 +29,110 @@ class AcademySelectionViewModel(
 
     private val _loadingInvitations = MutableStateFlow<Set<String>>(emptySet())
     val loadingInvitations: StateFlow<Set<String>> = _loadingInvitations.asStateFlow()
+    
+    private val _isRefreshingAcademies = MutableStateFlow(false)
+    val isRefreshingAcademies: StateFlow<Boolean> = _isRefreshingAcademies.asStateFlow()
+    
+    private val _isRefreshingInvitations = MutableStateFlow(false)
+    val isRefreshingInvitations: StateFlow<Boolean> = _isRefreshingInvitations.asStateFlow()
+    
+    private val _isInitialLoading = MutableStateFlow(true)
+    val isInitialLoading: StateFlow<Boolean> = _isInitialLoading.asStateFlow()
 
     init {
         viewModelScope.launch {
             currentUser.collectLatest { user ->
                 if (user.email.isNotEmpty()) {
                     loadUserData(user.email)
+                    _isInitialLoading.value = false
                 }
             }
         }
     }
 
     private suspend fun loadUserData(email: String) {
-        userInvitationsRepository.fetchUserInvitations(email)
-        userInvitationsRepository.fetchUserAcademies(email)
+        try {
+            userInvitationsRepository.fetchUserInvitations(email)
+            userInvitationsRepository.fetchUserAcademies(email)
+        } catch (e: Exception) {
+            println("Error cargando datos del usuario: ${e.message}")
+            // Aquí podríamos manejar el error, mostrar un mensaje, etc.
+        }
     }
 
     fun onTabSelected(index: Int) {
         _selectedTab.value = index
+        
+        // Si cambiamos a una pestaña y no hay datos, intentamos cargarlos
+        if (index == 0 && academies.value.isEmpty()) {
+            refreshAcademies()
+        } else if (index == 1 && invitations.value.isEmpty()) {
+            refreshInvitations()
+        }
+    }
+    
+    fun refreshAcademies() {
+        val userEmail = currentUser.value.email
+        if (userEmail.isEmpty()) return
+        
+        viewModelScope.launch {
+            try {
+                _isRefreshingAcademies.value = true
+                userInvitationsRepository.fetchUserAcademies(userEmail)
+            } catch (e: Exception) {
+                println("Error refrescando academias: ${e.message}")
+            } finally {
+                _isRefreshingAcademies.value = false
+            }
+        }
+    }
+    
+    fun refreshInvitations() {
+        val userEmail = currentUser.value.email
+        if (userEmail.isEmpty()) return
+        
+        viewModelScope.launch {
+            try {
+                _isRefreshingInvitations.value = true
+                userInvitationsRepository.fetchUserInvitations(userEmail)
+            } catch (e: Exception) {
+                println("Error refrescando invitaciones: ${e.message}")
+            } finally {
+                _isRefreshingInvitations.value = false
+            }
+        }
     }
 
     fun acceptInvitation(invitation: UserInvitation) {
         _loadingInvitations.value += invitation.id
         viewModelScope.launch {
-            val success = userInvitationsRepository.acceptInvitation(invitation.id)
-            
-            if (success) {
-                val user = currentUser.value
-                if (user.email.isNotEmpty()) {
-                    userInvitationsRepository.fetchUserAcademies(user.email)
+            try {
+                val success = userInvitationsRepository.acceptInvitation(invitation.id)
+                
+                if (success) {
+                    val user = currentUser.value
+                    if (user.email.isNotEmpty()) {
+                        userInvitationsRepository.fetchUserAcademies(user.email)
+                    }
                 }
+            } catch (e: Exception) {
+                println("Error aceptando invitación: ${e.message}")
+            } finally {
+                _loadingInvitations.value -= invitation.id
             }
-            
-            _loadingInvitations.value -= invitation.id
         }
     }
 
     fun rejectInvitation(invitation: UserInvitation) {
         _loadingInvitations.value += invitation.id
         viewModelScope.launch {
-            userInvitationsRepository.rejectInvitation(invitation.id)
-            _loadingInvitations.value -= invitation.id
+            try {
+                userInvitationsRepository.rejectInvitation(invitation.id)
+            } catch (e: Exception) {
+                println("Error rechazando invitación: ${e.message}")
+            } finally {
+                _loadingInvitations.value -= invitation.id
+            }
         }
     }
 

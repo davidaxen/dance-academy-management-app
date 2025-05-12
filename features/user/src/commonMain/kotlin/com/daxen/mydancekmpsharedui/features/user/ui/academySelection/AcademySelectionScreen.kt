@@ -2,15 +2,21 @@ package com.daxen.mydancekmpsharedui.features.user.ui.academySelection
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -36,6 +42,7 @@ import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AcademySelectionScreen(
     viewModel: AcademySelectionViewModel,
@@ -47,12 +54,38 @@ fun AcademySelectionScreen(
     val academies by viewModel.academies.collectAsState()
     val invitations by viewModel.invitations.collectAsState()
     val loadingInvitations by viewModel.loadingInvitations.collectAsState()
+    val isRefreshingAcademies by viewModel.isRefreshingAcademies.collectAsState()
+    val isRefreshingInvitations by viewModel.isRefreshingInvitations.collectAsState()
+    val isInitialLoading by viewModel.isInitialLoading.collectAsState()
 
     val tabs = remember {
         listOf("Academias", "Invitaciones", "Perfil")
     }
     val tabIcons = remember {
         listOf(Icons.Default.Home, Icons.Default.Email, Icons.Default.AccountCircle)
+    }
+
+    if (isInitialLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(48.dp)
+                )
+                Spacer(modifier = Modifier.height(LocalPadding.current.small))
+                Text(
+                    text = "Cargando datos...",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+        return
     }
 
     Column(
@@ -95,90 +128,128 @@ fun AcademySelectionScreen(
         when (selectedTab) {
             0 -> {
                 // Lista de academias
-                if (academies.isEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(LocalPadding.current.normal),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "No hay academias",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(LocalPadding.current.normal))
-                        Text(
-                            text = "No estás matriculado en ninguna academia",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(modifier = Modifier.height(LocalPadding.current.small))
-                        Text(
-                            text = "Cuando te matricules en la academia, aparecerá aquí",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize().padding(top = LocalPadding.current.small)
-                    ) {
-                        items(academies) { academy ->
-                            AcademyCard(
-                                name = academy.name,
-                                location = academy.location,
-                                imageUrl = academy.imageUrl,
-                                schedule = academy.schedule,
-                                role = academy.role.toSpanishText(),
-                                onClick = { /* TODO: Navegar a la academia */ }
+                val academiesPullRefreshState = rememberPullRefreshState(
+                    refreshing = isRefreshingAcademies,
+                    onRefresh = { viewModel.refreshAcademies() }
+                )
+                
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pullRefresh(academiesPullRefreshState)
+                ) {
+                    if (academies.isEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(LocalPadding.current.normal),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Home,
+                                contentDescription = "No hay academias",
+                                modifier = Modifier.size(48.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+                            Text(
+                                text = "No estás matriculado en ninguna academia",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(modifier = Modifier.height(LocalPadding.current.small))
+                            Text(
+                                text = "Cuando te matricules en la academia, aparecerá aquí",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize().padding(top = LocalPadding.current.small)
+                        ) {
+                            items(academies) { academy ->
+                                AcademyCard(
+                                    name = academy.name,
+                                    location = academy.location,
+                                    imageUrl = academy.imageUrl,
+                                    schedule = academy.schedule,
+                                    role = academy.role.toSpanishText(),
+                                    onClick = { /* TODO: Navegar a la academia */ }
+                                )
+                            }
+                        }
                     }
+                    
+                    PullRefreshIndicator(
+                        refreshing = isRefreshingAcademies,
+                        state = academiesPullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
             1 -> {
                 // Lista de invitaciones
-                if (invitations.isEmpty()) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = "No hay invitaciones",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(LocalPadding.current.normal))
-                        Text(
-                            text = "No tienes invitaciones pendientes",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(modifier = Modifier.height(LocalPadding.current.small))
-                        Text(
-                            text = "Cuando una academia te invite, aparecerá aquí",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize().padding(top = LocalPadding.current.small)
-                    ) {
-                        items(invitations) { invitation ->
-                            InvitationCard(
-                                academyName = invitation.academyName,
-                                academyImage = invitation.imageUrl,
-                                role = invitation.role.toSpanishText(),
-                                onAccept = { viewModel.acceptInvitation(invitation) },
-                                onReject = { viewModel.rejectInvitation(invitation) },
-                                isLoading = loadingInvitations.contains(invitation.id)
+                val invitationsPullRefreshState = rememberPullRefreshState(
+                    refreshing = isRefreshingInvitations,
+                    onRefresh = { viewModel.refreshInvitations() }
+                )
+                
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pullRefresh(invitationsPullRefreshState)
+                ) {
+                    if (invitations.isEmpty()) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "No hay invitaciones",
+                                modifier = Modifier.size(48.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+                            Text(
+                                text = "No tienes invitaciones pendientes",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(modifier = Modifier.height(LocalPadding.current.small))
+                            Text(
+                                text = "Cuando una academia te invite, aparecerá aquí",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize().padding(top = LocalPadding.current.small)
+                        ) {
+                            items(invitations) { invitation ->
+                                InvitationCard(
+                                    academyName = invitation.academyName,
+                                    academyImage = invitation.imageUrl,
+                                    role = invitation.role.toSpanishText(),
+                                    onAccept = { viewModel.acceptInvitation(invitation) },
+                                    onReject = { viewModel.rejectInvitation(invitation) },
+                                    isLoading = loadingInvitations.contains(invitation.id)
+                                )
+                            }
+                        }
                     }
+                    
+                    PullRefreshIndicator(
+                        refreshing = isRefreshingInvitations,
+                        state = invitationsPullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
             2 -> {

@@ -121,4 +121,58 @@ class FirebaseUserInvitationsServiceImpl(
             emptyList()
         }
     }
+    
+    override suspend fun getAcademyDetails(academyId: String, userId: String): Map<String, Any> {
+        return try {
+            // 1. Primero obtenemos los datos básicos de la academia
+            val academyDoc = firestore.collection("academies")
+                .document(academyId)
+                .get()
+                
+            val academyData = academyDoc.data() ?: emptyMap<String, Any>()
+            
+            // 2. Obtenemos el rol del usuario en esta academia
+            val userDoc = firestore.collection("users")
+                .where {
+                    "email" equalTo userId
+                }
+                .get()
+                .documents
+                .firstOrNull()
+                
+            var userRole = "student" // Por defecto, consideramos que es estudiante
+            
+            if (userDoc != null) {
+                val userData = userDoc.data() as? Map<String, Any>
+                val academyRoles = userData?.get("academyRoles") as? Map<String, Any>
+                val roles = academyRoles?.get(academyId) as? List<String>
+                
+                // Si tiene rol, usamos el primero (normalmente solo tendrá uno)
+                if (roles != null && roles.isNotEmpty()) {
+                    userRole = roles.first()
+                }
+            }
+            
+            // 3. Construimos el mapa de respuesta
+            mapOf(
+                "id" to academyId,
+                "name" to (academyData["name"] as? String ?: "Academia sin nombre"),
+                "location" to (academyData["location"] as? String ?: ""),
+                "imageUrl" to (academyData["imageUrl"] as? String ?: ""),
+                "schedule" to (academyData["schedule"] as? String ?: ""),
+                "role" to userRole
+            )
+        } catch (e: Exception) {
+            println("Error obteniendo detalles de la academia: $academyId - ${e.message}")
+            // Devolvemos un mapa con valores por defecto
+            mapOf(
+                "id" to academyId,
+                "name" to "Academia $academyId",
+                "location" to "",
+                "imageUrl" to "",
+                "schedule" to "",
+                "role" to "student"
+            )
+        }
+    }
 } 
