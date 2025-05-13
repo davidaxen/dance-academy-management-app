@@ -167,7 +167,7 @@ class InvitationStudentViewModel(
             
             try {
                 // Verificar si se puede crear la invitación
-                val (canCreate, errorMessage) = academyStudentsRepository.canCreateInvitation(email)
+                val (canCreate, errorMessage) = academyStudentsRepository.canCreateInvitation(email, currentAcademy.value.academyId)
                 
                 if (!canCreate) {
                     _formErrorMessage.value = errorMessage
