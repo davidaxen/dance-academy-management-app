@@ -25,6 +25,9 @@ actual suspend fun uploadImageToStorage(byteArray: ByteArray, path: String): Str
             val ref = Firebase.storage.reference.child(path)
             ref.putFile(FirebaseFile(uri))
             ref.getDownloadUrl()
+        } catch (e: Exception) {
+            println("Error uploading image: ${e.message}")
+            throw IllegalStateException(e)
         } finally {
             tempFile.delete()
         }
