@@ -13,17 +13,35 @@ class FirebaseReservationServiceImpl(
             classId = classId,
             date = selectedDate,
             className = name,
+            academyId = academyId,
             hour = hour
         )
         firestore.collection("academies/$academyId/reservations").add(reservation)
         firestore.collection("users/$studentId/reservations").add(reservation)
     }
 
-    override suspend fun getReservationDates(userId: String): List<String> {
-        val snapshot = firestore.collection("users/$userId/reservations").get()
+    override suspend fun getReservationDates(userId: String, academyId: String): List<String> {
+        val snapshot = firestore.collection("users/$userId/reservations")
+            .where {
+                "academyId" equalTo academyId
+            }
+            .get()
 
         return snapshot.documents.map { document ->
             document.data(ClassDateModel.serializer()).date
+        }
+    }
+    
+    override suspend fun getReservationsByDate(userId: String, academyId: String, date: String): List<ReservationModel> {
+        val snapshot = firestore.collection("users/$userId/reservations")
+            .where {
+                "academyId" equalTo academyId
+                "date" equalTo date
+            }
+            .get()
+            
+        return snapshot.documents.map { document ->
+            document.data(ReservationModel.serializer())
         }
     }
 }

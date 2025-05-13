@@ -18,17 +18,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
+import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
+import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
+import com.daxen.mydancekmpsharedui.features.student.calendar.ui.CalendarViewModel.ReservedClassesState
 import com.daxen.mydancekmpsharedui.features.student.calendar.ui.models.ReservedClass
 import kotlinx.datetime.LocalDate
 
 @Composable
 fun ReservedClassesList(
     selectedDate: LocalDate,
-    reservedClasses: List<ReservedClass>,
+    reservedClassesState: ReservedClassesState,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(LocalPadding.current.small)
     ) {
@@ -41,25 +45,46 @@ fun ReservedClassesList(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        if (reservedClasses.isEmpty()) {
-            Text(
-                text = "No hay clases reservadas para este día",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = LocalPadding.current.extraTiny)
-            ) {
-                items(reservedClasses) { reservedClass ->
-                    ReservedClassItem(reservedClass = reservedClass)
+        when (reservedClassesState) {
+            is ReservedClassesState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadingComponent(text = "Cargando clases reservadas...")
                 }
             }
-
+            is ReservedClassesState.Empty -> {
+                Text(
+                    text = "No hay clases reservadas para este día",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
+            is ReservedClassesState.Success -> {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(vertical = LocalPadding.current.extraTiny)
+                ) {
+                    items(reservedClassesState.reservedClasses) { reservedClass ->
+                        ReservedClassItem(reservedClass = reservedClass)
+                    }
+                }
+            }
+            is ReservedClassesState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ErrorComponent(
+                        message = "Error al cargar las clases reservadas",
+                        onRetry = onRetry
+                    )
+                }
+            }
+            else -> {}
         }
     }
-
 }
 
 @Composable

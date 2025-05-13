@@ -2,12 +2,12 @@ package com.daxen.mydancekmpsharedui.navigation.studentBottomNavigation
 
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Article
+import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.runtime.Composable
 import com.daxen.mydancekmpsharedui.features.student.calendar.CalendarGraph
 import com.daxen.mydancekmpsharedui.features.student.reservation.ReservationGraph
@@ -36,10 +36,10 @@ sealed class StudentBottomBarDestination<T>(
     data object Reservation: StudentBottomBarDestination<ReservationGraph>(
         title = "Reservas",
         selectedIcon = {
-            Icon(imageVector = Icons.Filled.DateRange, contentDescription = "")
+            Icon(imageVector = Icons.AutoMirrored.Filled.Article, contentDescription = "")
         },
         unselectedIcon = {
-            Icon(imageVector = Icons.Outlined.DateRange, contentDescription = "")
+            Icon(imageVector = Icons.AutoMirrored.Outlined.Article, contentDescription = "")
         },
         route = ReservationGraph
     )

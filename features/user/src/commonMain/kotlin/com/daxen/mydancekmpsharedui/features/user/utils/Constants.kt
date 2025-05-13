@@ -1,12 +1,10 @@
 package com.daxen.mydancekmpsharedui.features.user.utils
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.ui.graphics.Color
 import com.daxen.mydancekmpsharedui.features.user.ProfileAction
 
 object Constants {
@@ -32,9 +30,9 @@ object Constants {
         ProfileItem.Option("Idioma", Icons.Default.Edit),
 //        ProfileItem.Option("WhatsApp", Icons.Default.Chat, "whatsapp"),
 
-        ProfileItem.Section("Ajustes"),
+//        ProfileItem.Section("Ajustes"),
 //        ProfileItem.Option("Ayuda", Icons.Default.Info, "help"),
-        ProfileItem.Option("Borrar cuenta (Permanente)", Icons.Default.DeleteForever, ProfileAction.DeleteAccount, color = Color.Red),
+//        ProfileItem.Option("Borrar cuenta (Permanente)", Icons.Default.DeleteForever, ProfileAction.DeleteAccount, color = Color.Red),
     )
 
 }

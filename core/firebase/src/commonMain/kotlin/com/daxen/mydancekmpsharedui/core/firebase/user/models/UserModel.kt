@@ -13,5 +13,5 @@ data class UserModel(
     val phoneNumberPrefix: String = "",
     val role: String = "" , // Rol como String desde Firebase
     val danceRole: String = "" , // Rol como String desde Firebase
-    val academies: Map<String, UserAcademyInfoResponse> = emptyMap()
+//    val academies: Map<String, UserAcademyInfoResponse> = emptyMap()
 )

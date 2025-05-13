@@ -22,6 +22,10 @@ class UserRepositoryImpl(
         _currentUser.value =  userResponse.toUser()
     }
 
+    override fun setUserAcademyId(academyId: String) {
+        _currentUser.value.currentAcademyId = academyId
+    }
+
     override suspend fun getUserToCheck(): User {
         return firebaseUserService.getUserToCheck().toUser()
     }

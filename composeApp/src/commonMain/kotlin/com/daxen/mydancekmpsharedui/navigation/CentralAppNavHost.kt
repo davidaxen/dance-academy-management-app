@@ -24,6 +24,7 @@ import com.daxen.mydancekmpsharedui.features.user.academyOptionsNavGraph
 import com.daxen.mydancekmpsharedui.features.user.academySelectionNavGraph
 import com.daxen.mydancekmpsharedui.features.user.userOptionsNavGraph
 import com.daxen.mydancekmpsharedui.main.AcademyMainGraph
+import com.daxen.mydancekmpsharedui.main.StudentMainGraph
 import com.daxen.mydancekmpsharedui.main.mainNavGraph
 
 @Composable
@@ -65,7 +66,12 @@ fun CentralAppNavHost(
         academyRegisterProcessNavGraph(
             goBack = { navController.popBackStack() },
             goToLogoUploader = { navController.navigate(LogoUploaderScreenRoute) },
-            goToSubscription = { navController.navigate(SubscriptionScreenRoute) }
+            goToSubscription = { navController.navigate(SubscriptionScreenRoute) },
+            goToAcademyHome = {
+                navController.navigate(AcademyMainGraph) {
+                    popUpTo(0) { inclusive = true }
+                }
+            },
         )
 
         registerProcessNavGraph(
@@ -85,6 +91,7 @@ fun CentralAppNavHost(
 
         academySelectionNavGraph(
             appNavController = navController,
+            navigateToAcademy = { navController.navigate(StudentMainGraph) },
             navigateToLogin = { navController.navigate(LoginScreenRoute) }
         )
 

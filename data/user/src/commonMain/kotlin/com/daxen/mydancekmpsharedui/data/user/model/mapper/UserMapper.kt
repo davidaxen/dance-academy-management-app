@@ -14,11 +14,11 @@ fun UserModel.toUser(): User {
     val danceRole = DanceRole.from(this.danceRole)
         ?: DanceRole.LEADER
 
-    val academiesResponse: Map<String, UserAcademyInfo> =
-        this.academies.map { (academyId, academyInfoResponse) ->
-            val roleResponse = UserRole.from(academyInfoResponse.role) ?: UserRole.STUDENT
-            academyId to UserAcademyInfo(role = roleResponse)
-        }.toMap()
+//    val academiesResponse: Map<String, UserAcademyInfo> =
+//        this.academies.map { (academyId, academyInfoResponse) ->
+//            val roleResponse = UserRole.from(academyInfoResponse.role) ?: UserRole.STUDENT
+//            academyId to UserAcademyInfo(role = roleResponse)
+//        }.toMap()
 
     return User(
         uid = this.uid,
@@ -30,17 +30,17 @@ fun UserModel.toUser(): User {
         phoneNumberPrefix = this.phoneNumberPrefix,
         role = role,
         danceRole = danceRole,
-        academies = academiesResponse
+//        academies = academiesResponse
     )
 }
 
 fun User.toUserResponse(): UserModel {
-    val academiesResponse: Map<String, UserAcademyInfoResponse> =
-        this.academies.map { (academyId, academyInfo) ->
-            academyId to UserAcademyInfoResponse(
-                role = academyInfo.role.roleName
-            )
-        }.toMap()
+//    val academiesResponse: Map<String, UserAcademyInfoResponse> =
+//        this.academies.map { (academyId, academyInfo) ->
+//            academyId to UserAcademyInfoResponse(
+//                role = academyInfo.role.roleName
+//            )
+//        }.toMap()
 
     return UserModel(
         uid = this.uid,
@@ -52,6 +52,6 @@ fun User.toUserResponse(): UserModel {
         phoneNumberPrefix = this.phoneNumberPrefix,
         role = this.role.roleName,
         danceRole = this.danceRole.roleName,
-        academies = academiesResponse
+//        academies = academiesResponse
     )
 }

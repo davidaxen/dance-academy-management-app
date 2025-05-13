@@ -118,11 +118,13 @@ private fun ClassScheduleScreen(
     val filteredClasses = remember(specificClasses, weeklyClasses, selectedDate) {
         val dayOfWeek = selectedDate.dayOfWeek.name
         val specific = specificClasses.filter { it.date == selectedDate.toString() }.map {
+                val teacherName = if (it.data.teachers.isNotEmpty()) it.data.teachers[0].name else ""
                 DisplayClass(
                     id = it.data.id,
                     hour = it.data.hour,
                     name = it.data.name,
                     teacherId = it.data.teacherId,
+                    teacherName = teacherName,
                     status = it.data.status,
                     availableSpots = it.data.availableSpots,
                     origin = ClassOrigin.SPECIFIC
@@ -130,11 +132,13 @@ private fun ClassScheduleScreen(
             }
 
         val weekly = weeklyClasses.filter { it.dayOfWeek == dayOfWeek }.map {
+                val teacherName = if (it.data.teachers.isNotEmpty()) it.data.teachers[0].name else ""
                 DisplayClass(
                     id = it.data.id,
                     hour = it.data.hour,
                     name = it.data.name,
                     teacherId = it.data.teacherId,
+                    teacherName = teacherName,
                     status = it.data.status,
                     availableSpots = it.data.availableSpots,
                     origin = ClassOrigin.WEEKLY
@@ -277,7 +281,7 @@ private fun ClassesListSection(
                             DetailRow(
                                 icon = Icons.Default.Person,
                                 title = "Profesor",
-                                content = "Marley & Leo"
+                                content = selectedClass!!.teacherName.ifEmpty { "Profesor sin asignar" }
                             )
 
                             Spacer(modifier = Modifier.height(LocalPadding.current.small))

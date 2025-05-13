@@ -38,7 +38,7 @@ class FirebaseClassesServiceImpl(
                 name = response.name,
                 hour = response.hour,
                 status = response.status,
-                teacherId = response.teacherId
+                teachers = response.teachers
             )
         }
     }
@@ -55,7 +55,7 @@ class FirebaseClassesServiceImpl(
                 name = response.name,
                 hour = response.hour,
                 status = response.status,
-                teacherId = response.teacherId
+                teachers = response.teachers
             )
         }
     }

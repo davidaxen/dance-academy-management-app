@@ -17,5 +17,13 @@ enum class UserRole(val roleName: String) {
         fun from(roleName: String?): UserRole? {
             return entries.find { it.roleName == roleName }
         }
+        
+        fun fromString(role: String): UserRole {
+            return when (role.lowercase()) {
+                "academy" -> ACADEMY
+                "teacher" -> TEACHER
+                else -> STUDENT
+            }
+        }
     }
 }
