@@ -35,8 +35,10 @@ class FirebaseReservationServiceImpl(
     override suspend fun getReservationsByDate(userId: String, academyId: String, date: String): List<ReservationModel> {
         val snapshot = firestore.collection("users/$userId/reservations")
             .where {
-                "academyId" equalTo academyId
-                "date" equalTo date
+                all(
+                    "academyId" equalTo academyId,
+                    "date" equalTo date
+                )
             }
             .get()
             

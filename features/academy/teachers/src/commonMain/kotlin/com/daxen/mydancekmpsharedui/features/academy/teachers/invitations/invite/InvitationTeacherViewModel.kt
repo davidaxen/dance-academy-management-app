@@ -246,6 +246,7 @@ class InvitationTeacherViewModel(
         viewModelScope.launch {
             try {
                 val academyId = currentAcademy.value.academyId
+                println(currentAcademy.value)
                 if (academyId.isNotEmpty()) {
                     academyTeachersRepository.getTeachersByAcademyID(academyId)
                 }

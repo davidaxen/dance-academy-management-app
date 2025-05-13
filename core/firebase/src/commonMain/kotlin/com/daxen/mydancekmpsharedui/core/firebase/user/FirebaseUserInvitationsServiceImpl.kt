@@ -16,8 +16,10 @@ class FirebaseUserInvitationsServiceImpl(
         return try {
             val documents = firestore.collection("invitations")
                 .where {
-                    "userId" equalTo email
-                    "status" equalTo "PENDING"
+                    all(
+                        "userId" equalTo email,
+                        "status" equalTo "PENDING"
+                    )
                 }
                 .get()
                 .documents

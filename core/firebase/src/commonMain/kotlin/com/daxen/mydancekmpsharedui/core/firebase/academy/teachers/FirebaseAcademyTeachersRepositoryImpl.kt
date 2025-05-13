@@ -51,8 +51,10 @@ class FirebaseAcademyTeachersRepositoryImpl(
         return try {
             val documents = firestore.collection("invitations")
                 .where {
-                    "academyId" equalTo academyId
-                    "role" equalTo "teacher"
+                    all(
+                        "academyId" equalTo academyId,
+                        "role" equalTo "teacher"
+                    )
                 }
                 .get()
                 .documents
@@ -101,8 +103,10 @@ class FirebaseAcademyTeachersRepositoryImpl(
         return try {
             val documents = firestore.collection("invitations")
                 .where {
-                    "userId" equalTo email
-                    "role" equalTo "teacher"
+                    all(
+                        "userId" equalTo email,
+                        "role" equalTo "teacher"
+                    )
                 }
                 .get()
                 .documents
