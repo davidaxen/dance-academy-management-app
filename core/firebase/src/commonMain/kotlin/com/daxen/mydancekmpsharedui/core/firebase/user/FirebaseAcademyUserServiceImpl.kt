@@ -11,29 +11,36 @@ class FirebaseAcademyUserServiceImpl(
     private val firestore: FirebaseFirestore,
     private val firebaseAuthService: FirebaseAuthService
 ): FirebaseAcademyUserService {
-    override suspend fun saveUserToDatabase(
+    override suspend fun saveUserAndAcademy(
         academyUserModel: AcademyUserModel,
         academyModel: AcademyModel,
         image: ByteArray
-    ) {
-        val academy = firestore.collection("academies")
-            .add(academyModel)
-        val academyId = academy.id
+    ): String {
+        try {
+            val academy = firestore.collection("academies")
+                .add(academyModel)
+            val academyId = academy.id
 
-        // Subir la imagen y obtener URL
-        val logoUrl = uploadImageToStorage(image, "academyLogos/$academyId")
-        
-        // Actualizar el modelo de academia con la URL del logo
-        academyModel.logoUrl = logoUrl
-        firestore.collection("academies")
-            .document(academyId)
-            .update(academyModel)
+            // Subir la imagen y obtener URL
+            val logoUrl = uploadImageToStorage(image, "academyLogos/$academyId")
 
-        firestore.collection("users")
-            .document(academyUserModel.uid)
-            .set(academyUserModel.copy(
-                academyId = academyId
-            ))
+            // Actualizar el modelo de academia con la URL del logo
+            academyModel.logoUrl = logoUrl
+            firestore.collection("academies")
+                .document(academyId)
+                .update(academyModel)
+
+            firestore.collection("users")
+                .document(academyUserModel.uid)
+                .set(academyUserModel.copy(
+                    academyId = academyId
+                ))
+
+            return academyId
+        } catch (e: Exception) {
+            println("Error al guardar usuario y academia: ${e.message}")
+            throw e
+        }
     }
 
     override suspend fun getCurrentAcademyUserData(): AcademyUserModel {

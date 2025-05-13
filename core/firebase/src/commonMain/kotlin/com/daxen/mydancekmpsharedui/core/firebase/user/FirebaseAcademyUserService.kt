@@ -4,7 +4,7 @@ import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyModel
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyUserModel
 
 interface FirebaseAcademyUserService {
-    suspend fun saveUserToDatabase(academyUserModel: AcademyUserModel, academyModel: AcademyModel, image: ByteArray)
+    suspend fun saveUserAndAcademy(academyUserModel: AcademyUserModel, academyModel: AcademyModel, image: ByteArray): String
     suspend fun getCurrentAcademyUserData(): AcademyUserModel
     suspend fun getCurrentAcademyData(academyId: String): AcademyModel
     suspend fun getAcademyLogoUrl(academyId: String): String
