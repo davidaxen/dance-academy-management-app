@@ -70,6 +70,7 @@ fun NavGraphBuilder.academyRegisterProcessNavGraph(
     goBack: () -> Unit,
     goToLogoUploader: () -> Unit,
     goToSubscription: () -> Unit,
+    goToAcademyHome: () -> Unit
 ) {
     navigation<AcademyRegisterProcessNavGraph>(startDestination = AcademyInfoScreenRoute) {
         composable<AcademyInfoScreenRoute>(
@@ -136,7 +137,7 @@ fun NavGraphBuilder.academyRegisterProcessNavGraph(
             SubscriptionScreen(
                 viewModel = viewModel,
                 onNavigateBack = goBack,
-                onNavigateNext = {},
+                onNavigateNext = goToAcademyHome,
             )
         }
     }

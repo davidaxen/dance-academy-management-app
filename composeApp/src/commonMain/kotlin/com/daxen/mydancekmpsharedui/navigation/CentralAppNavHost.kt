@@ -66,7 +66,12 @@ fun CentralAppNavHost(
         academyRegisterProcessNavGraph(
             goBack = { navController.popBackStack() },
             goToLogoUploader = { navController.navigate(LogoUploaderScreenRoute) },
-            goToSubscription = { navController.navigate(SubscriptionScreenRoute) }
+            goToSubscription = { navController.navigate(SubscriptionScreenRoute) },
+            goToAcademyHome = {
+                navController.navigate(AcademyMainGraph) {
+                    popUpTo(0) { inclusive = true }
+                }
+            },
         )
 
         registerProcessNavGraph(
