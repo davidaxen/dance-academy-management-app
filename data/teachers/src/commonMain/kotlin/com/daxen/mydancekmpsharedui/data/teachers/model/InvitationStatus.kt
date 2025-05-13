@@ -1,13 +1,13 @@
 package com.daxen.mydancekmpsharedui.data.teachers.model
 
-enum class InvitationStatus(val value: String) {
-    PENDING("pending"),
-    ACCEPTED("accepted"),
-    REJECTED("rejected");
+enum class InvitationStatus(val value: String, val localizedValue: String) {
+    PENDING("PENDING", "Pendiente"),
+    ACCEPTED("ACCEPTED", "Aceptada"),
+    REJECTED("REJECTED", "Rechazada"),;
 
     companion object {
-        fun fromValue(value: String?): InvitationStatus {
-            return entries.find { it.value == value } ?: PENDING
+        fun fromValue(value: String): InvitationStatus {
+            return entries.firstOrNull { it.value == value } ?: PENDING
         }
     }
-} 
+}

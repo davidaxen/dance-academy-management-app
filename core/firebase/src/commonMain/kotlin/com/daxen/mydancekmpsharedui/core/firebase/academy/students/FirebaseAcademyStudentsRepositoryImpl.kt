@@ -105,7 +105,8 @@ class FirebaseAcademyStudentsRepositoryImpl(
                 .where {
                     all(
                         "userId" equalTo email,
-                        "academyId" equalTo academyId
+                        "academyId" equalTo academyId,
+                        "role" equalTo "student"
                     )
                 }
                 .get()
