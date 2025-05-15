@@ -47,9 +47,14 @@ internal class ReservationViewModel(
 
     // Almacén de profesores por ID
     private val teachersMap = MutableStateFlow<Map<String, String>>(emptyMap())
+    
+    // Lista de reservas del usuario
+    private val _userReservations = MutableStateFlow<List<Pair<String, String>>>(emptyList()) // Pair<classId, reservationId>
+    val userReservations: StateFlow<List<Pair<String, String>>> = _userReservations
 
     init {
         loadClasses()
+        loadUserReservations()
     }
 
     private fun loadClasses() {
@@ -83,15 +88,59 @@ internal class ReservationViewModel(
             }
         }
     }
-
-    fun reserveClass(academyId: String, studentId: String, classId: String, name: String, hour: String) {
+    
+    private fun loadUserReservations() {
         viewModelScope.launch {
             try {
-                reservationRepository.reserveClass(academyId, studentId, classId, name, hour, selectedDate.value.toString())
+                // En un entorno real, obtendríamos las reservas del usuario
+                // Por ahora, simularemos algunas reservas para probar la UI
+                // Esto debería reemplazarse por una llamada real a reservationRepository
+                _userReservations.value = listOf(
+                    "class1" to "reservation1",
+                    "class2" to "reservation2"
+                )
+                
+                // La implementación real sería algo así:
+                // val reservations = reservationRepository.getUserReservations(currentUser.value.uid)
+                // _userReservations.value = reservations.map { it.classId to it.id }
+            } catch (e: Exception) {
+                println("Error al cargar las reservas del usuario: ${e.message}")
+            }
+        }
+    }
+
+    fun reserveClass(studentId: String, classId: String, name: String, hour: String) {
+        viewModelScope.launch {
+            try {
+                reservationRepository.reserveClass(currentUser.value.currentAcademyId, studentId, classId, name, hour, selectedDate.value.toString())
+                // Después de reservar, recargar las reservas del usuario
+                loadUserReservations()
             } catch (e: Exception) {
                 println("Error al reservar clase: ${e.message}")
             }
         }
+    }
+    
+    fun cancelReservation(reservationId: String, classId: String) {
+        viewModelScope.launch {
+            try {
+                // Esta función debería implementarse en el repositorio de reservas
+                // reservationRepository.cancelReservation(reservationId)
+                
+                // Actualizar la lista local de reservas
+                _userReservations.value = _userReservations.value.filter { it.second != reservationId }
+            } catch (e: Exception) {
+                println("Error al cancelar la reserva: ${e.message}")
+            }
+        }
+    }
+    
+    fun isClassReserved(classId: String): Boolean {
+        return _userReservations.value.any { it.first == classId }
+    }
+    
+    fun getReservationId(classId: String): String {
+        return _userReservations.value.firstOrNull { it.first == classId }?.second ?: ""
     }
 
     fun goToToday() {
@@ -128,6 +177,7 @@ internal class ReservationViewModel(
     fun reloadClasses() {
         _classesListState.value = ClassesListUiState.Loading
         loadClasses()
+        loadUserReservations()
     }
     
     fun getTeacherName(teacherId: String): String {

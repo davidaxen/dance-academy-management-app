@@ -58,6 +58,9 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.koin.compose.viewmodel.koinViewModel
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.TextButton
 
 @Composable
 internal fun ReservationScreen(
@@ -113,12 +116,15 @@ private fun ClassScheduleScreen(
     val selectedDate by viewModel.selectedDate.collectAsState()
     val currentWeek by viewModel.currentWeek.collectAsState()
     val canGoBack by viewModel.canGoBack.collectAsState()
+    val userReservations by viewModel.userReservations.collectAsState()
     val today = viewModel.today
 
-    val filteredClasses = remember(specificClasses, weeklyClasses, selectedDate) {
+    val filteredClasses = remember(specificClasses, weeklyClasses, selectedDate, userReservations) {
         val dayOfWeek = selectedDate.dayOfWeek.name
         val specific = specificClasses.filter { it.date == selectedDate.toString() }.map {
                 val teacherName = if (it.data.teachers.isNotEmpty()) it.data.teachers[0].name else ""
+                val isReserved = viewModel.isClassReserved(it.data.id)
+                val reservationId = if (isReserved) viewModel.getReservationId(it.data.id) else ""
                 DisplayClass(
                     id = it.data.id,
                     hour = it.data.hour,
@@ -127,12 +133,16 @@ private fun ClassScheduleScreen(
                     teacherName = teacherName,
                     status = it.data.status,
                     availableSpots = it.data.availableSpots,
-                    origin = ClassOrigin.SPECIFIC
+                    origin = ClassOrigin.SPECIFIC,
+                    isReserved = isReserved,
+                    reservationId = reservationId
                 )
             }
 
         val weekly = weeklyClasses.filter { it.dayOfWeek == dayOfWeek }.map {
                 val teacherName = if (it.data.teachers.isNotEmpty()) it.data.teachers[0].name else ""
+                val isReserved = viewModel.isClassReserved(it.data.id)
+                val reservationId = if (isReserved) viewModel.getReservationId(it.data.id) else ""
                 DisplayClass(
                     id = it.data.id,
                     hour = it.data.hour,
@@ -141,7 +151,9 @@ private fun ClassScheduleScreen(
                     teacherName = teacherName,
                     status = it.data.status,
                     availableSpots = it.data.availableSpots,
-                    origin = ClassOrigin.WEEKLY
+                    origin = ClassOrigin.WEEKLY,
+                    isReserved = isReserved,
+                    reservationId = reservationId
                 )
             }
 
@@ -171,15 +183,23 @@ private fun ClassScheduleScreen(
 
         }
 
-        ClassesListSection(classes = filteredClasses, onReserveClick = { classModel ->
-            viewModel.reserveClass(
-                academyId = "CJK3TNrlIeIXdKYeI5Ee",
-                studentId = currentUser.uid,
-                classId = classModel.id,
-                name = classModel.name,
-                hour = classModel.hour,
-            )
-        })
+        ClassesListSection(
+            classes = filteredClasses, 
+            onReserveClick = { classModel ->
+                viewModel.reserveClass(
+                    studentId = currentUser.uid,
+                    classId = classModel.id,
+                    name = classModel.name,
+                    hour = classModel.hour,
+                )
+            },
+            onCancelReservation = { classModel ->
+                viewModel.cancelReservation(
+                    reservationId = classModel.reservationId,
+                    classId = classModel.id
+                )
+            }
+        )
     }
 }
 
@@ -188,11 +208,13 @@ private fun ClassScheduleScreen(
 private fun ClassesListSection(
     classes: List<DisplayClass>,
     onReserveClick: (DisplayClass) -> Unit,
+    onCancelReservation: (DisplayClass) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedClass by remember { mutableStateOf<DisplayClass?>(null) }
+    var showCancelConfirmation by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxWidth().padding(top = LocalPadding.current.tiny)
@@ -295,34 +317,88 @@ private fun ClassesListSection(
 
                             Spacer(modifier = Modifier.height(LocalPadding.current.normal))
 
-                            // Botón de reservar
-                            Button(
-                                onClick = {
-                                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                        if (!sheetState.isVisible) {
-                                            showBottomSheet = false
-                                            selectedClass?.let {
-                                                onReserveClick(it)
+                            // Botón de reservar o cancelar
+                            if (selectedClass!!.isReserved) {
+                                TextButton(
+                                    onClick = {
+                                        showCancelConfirmation = true
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    border = BorderStroke(1.dp, Color.Red),
+                                    shape = RoundedCornerShape(12.dp),
+                                ) {
+                                    Text(
+                                        text = "Cancelar reserva",
+                                        color = Color.Red,
+                                        modifier = Modifier.padding(vertical = LocalPadding.current.extraTiny)
+                                    )
+                                }
+                            } else {
+                                Button(
+                                    onClick = {
+                                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                            if (!sheetState.isVisible) {
+                                                showBottomSheet = false
+                                                selectedClass?.let {
+                                                    onReserveClick(it)
+                                                }
+                                                selectedClass = null
                                             }
-                                            selectedClass = null
                                         }
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                )
-                            ) {
-                                Text(
-                                    text = "Reservar clase",
-                                    modifier = Modifier.padding(vertical = LocalPadding.current.extraTiny)
-                                )
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                ) {
+                                    Text(
+                                        text = "Reservar clase",
+                                        modifier = Modifier.padding(vertical = LocalPadding.current.extraTiny)
+                                    )
+                                }
                             }
                         }
                     }
                 }
+            }
+            
+            // Diálogo de confirmación para cancelar reserva
+            if (showCancelConfirmation && selectedClass != null) {
+                AlertDialog(
+                    onDismissRequest = { showCancelConfirmation = false },
+                    title = { Text("Cancelar reserva") },
+                    text = { Text("¿Estás seguro que deseas cancelar tu reserva para la clase ${selectedClass!!.name}?") },
+                    backgroundColor = Color.White,
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showCancelConfirmation = false
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        showBottomSheet = false
+                                        selectedClass?.let {
+                                            onCancelReservation(it)
+                                        }
+                                        selectedClass = null
+                                    }
+                                }
+                            }
+                        ) {
+                            Text("Sí, cancelar", color = Color.Red)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showCancelConfirmation = false
+                            }
+                        ) {
+                            Text("No")
+                        }
+                    }
+                )
             }
         }
     }

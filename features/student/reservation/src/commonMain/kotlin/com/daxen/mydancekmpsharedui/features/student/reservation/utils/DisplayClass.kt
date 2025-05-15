@@ -9,7 +9,9 @@ data class DisplayClass(
     val teacherName: String = "",
     val availableSpots: Int = 10,
 //    val room: String,
-    val origin: ClassOrigin
+    val origin: ClassOrigin,
+    val isReserved: Boolean = false,
+    val reservationId: String = ""
 )
 
 enum class ClassOrigin {
