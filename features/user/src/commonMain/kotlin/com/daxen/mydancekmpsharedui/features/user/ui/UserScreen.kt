@@ -22,10 +22,8 @@ internal fun UserScreen(
 ) {
     val userState by viewModel.userState.collectAsState()
 
-    LaunchedEffect(userState) {
-        if (userState is UserUiState.Loading) {
-            viewModel.reloadUser()
-        }
+    LaunchedEffect(Unit) {
+        viewModel.reloadUser()
     }
 
     Box(

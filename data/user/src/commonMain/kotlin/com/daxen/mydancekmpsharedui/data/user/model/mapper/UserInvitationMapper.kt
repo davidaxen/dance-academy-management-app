@@ -11,10 +11,23 @@ suspend fun InvitationModel.toUserInvitation(getLogoUrl: suspend (String) -> Str
     return UserInvitation(
         id = id,
         academyId = academyId,
+        userId = userId,
         academyName = academyName,
         imageUrl = logoUrl, // Usamos la URL del logo obtenida
         role = UserRole.fromString(role),
         status = InvitationStatus.fromString(status),
         createdAt = createdAt
     )
-} 
+}
+
+fun UserInvitation.toInvitationModel(): InvitationModel {
+    return InvitationModel(
+        id = id,
+        academyId = academyId,
+        userId = userId,
+        academyName = academyName,
+        role = role.toString(),
+        status = status.toString(),
+        createdAt = createdAt
+    )
+}
