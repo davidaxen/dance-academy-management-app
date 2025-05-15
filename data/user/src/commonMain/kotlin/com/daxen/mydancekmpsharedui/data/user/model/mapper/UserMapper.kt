@@ -1,10 +1,8 @@
 package com.daxen.mydancekmpsharedui.data.user.model.mapper
 
-import com.daxen.mydancekmpsharedui.core.firebase.user.models.UserAcademyInfoResponse
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.UserModel
 import com.daxen.mydancekmpsharedui.data.user.model.DanceRole
 import com.daxen.mydancekmpsharedui.data.user.model.User
-import com.daxen.mydancekmpsharedui.data.user.model.UserAcademyInfo
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 
 fun UserModel.toUser(): User {

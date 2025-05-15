@@ -64,7 +64,7 @@ class FirebaseUserInvitationsServiceImpl(
                     // Agregamos el rol del usuario en esta academia
                     firestore.collection("users")
                         .document(userId)
-                        .update("academyRoles.${invitation.academyId}" to listOf(invitation.role.lowercase()))
+                        .update("academyRoles.${invitation.academyId}" to listOf(invitation.role))
                     
                     // Añadimos al usuario como estudiante en la academia
                     if (invitation.role.equals("STUDENT", ignoreCase = true)) {
@@ -147,7 +147,7 @@ class FirebaseUserInvitationsServiceImpl(
                 .documents
                 .firstOrNull()
                 
-            var userRole = "student" // Por defecto, consideramos que es estudiante
+            var userRole = "STUDENT" // Por defecto, consideramos que es estudiante
             
             if (userDoc != null) {
                 val userWithRoles = userDoc.data(UserWithAcademyRolesModel.serializer())
@@ -183,7 +183,7 @@ class FirebaseUserInvitationsServiceImpl(
                 location = "",
                 imageUrl = "",
                 schedule = "",
-                role = "student"
+                role = "STUDENT"
             )
         }
     }

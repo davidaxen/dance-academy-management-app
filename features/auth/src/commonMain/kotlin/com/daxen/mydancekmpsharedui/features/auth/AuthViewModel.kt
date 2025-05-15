@@ -37,6 +37,8 @@ class AuthViewModel(
 
     private fun setLoginDestinationUserLogged(user: User) {
         viewModelScope.launch {
+            userRepository.onLoginClear()
+            academyUserRepository.onLoginClear()
             if (user == User.EMPTY) {
                 _startingDestination.value = PostSplashDestination.CompleteProfile
             } else {

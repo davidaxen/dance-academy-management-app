@@ -91,4 +91,8 @@ class AcademyUserRepositoryImpl(
         // Si no, la obtenemos del servicio
         return firebaseAcademyUserService.getAcademyLogoUrl(id)
     }
+
+    override fun onLoginClear() {
+        _currentAcademy.value = UserAcademy.EMPTY
+    }
 }

@@ -53,7 +53,7 @@ class FirebaseAcademyTeachersRepositoryImpl(
                 .where {
                     all(
                         "academyId" equalTo academyId,
-                        "role" equalTo "teacher"
+                        "role" equalTo "TEACHER"
                     )
                 }
                 .get()
@@ -106,7 +106,7 @@ class FirebaseAcademyTeachersRepositoryImpl(
                     all(
                         "userId" equalTo email,
                         "academyId" equalTo academyId,
-                        "role" equalTo "teacher"
+                        "role" equalTo "TEACHER"
                     )
                 }
                 .get()

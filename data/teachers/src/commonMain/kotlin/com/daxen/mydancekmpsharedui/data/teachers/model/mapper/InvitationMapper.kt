@@ -21,7 +21,7 @@ fun Invitation.toFirebaseModel(): InvitationModel {
         userId = this.email, // Guardamos el email como userId
         academyId = this.academyId,
         academyName = this.academyName,
-        role = "teacher",
+        role = "TEACHER",
         status = this.status.value,
         createdAt = this.createdAt
     )

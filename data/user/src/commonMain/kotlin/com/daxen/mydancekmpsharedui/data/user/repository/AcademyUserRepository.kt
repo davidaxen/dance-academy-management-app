@@ -19,4 +19,5 @@ interface AcademyUserRepository {
     fun setSubscription(subscription: Subscription)
     suspend fun saveToDatabase()
     suspend fun getAcademyLogoUrl(academyId: String? = null): String
+    fun onLoginClear()
 }

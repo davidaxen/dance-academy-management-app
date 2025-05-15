@@ -106,7 +106,7 @@ class FirebaseAcademyStudentsRepositoryImpl(
                     all(
                         "userId" equalTo email,
                         "academyId" equalTo academyId,
-                        "role" equalTo "student"
+                        "role" equalTo "STUDENT"
                     )
                 }
                 .get()

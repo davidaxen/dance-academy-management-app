@@ -1,8 +1,8 @@
 package com.daxen.mydancekmpsharedui.data.students.model
 
 enum class DanceRole(val roleName: String) {
-    LEADER("leader"),
-    FOLLOWER("follower");
+    LEADER("LEADER"),
+    FOLLOWER("FOLLOWER");
 
     companion object {
         fun from(roleName: String?): DanceRole? {

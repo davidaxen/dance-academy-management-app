@@ -123,7 +123,9 @@ fun InvitationStudentScreen(
     if (isModalVisible) {
         ModalBottomSheet(
             onDismissRequest = { viewModel.toggleModal() },
-            sheetState = sheetState
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground,
         ) {
             InviteStudentForm(viewModel)
         }
@@ -334,7 +336,7 @@ private fun InviteStudentForm(viewModel: InvitationStudentViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Invitar Estudiante",
+            text = "Invitar Alumno",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
