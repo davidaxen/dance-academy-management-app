@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.features.user.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -20,6 +21,12 @@ internal fun UserScreen(
     navigateToSection: (ProfileAction) -> Unit
 ) {
     val userState by viewModel.userState.collectAsState()
+
+    LaunchedEffect(userState) {
+        if (userState is UserUiState.Loading) {
+            viewModel.reloadUser()
+        }
+    }
 
     Box(
         modifier = Modifier

@@ -37,7 +37,6 @@ internal class UserViewModel(
     }
 
     fun reloadUser() {
-        _userState.value = UserUiState.Loading
         loadUser()
     }
 
