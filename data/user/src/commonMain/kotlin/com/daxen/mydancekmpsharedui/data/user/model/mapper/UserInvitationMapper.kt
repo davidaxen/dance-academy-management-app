@@ -8,7 +8,6 @@ import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 suspend fun InvitationModel.toUserInvitation(getLogoUrl: suspend (String) -> String): UserInvitation {
     // Obtenemos la URL del logo de la academia
     val logoUrl = getLogoUrl(academyId)
-    
     return UserInvitation(
         id = id,
         academyId = academyId,

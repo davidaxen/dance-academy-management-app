@@ -24,11 +24,10 @@ class UserInvitationsRepositoryImpl(
     override suspend fun fetchUserInvitations(email: String) {
         currentUserEmail = email
         val invitationModels = firebaseUserInvitationsService.getUserInvitations(email)
-        
         // Mapeamos los modelos de Firebase a nuestros modelos de dominio, pasando una función
         // para obtener la URL del logo de cada academia
         _invitations.value = invitationModels.map { invitationModel ->
-            invitationModel.toUserInvitation { academyId -> 
+            invitationModel.toUserInvitation { academyId ->
                 firebaseUserInvitationsService.getAcademyLogoUrl(academyId)
             }
         }

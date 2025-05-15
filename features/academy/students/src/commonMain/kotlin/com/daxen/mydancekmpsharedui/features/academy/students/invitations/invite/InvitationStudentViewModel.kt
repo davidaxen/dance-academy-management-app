@@ -121,7 +121,7 @@ class InvitationStudentViewModel(
             }
             
             try {
-                val academyId = currentAcademy.value.uid
+                val academyId = currentAcademy.value.academyId
                 if (academyId.isNotEmpty()) {
                     academyStudentsRepository.getInvitationsByAcademyID(academyId)
                 }
@@ -178,7 +178,7 @@ class InvitationStudentViewModel(
                 // Crear un objeto Invitation completo
                 val invitation = Invitation(
                     email = email,
-                    academyId = currentAcademy.value.uid,
+                    academyId = currentAcademy.value.academyId,
                     academyName = currentAcademy.value.name,
                     status = InvitationStatus.PENDING,
                     createdAt = Instant.DISTANT_PAST
@@ -244,7 +244,7 @@ class InvitationStudentViewModel(
         _errorMessage.value = null
         viewModelScope.launch {
             try {
-                val academyId = currentAcademy.value.uid
+                val academyId = currentAcademy.value.academyId
                 if (academyId.isNotEmpty()) {
                     academyStudentsRepository.getInvitationsByAcademyID(academyId)
                 }
