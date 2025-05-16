@@ -48,7 +48,10 @@ internal class ReservationViewModel(
     // Almacén de profesores por ID
     private val teachersMap = MutableStateFlow<Map<String, String>>(emptyMap())
     
-    // Lista de reservas del usuario
+    // Mapa de reservas: Triple(fecha, classId) -> reservationId
+    private val _userReservationsMap = MutableStateFlow<Map<Pair<String, String>, String>>(emptyMap())
+    
+    // Lista de reservas del usuario para la interfaz
     private val _userReservations = MutableStateFlow<List<Pair<String, String>>>(emptyList()) // Pair<classId, reservationId>
     val userReservations: StateFlow<List<Pair<String, String>>> = _userReservations
 
@@ -92,27 +95,57 @@ internal class ReservationViewModel(
     private fun loadUserReservations() {
         viewModelScope.launch {
             try {
-                // En un entorno real, obtendríamos las reservas del usuario
-                // Por ahora, simularemos algunas reservas para probar la UI
-                // Esto debería reemplazarse por una llamada real a reservationRepository
-                _userReservations.value = listOf(
-                    "class1" to "reservation1",
-                    "class2" to "reservation2"
+                // Obtener reservas reales del usuario
+                val userReservationList = reservationRepository.getUserReservations(
+                    currentUser.value.uid,
+                    currentUser.value.currentAcademyId
                 )
                 
-                // La implementación real sería algo así:
-                // val reservations = reservationRepository.getUserReservations(currentUser.value.uid)
-                // _userReservations.value = reservations.map { it.classId to it.id }
+                // Crear un mapa de (fecha, classId) a reservationId
+                val reservationsMap = userReservationList.associate { 
+                    (it.date to it.classId) to it.id 
+                }
+                _userReservationsMap.value = reservationsMap
+                
+                // Filtrar solo las reservas para la fecha actual seleccionada
+                updateReservationsForSelectedDate()
             } catch (e: Exception) {
                 println("Error al cargar las reservas del usuario: ${e.message}")
+                // En caso de error, mantener mapas vacíos
+                _userReservationsMap.value = emptyMap()
+                _userReservations.value = emptyList()
             }
         }
+    }
+    
+    private fun updateReservationsForSelectedDate() {
+        val currentDate = _selectedDate.value.toString()
+        // Para clases semanales, también debemos considerar el día de la semana
+        val dayOfWeek = _selectedDate.value.dayOfWeek.name
+        
+        // Filtrar reservas por la fecha seleccionada
+        val reservationsForDate = _userReservationsMap.value
+            .filter { (dateClassIdPair, _) ->
+                dateClassIdPair.first == currentDate
+            }
+            .map { (dateClassIdPair, reservationId) ->
+                dateClassIdPair.second to reservationId
+            }
+            
+        _userReservations.value = reservationsForDate
     }
 
     fun reserveClass(studentId: String, classId: String, name: String, hour: String) {
         viewModelScope.launch {
             try {
-                reservationRepository.reserveClass(currentUser.value.currentAcademyId, studentId, classId, name, hour, selectedDate.value.toString())
+                reservationRepository.reserveClass(
+                    currentUser.value.currentAcademyId, 
+                    studentId, 
+                    classId, 
+                    name, 
+                    hour, 
+                    selectedDate.value.toString()
+                )
                 // Después de reservar, recargar las reservas del usuario
                 loadUserReservations()
             } catch (e: Exception) {
@@ -124,11 +157,24 @@ internal class ReservationViewModel(
     fun cancelReservation(reservationId: String, classId: String) {
         viewModelScope.launch {
             try {
-                // Esta función debería implementarse en el repositorio de reservas
-                // reservationRepository.cancelReservation(reservationId)
+                // Obtener la fecha actual seleccionada para la cancelación
+                val currentDate = selectedDate.value.toString()
                 
-                // Actualizar la lista local de reservas
-                _userReservations.value = _userReservations.value.filter { it.second != reservationId }
+                // Llamar al repositorio para cancelar la reserva
+                reservationRepository.cancelReservation(
+                    currentUser.value.uid, 
+                    currentUser.value.currentAcademyId, 
+                    classId,
+                    currentDate
+                )
+                
+                // Actualizar el mapa local de reservas
+                val updatedReservationsMap = _userReservationsMap.value.filter { 
+                    (dateClassIdPair, id) -> 
+                    (dateClassIdPair.first != currentDate || dateClassIdPair.second != classId)
+                }
+                _userReservationsMap.value = updatedReservationsMap
+                updateReservationsForSelectedDate()
             } catch (e: Exception) {
                 println("Error al cancelar la reserva: ${e.message}")
             }
@@ -146,10 +192,14 @@ internal class ReservationViewModel(
     fun goToToday() {
         _selectedDate.value = today
         _currentWeek.value = getCurrentWeek(today)
+        // Actualizar las reservas para la fecha seleccionada
+        updateReservationsForSelectedDate()
     }
 
     fun selectDate(dateSelected: LocalDate) {
         _selectedDate.value = dateSelected
+        // Actualizar las reservas para la nueva fecha seleccionada
+        updateReservationsForSelectedDate()
     }
 
     fun goToPreviousWeek() {
@@ -159,11 +209,15 @@ internal class ReservationViewModel(
         } else {
             _selectedDate.value = _currentWeek.value.first()
         }
+        // Actualizar las reservas para la nueva fecha seleccionada
+        updateReservationsForSelectedDate()
     }
 
     fun goToNextWeek() {
         _currentWeek.value = getNextWeek(_currentWeek.value.first())
         _selectedDate.value = _currentWeek.value.first()
+        // Actualizar las reservas para la nueva fecha seleccionada
+        updateReservationsForSelectedDate()
     }
 
     private fun getCurrentWeek(date: LocalDate): List<LocalDate> {

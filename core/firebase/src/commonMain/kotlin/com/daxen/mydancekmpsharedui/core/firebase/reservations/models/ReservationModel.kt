@@ -9,5 +9,6 @@ data class ReservationModel(
     val date: String,
     val className: String,
     val academyId: String,
-    val hour: String
+    val hour: String,
+    val documentId: String = "" // ID del documento en Firestore
 )
