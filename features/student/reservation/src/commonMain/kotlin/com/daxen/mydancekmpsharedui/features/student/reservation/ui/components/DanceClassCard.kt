@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.student.reservation.utils.DisplayClass
 
@@ -47,12 +48,48 @@ internal fun DanceClassCard(
     ) {
         Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .clickable { openBottomSheet() }
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(LocalPadding.current.normal)
         ) {
+            if (danceClass.isReserved) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .zIndex(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFF4CAF50))
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = "Reservado",
+                                tint = Color.White,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Reservado",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                }
+            }
+            
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(end = if (danceClass.isReserved) 110.dp else 0.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -80,46 +117,12 @@ internal fun DanceClassCard(
                 Spacer(modifier = Modifier.width(LocalPadding.current.normal))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            danceClass.name.uppercase(),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.weight(1f)
-                        )
-                        
-                        if (danceClass.isReserved) {
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(Color(0xFF4CAF50))
-                                    .padding(horizontal = 10.dp, vertical = 6.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        Icons.Default.Check,
-                                        contentDescription = "Reservado",
-                                        tint = Color.White,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
-                                        text = "Reservado",
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 12.sp
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    Text(
+                        danceClass.name.uppercase(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     
                     Spacer(modifier = Modifier.height(8.dp))
                     
