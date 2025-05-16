@@ -7,7 +7,6 @@ interface ReservationRepository {
     suspend fun reserveClass(academyId: String, studentId: String, classId: String, name: String, hour: String, selectedDate: String)
     suspend fun getReservationDates(userId: String, academyId: String)
     suspend fun getReservationsByDate(userId: String, academyId: String, date: String): List<ReservationDetails>
-    suspend fun getUserReservations(userId: String, academyId: String): List<ReservationDetails>
     suspend fun cancelReservation(userId: String, academyId: String, classId: String, date: String)
 }
 

@@ -49,20 +49,6 @@ class FirebaseReservationServiceImpl(
         }
     }
     
-    override suspend fun getAllUserReservations(userId: String, academyId: String): List<ReservationModel> {
-        val snapshot = firestore.collection("users/$userId/reservations")
-            .where {
-                "academyId" equalTo academyId
-            }
-            .get()
-            
-        return snapshot.documents.map { document ->
-            val reservation = document.data(ReservationModel.serializer())
-            // Guardar el ID del documento para poder cancelar la reserva después
-            reservation.copy(documentId = document.id)
-        }
-    }
-    
     override suspend fun cancelReservation(userId: String, academyId: String, classId: String, date: String) {
         // Buscar la reserva específica para esta fecha y clase en las reservas del usuario
         val userReservationsSnapshot = firestore.collection("users/$userId/reservations")

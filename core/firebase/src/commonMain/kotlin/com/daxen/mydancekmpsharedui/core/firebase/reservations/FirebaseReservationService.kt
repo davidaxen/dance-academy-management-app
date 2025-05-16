@@ -6,6 +6,5 @@ interface FirebaseReservationService {
     suspend fun reserveClass(academyId: String, studentId: String, classId: String, name: String, hour: String, selectedDate: String)
     suspend fun getReservationDates(userId: String, academyId: String): List<String>
     suspend fun getReservationsByDate(userId: String, academyId: String, date: String): List<ReservationModel>
-    suspend fun getAllUserReservations(userId: String, academyId: String): List<ReservationModel>
     suspend fun cancelReservation(userId: String, academyId: String, classId: String, date: String)
 }

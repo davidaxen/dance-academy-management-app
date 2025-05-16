@@ -63,45 +63,6 @@ class ReservationRepositoryImpl(
         }
     }
     
-    override suspend fun getUserReservations(userId: String, academyId: String): List<ReservationDetails> {
-        val reservations = firebaseReservationService.getAllUserReservations(userId, academyId)
-        
-        // Obtener todas las clases para buscar información de profesores
-        val weeklyClasses = firebaseClassesService.getWeeklyClassesByAcademyId(academyId)
-        val specificClasses = firebaseClassesService.getSpecificClassesByAcademyId(academyId)
-        
-        // Crear un mapa de ID de clase a profesor para búsqueda rápida
-        val classIdToTeacherMap = mutableMapOf<String, String>()
-        
-        // Llenar mapa con clases semanales
-        weeklyClasses.forEach { weeklyClass ->
-            if (weeklyClass.teachers.isNotEmpty()) {
-                classIdToTeacherMap[weeklyClass.id] = weeklyClass.teachers[0].name
-            }
-        }
-        
-        // Llenar mapa con clases específicas
-        specificClasses.forEach { specificClass ->
-            if (specificClass.teachers.isNotEmpty()) {
-                classIdToTeacherMap[specificClass.id] = specificClass.teachers[0].name
-            }
-        }
-        
-        return reservations.map { reservation ->
-            // Buscar el nombre del profesor usando el ID de la clase
-            val teacherName = classIdToTeacherMap[reservation.classId] ?: "Profesor sin asignar"
-            
-            ReservationDetails(
-                id = reservation.documentId,
-                classId = reservation.classId,
-                className = reservation.className,
-                hour = reservation.hour,
-                teacherName = teacherName,
-                date = reservation.date
-            )
-        }
-    }
-    
     override suspend fun cancelReservation(userId: String, academyId: String, classId: String, date: String) {
         firebaseReservationService.cancelReservation(userId, academyId, classId, date)
         // Actualizar las fechas de reserva después de cancelar
