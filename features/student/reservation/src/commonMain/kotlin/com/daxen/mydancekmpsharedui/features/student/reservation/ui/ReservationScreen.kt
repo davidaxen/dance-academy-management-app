@@ -194,10 +194,7 @@ private fun ClassScheduleScreen(
                 )
             },
             onCancelReservation = { classModel ->
-                viewModel.cancelReservation(
-                    reservationId = classModel.reservationId,
-                    classId = classModel.id
-                )
+                viewModel.cancelReservation(classId = classModel.id)
             }
         )
     }
