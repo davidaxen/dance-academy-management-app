@@ -15,8 +15,6 @@ import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.components.Main
 @Composable
 internal fun AcademyUserScreen(
     viewModel: AcademyUserViewModel,
-    showTopSection: Boolean = false,
-    navigateToLogin: () -> Unit,
     navigateToSection: (AcademyProfileAction) -> Unit
 ) {
     val userState by viewModel.userState.collectAsState()
@@ -32,11 +30,7 @@ internal fun AcademyUserScreen(
             }
 
             is AcademyUserUiState.Success -> {
-                val user = (userState as AcademyUserUiState.Success).user
                 MainAcademyUserSection(
-                    user,
-                    showTopSection = showTopSection,
-                    navigateToLogin = navigateToLogin,
                     navigateToSection = navigateToSection
                 )
             }

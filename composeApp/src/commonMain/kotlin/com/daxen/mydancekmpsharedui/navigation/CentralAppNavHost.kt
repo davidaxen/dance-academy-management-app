@@ -75,7 +75,11 @@ fun CentralAppNavHost(
         )
 
         registerProcessNavGraph(
-            goToLogin = { navController.navigate(LoginScreenRoute) },
+            goToLogin = { navController.navigate(LoginScreenRoute) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
             goToInfo = { navController.navigate(PersonalInfoScreenRoute) },
             goToDanceRoleSelection = { navController.navigate(DanceRoleSelectionScreenRoute) },
             goToAcademySelection = {
@@ -92,7 +96,11 @@ fun CentralAppNavHost(
         academySelectionNavGraph(
             appNavController = navController,
             navigateToAcademy = { navController.navigate(StudentMainGraph) },
-            navigateToLogin = { navController.navigate(LoginScreenRoute) }
+            navigateToLogin = { navController.navigate(LoginScreenRoute) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
         )
 
         academyStudentsSectionsGraph(

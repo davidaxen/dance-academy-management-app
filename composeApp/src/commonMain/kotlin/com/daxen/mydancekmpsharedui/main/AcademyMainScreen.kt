@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,11 +16,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
@@ -49,10 +56,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -63,6 +73,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentViewModelProvider
@@ -70,10 +81,13 @@ import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.Student
 import com.daxen.mydancekmpsharedui.features.academy.teachers.AcademyTeachersDestinations
 import com.daxen.mydancekmpsharedui.features.academy.teachers.invitations.invite.InvitationTeacherViewModelProvider
 import com.daxen.mydancekmpsharedui.features.academy.teachers.listing.ui.TeachersListingViewModelProvider
+import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
+import com.daxen.mydancekmpsharedui.features.user.AcademyUserInfoProvider
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerDestination
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerNavHost
 import kotlinx.coroutines.launch
+import org.koin.compose.getKoin
 
 // Clase de ayuda para configurar qué elementos mostrar en la TopBar según la pantalla
 data class TopBarConfig(
@@ -143,7 +157,7 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerContent(drawerScreens, currentDestination, drawerNavController) {
+            ModalDrawerContent(drawerScreens, currentDestination, drawerNavController, appNavController) {
                 scope.launch {
                     if (drawerState.isOpen) {
                         drawerState.close()
@@ -455,6 +469,7 @@ private fun ModalDrawerContent(
     drawerScreens: List<AcademyDrawerDestination<out Any>>,
     currentDestination: NavDestination?,
     drawerNavController: NavHostController,
+    appNavController: NavHostController,
     onClick: () -> Unit
 ) {
     val groupedScreens = drawerScreens.groupBy { it.section }
@@ -466,6 +481,13 @@ private fun ModalDrawerContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            //ACADEMYYYY
+            UserAcademyDataSummary {
+                appNavController.navigate(LoginScreenRoute) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
             Spacer(Modifier.height(12.dp))
             groupedScreens.entries.withIndex().forEach { (index, entry) ->
                 val (section, items) = entry
@@ -517,4 +539,83 @@ private fun ModalDrawerContent(
         }
     }
 
+}
+
+@Composable
+fun UserAcademyDataSummary(navigateToLogin: () -> Unit) {
+    val academyUserInfoProvider: AcademyUserInfoProvider = getKoin().get()
+    val user by academyUserInfoProvider.userAcademyUiFlow.collectAsState()
+    Surface(
+        elevation = 4.dp,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(
+                    vertical = LocalPadding.current.small,
+                    horizontal = LocalPadding.current.small
+                )
+                .fillMaxWidth()
+        ) {
+            // Avatar de la academia
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.size(80.dp)
+            ) {
+                if (user.logoUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = user.logoUrl,
+                        contentDescription = "Logo de la academia",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Logo de academia",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(80.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(
+                modifier = Modifier
+                    .padding(start = LocalPadding.current.tiny)
+                    .weight(1f)
+            ) {
+                Text(
+                    text = user.name,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = user.email,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = user.address,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            IconButton(
+                onClick = navigateToLogin,
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Logout,
+                    contentDescription = "Cerrar sesión",
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
+    }
 }

@@ -19,27 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
 import com.daxen.mydancekmpsharedui.features.user.AcademyProfileAction
 import com.daxen.mydancekmpsharedui.features.user.ui.academyUser.utils.AcademyConstants
 import com.daxen.mydancekmpsharedui.features.user.utils.AcademyProfileItem
 
 @Composable
 internal fun MainAcademyUserSection(
-    user: UserAcademy,
-    showTopSection: Boolean = false,
-    navigateToLogin: () -> Unit,
     navigateToSection: (AcademyProfileAction) -> Unit
 ) {
     val dialogState = remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxSize()) {
-        // Header con icono de usuario y nombre (opcional)
-        if (showTopSection) {
-            AcademyUserDataSummary(user) {
-                navigateToLogin()
-            }
-        }
-
         // Lista de opciones
         Column(
             modifier = Modifier
