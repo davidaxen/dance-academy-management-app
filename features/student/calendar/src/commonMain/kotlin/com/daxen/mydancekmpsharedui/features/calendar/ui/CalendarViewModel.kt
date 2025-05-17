@@ -107,7 +107,6 @@ class CalendarViewModel(
             return when (state) {
                 is CalendarDatesListUiState.Success -> state.reservationsDatesList.contains(date)
                 is CalendarDatesListUiState.Error, CalendarDatesListUiState.Loading, CalendarDatesListUiState.Empty -> false
-                else -> false
             }
         }
     }
