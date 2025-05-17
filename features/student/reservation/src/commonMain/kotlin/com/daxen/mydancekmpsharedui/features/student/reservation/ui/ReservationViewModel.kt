@@ -6,8 +6,6 @@ import com.daxen.mydancekmpsharedui.data.classes.repository.ClassesRepository
 import com.daxen.mydancekmpsharedui.data.reservation.repository.ReservationRepository
 import com.daxen.mydancekmpsharedui.data.user.model.User
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
-import com.daxen.mydancekmpsharedui.features.student.reservation.utils.ClassOrigin
-import com.daxen.mydancekmpsharedui.features.student.reservation.utils.DisplayClass
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -133,7 +131,7 @@ internal class ReservationViewModel(
         }
     }
     
-    fun cancelReservation(reservationId: String, classId: String) {
+    fun cancelReservation(classId: String) {
         viewModelScope.launch {
             try {
                 // Obtener la fecha actual seleccionada para la cancelación
@@ -206,9 +204,5 @@ internal class ReservationViewModel(
         _classesListState.value = ClassesListUiState.Loading
         loadClasses()
         loadUserReservationsForSelectedDate()
-    }
-    
-    fun getTeacherName(teacherId: String): String {
-        return teachersMap.value[teacherId] ?: "Profesor sin asignar"
     }
 }
