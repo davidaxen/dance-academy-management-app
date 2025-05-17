@@ -7,17 +7,21 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import com.daxen.mydancekmpsharedui.features.academy.classes.AcademyClassesDestinations
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.academy.teachers.AcademyTeachersDestinations
+import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
 import com.daxen.mydancekmpsharedui.features.user.AcademyUserGraph
 import kotlinx.serialization.Serializable
 
@@ -47,6 +51,19 @@ sealed class AcademyDrawerDestination<T>(
         },
         section = DrawerSection.User,
         route = AcademyUserGraph
+    )
+
+    @Serializable
+    data object Logout: AcademyDrawerDestination<LoginScreenRoute>(
+        title = "Cerrar Sesión",
+        selectedIcon = {
+             Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "", tint = Color.Red)
+        },
+        unselectedIcon = {
+             Icon(imageVector = Icons.AutoMirrored.Outlined.Logout, contentDescription = "", tint = Color.Red)
+        },
+        section = DrawerSection.User,
+        route = LoginScreenRoute
     )
 
     @Serializable

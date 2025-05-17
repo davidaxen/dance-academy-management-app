@@ -25,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -62,6 +61,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -86,6 +86,7 @@ import com.daxen.mydancekmpsharedui.features.user.AcademyUserInfoProvider
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerDestination
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerNavHost
+import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.DrawerSection
 import kotlinx.coroutines.launch
 import org.koin.compose.getKoin
 
@@ -107,6 +108,7 @@ fun AcademyMainScreen(appNavController: NavHostController) {
             AcademyDrawerDestination.ClassesList,
             AcademyDrawerDestination.ClassesCreation,
             AcademyDrawerDestination.User,
+            AcademyDrawerDestination.Logout,
         )
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -482,67 +484,140 @@ private fun ModalDrawerContent(
                 .verticalScroll(rememberScrollState())
         ) {
             //ACADEMYYYY
-            UserAcademyDataSummary {
-                appNavController.navigate(LoginScreenRoute) {
-                    popUpTo(0) { inclusive = true }
-                    launchSingleTop = true
-                }
-            }
+            UserAcademyDataSummary()
             Spacer(Modifier.height(12.dp))
-            groupedScreens.entries.withIndex().forEach { (index, entry) ->
-                val (section, items) = entry
+            
+            // Lista de todas las secciones excepto "Usuario"
+            groupedScreens.entries
+                .filter { it.key != DrawerSection.User }
+                .withIndex()
+                .forEach { (index, entry) ->
+                    val (section, items) = entry
 
+                    Text(
+                        text = section.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(LocalPadding.current.tiny)
+                    )
+
+                    items.forEach { item ->
+                        DrawerItem(
+                            item = item,
+                            currentDestination = currentDestination,
+                            onClick = {
+                                navigateToDestination(drawerNavController, item)
+                                onClick()
+                            }
+                        )
+                    }
+
+                    if (index < groupedScreens.entries.filter { it.key != DrawerSection.User }.size - 1) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = LocalPadding.current.normal),
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            
+            // Agregar un Spacer que ocupe todo el espacio disponible
+            Spacer(modifier = Modifier.weight(1f))
+            
+            // Sección de usuario al final
+            if (groupedScreens.containsKey(DrawerSection.User)) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = LocalPadding.current.normal),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                
                 Text(
-                    text = section.title,
+                    text = DrawerSection.User.title,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(LocalPadding.current.tiny)
                 )
-
-                items.forEach { item ->
-                    val isSelected =
-                        currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true
-
-                    NavigationDrawerItem(
-                        label = { Text(item.title) },
-                        icon = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                        selected = isSelected,
-                        shape = RoundedCornerShape(0),
-                        colors = NavigationDrawerItemDefaults.colors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                            unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
-                        onClick = {
-                            drawerNavController.navigate(item.route) {
-                                popUpTo(drawerNavController.graph.findStartDestination().id) {
-                                    saveState = true
+                
+                groupedScreens[DrawerSection.User]?.forEach { item ->
+                    // Si es el item de logout, navegamos a la ruta de login con popUpTo
+                    if (item == AcademyDrawerDestination.Logout) {
+                        DrawerItem(
+                            item = item,
+                            currentDestination = currentDestination,
+                            textColor = MaterialTheme.colorScheme.error,
+                            onClick = {
+                                appNavController.navigate(LoginScreenRoute) {
+                                    popUpTo(0) { inclusive = true }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
+                                onClick()
                             }
-                            onClick()
-                        },
-                    )
-                }
-
-                if (index < groupedScreens.size - 1) {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = LocalPadding.current.normal),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                        )
+                    } else {
+                        DrawerItem(
+                            item = item,
+                            currentDestination = currentDestination,
+                            onClick = {
+                                navigateToDestination(drawerNavController, item)
+                                onClick()
+                            }
+                        )
+                    }
                 }
             }
+            
+            // Añadir espacio al final para dispositivos pequeños
+            Spacer(modifier = Modifier.height(LocalPadding.current.normal))
         }
     }
-
 }
 
 @Composable
-fun UserAcademyDataSummary(navigateToLogin: () -> Unit) {
+private fun DrawerItem(
+    item: AcademyDrawerDestination<out Any>,
+    currentDestination: NavDestination?,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    onClick: () -> Unit
+) {
+    val isSelected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true
+
+    NavigationDrawerItem(
+        label = { 
+            Text(
+                text = item.title, 
+                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else textColor
+            ) 
+        },
+        icon = if (isSelected) item.selectedIcon else item.unselectedIcon,
+        selected = isSelected,
+        shape = RoundedCornerShape(0),
+        colors = NavigationDrawerItemDefaults.colors(
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            unselectedIconColor = if (item == AcademyDrawerDestination.Logout) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
+            unselectedTextColor = textColor,
+            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        onClick = onClick,
+    )
+}
+
+private fun navigateToDestination(
+    navController: NavHostController,
+    item: AcademyDrawerDestination<out Any>
+) {
+    navController.navigate(item.route) {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
+@Composable
+fun UserAcademyDataSummary() {
     val academyUserInfoProvider: AcademyUserInfoProvider = getKoin().get()
     val user by academyUserInfoProvider.userAcademyUiFlow.collectAsState()
     Surface(
@@ -602,18 +677,6 @@ fun UserAcademyDataSummary(navigateToLogin: () -> Unit) {
                 Text(
                     text = user.address,
                     style = MaterialTheme.typography.bodySmall
-                )
-            }
-
-            IconButton(
-                onClick = navigateToLogin,
-                modifier = Modifier.size(24.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Cerrar sesión",
-                    tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(32.dp)
                 )
             }
         }
