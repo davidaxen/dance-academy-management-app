@@ -35,13 +35,51 @@ class FirebaseReservationServiceImpl(
     override suspend fun getReservationsByDate(userId: String, academyId: String, date: String): List<ReservationModel> {
         val snapshot = firestore.collection("users/$userId/reservations")
             .where {
-                "academyId" equalTo academyId
-                "date" equalTo date
+                all(
+                    "academyId" equalTo academyId,
+                    "date" equalTo date
+                )
             }
             .get()
             
         return snapshot.documents.map { document ->
-            document.data(ReservationModel.serializer())
+            // Añadir el ID del documento para poder identificarlo al cancelar
+            val reservation = document.data(ReservationModel.serializer())
+            reservation.copy(documentId = document.id)
+        }
+    }
+    
+    override suspend fun cancelReservation(userId: String, academyId: String, classId: String, date: String) {
+        // Buscar la reserva específica para esta fecha y clase en las reservas del usuario
+        val userReservationsSnapshot = firestore.collection("users/$userId/reservations")
+            .where {
+                all(
+                    "academyId" equalTo academyId,
+                    "classId" equalTo classId,
+                    "date" equalTo date
+                )
+            }
+            .get()
+        
+        // Si encontramos documentos, eliminarlos
+        userReservationsSnapshot.documents.forEach { document ->
+            // Eliminar de la colección del usuario
+            firestore.collection("users/$userId/reservations").document(document.id).delete()
+            
+            // Buscar y eliminar también de la colección de la academia
+            val academyReservationsSnapshot = firestore.collection("academies/$academyId/reservations")
+                .where {
+                    all(
+                        "userId" equalTo userId,
+                        "classId" equalTo classId,
+                        "date" equalTo date
+                    )
+                }
+                .get()
+            
+            academyReservationsSnapshot.documents.forEach { academyDocument ->
+                firestore.collection("academies/$academyId/reservations").document(academyDocument.id).delete()
+            }
         }
     }
 }

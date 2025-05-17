@@ -167,7 +167,7 @@ class InvitationTeacherViewModel(
             
             try {
                 // Verificar si se puede crear la invitación
-                val (canCreate, errorMessage) = academyTeachersRepository.canCreateInvitation(email)
+                val (canCreate, errorMessage) = academyTeachersRepository.canCreateInvitation(email, currentAcademy.value.academyId)
                 
                 if (!canCreate) {
                     _formErrorMessage.value = errorMessage
@@ -246,6 +246,7 @@ class InvitationTeacherViewModel(
         viewModelScope.launch {
             try {
                 val academyId = currentAcademy.value.academyId
+                println(currentAcademy.value)
                 if (academyId.isNotEmpty()) {
                     academyTeachersRepository.getTeachersByAcademyID(academyId)
                 }

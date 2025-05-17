@@ -66,7 +66,8 @@ fun ReservedClassesList(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(vertical = LocalPadding.current.extraTiny)
                 ) {
-                    items(reservedClassesState.reservedClasses) { reservedClass ->
+                    val orderedClasses = reservedClassesState.reservedClasses.sortedBy { it.time }
+                    items(orderedClasses) { reservedClass ->
                         ReservedClassItem(reservedClass = reservedClass)
                     }
                 }

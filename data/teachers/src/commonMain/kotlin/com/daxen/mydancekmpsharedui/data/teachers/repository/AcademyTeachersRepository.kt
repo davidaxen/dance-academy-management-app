@@ -12,6 +12,6 @@ interface AcademyTeachersRepository {
     suspend fun inviteTeacherToAcademy(invitation: Invitation): Boolean
     suspend fun deleteInvitation(invitationId: String): Boolean
     suspend fun checkUserExists(email: String): Boolean
-    suspend fun getUserInvitations(email: String): List<Invitation>
-    suspend fun canCreateInvitation(email: String): Pair<Boolean, String>
+    suspend fun getUserInvitations(email: String, academyId: String): List<Invitation>
+    suspend fun canCreateInvitation(email: String, academyId: String): Pair<Boolean, String>
 } 

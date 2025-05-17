@@ -21,4 +21,5 @@ interface UserRepository {
     fun setDanceRole(role: DanceRole)
     fun setRole(role: UserRole)
     suspend fun saveUserToDatabase()
+    fun onLoginClear()
 }

@@ -4,6 +4,7 @@ import com.daxen.mydancekmpsharedui.core.firebase.user.FirebaseUserInvitationsSe
 import com.daxen.mydancekmpsharedui.data.user.model.Academy
 import com.daxen.mydancekmpsharedui.data.user.model.UserInvitation
 import com.daxen.mydancekmpsharedui.data.user.model.UserRole
+import com.daxen.mydancekmpsharedui.data.user.model.mapper.toInvitationModel
 import com.daxen.mydancekmpsharedui.data.user.model.mapper.toUserInvitation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,11 +25,10 @@ class UserInvitationsRepositoryImpl(
     override suspend fun fetchUserInvitations(email: String) {
         currentUserEmail = email
         val invitationModels = firebaseUserInvitationsService.getUserInvitations(email)
-        
         // Mapeamos los modelos de Firebase a nuestros modelos de dominio, pasando una función
         // para obtener la URL del logo de cada academia
         _invitations.value = invitationModels.map { invitationModel ->
-            invitationModel.toUserInvitation { academyId -> 
+            invitationModel.toUserInvitation { academyId ->
                 firebaseUserInvitationsService.getAcademyLogoUrl(academyId)
             }
         }
@@ -61,12 +61,12 @@ class UserInvitationsRepositoryImpl(
         }
     }
     
-    override suspend fun acceptInvitation(invitationId: String): Boolean {
-        val success = firebaseUserInvitationsService.acceptInvitation(invitationId)
+    override suspend fun acceptInvitation(invitation: UserInvitation): Boolean {
+        val success = firebaseUserInvitationsService.acceptInvitation(invitation.toInvitationModel())
         
         if (success) {
             // Actualizamos la lista local
-            _invitations.value = _invitations.value.filter { it.id != invitationId }
+            _invitations.value = _invitations.value.filter { it.id != invitation.id }
             
             // Si tenemos guardado el email del usuario, recargamos sus academias
             if (currentUserEmail.isNotEmpty()) {

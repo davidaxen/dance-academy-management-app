@@ -9,5 +9,5 @@ data class AcademyWithRoleModel(
     val location: String = "",
     val imageUrl: String = "",
     val schedule: String = "",
-    val role: String = "student"
+    val role: String = "STUDENT"
 ) 

@@ -53,12 +53,19 @@ class ReservationRepositoryImpl(
             val teacherName = classIdToTeacherMap[reservation.classId] ?: "Profesor sin asignar"
             
             ReservationDetails(
-                id = reservation.classId,
+                id = reservation.documentId,
                 classId = reservation.classId,
                 className = reservation.className,
                 hour = reservation.hour,
-                teacherName = teacherName
+                teacherName = teacherName,
+                date = reservation.date
             )
         }
+    }
+    
+    override suspend fun cancelReservation(userId: String, academyId: String, classId: String, date: String) {
+        firebaseReservationService.cancelReservation(userId, academyId, classId, date)
+        // Actualizar las fechas de reserva después de cancelar
+        getReservationDates(userId, academyId)
     }
 }

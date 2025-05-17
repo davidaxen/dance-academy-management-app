@@ -64,7 +64,15 @@ fun ClassesList(
                     combinedClasses.add(Pair(false, it))
                 }
                 
-                items(combinedClasses) { (isWeekly, classData) ->
+                // Ordenar las clases por hora
+                val sortedClasses = combinedClasses.sortedBy { pair ->
+                    when (pair.first) {
+                        true -> (pair.second as WeeklyClassModel).hour
+                        false -> (pair.second as SpecificClassModel).hour
+                    }
+                }
+                
+                items(sortedClasses) { (isWeekly, classData) ->
                     if (isWeekly) {
                         val weeklyClass = classData as WeeklyClassModel
                         ClassListItem(

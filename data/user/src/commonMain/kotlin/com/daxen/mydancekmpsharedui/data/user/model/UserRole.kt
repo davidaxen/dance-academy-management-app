@@ -1,9 +1,9 @@
 package com.daxen.mydancekmpsharedui.data.user.model
 
 enum class UserRole(val roleName: String) {
-    ACADEMY("academy"),
-    TEACHER("teacher"),
-    STUDENT("student");
+    ACADEMY("ACADEMY"),
+    TEACHER("TEACHER"),
+    STUDENT("STUDENT");
 
     fun toSpanishText(): String {
         return when(this) {
@@ -19,9 +19,9 @@ enum class UserRole(val roleName: String) {
         }
         
         fun fromString(role: String): UserRole {
-            return when (role.lowercase()) {
-                "academy" -> ACADEMY
-                "teacher" -> TEACHER
+            return when (role.uppercase()) {
+                "ACADEMY" -> ACADEMY
+                "TEACHER" -> TEACHER
                 else -> STUDENT
             }
         }

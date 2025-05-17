@@ -7,6 +7,7 @@ interface ReservationRepository {
     suspend fun reserveClass(academyId: String, studentId: String, classId: String, name: String, hour: String, selectedDate: String)
     suspend fun getReservationDates(userId: String, academyId: String)
     suspend fun getReservationsByDate(userId: String, academyId: String, date: String): List<ReservationDetails>
+    suspend fun cancelReservation(userId: String, academyId: String, classId: String, date: String)
 }
 
 data class ReservationDetails(
@@ -14,5 +15,6 @@ data class ReservationDetails(
     val classId: String,
     val className: String,
     val hour: String,
-    val teacherName: String
+    val teacherName: String,
+    val date: String
 )

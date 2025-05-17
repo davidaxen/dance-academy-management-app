@@ -6,8 +6,6 @@ import com.daxen.mydancekmpsharedui.data.classes.repository.ClassesRepository
 import com.daxen.mydancekmpsharedui.data.reservation.repository.ReservationRepository
 import com.daxen.mydancekmpsharedui.data.user.model.User
 import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
-import com.daxen.mydancekmpsharedui.features.student.reservation.utils.ClassOrigin
-import com.daxen.mydancekmpsharedui.features.student.reservation.utils.DisplayClass
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -47,9 +45,14 @@ internal class ReservationViewModel(
 
     // Almacén de profesores por ID
     private val teachersMap = MutableStateFlow<Map<String, String>>(emptyMap())
+    
+    // Lista de reservas del usuario para la fecha seleccionada
+    private val _userReservations = MutableStateFlow<List<Pair<String, String>>>(emptyList()) // Pair<classId, reservationId>
+    val userReservations: StateFlow<List<Pair<String, String>>> = _userReservations
 
     init {
         loadClasses()
+        loadUserReservationsForSelectedDate()
     }
 
     private fun loadClasses() {
@@ -83,24 +86,92 @@ internal class ReservationViewModel(
             }
         }
     }
-
-    fun reserveClass(academyId: String, studentId: String, classId: String, name: String, hour: String) {
+    
+    private fun loadUserReservationsForSelectedDate() {
         viewModelScope.launch {
             try {
-                reservationRepository.reserveClass(academyId, studentId, classId, name, hour, selectedDate.value.toString())
+                // Obtener la fecha seleccionada actualmente
+                val currentDate = _selectedDate.value.toString()
+                
+                // Obtener reservas específicas para esta fecha
+                val reservationsForDate = reservationRepository.getReservationsByDate(
+                    currentUser.value.uid,
+                    currentUser.value.currentAcademyId,
+                    currentDate
+                )
+                
+                // Convertir la lista de reservas a pares de classId y reservationId
+                _userReservations.value = reservationsForDate.map { 
+                    it.classId to it.id 
+                }
+            } catch (e: Exception) {
+                println("Error al cargar las reservas del usuario: ${e.message}")
+                // En caso de error, mantener una lista vacía
+                _userReservations.value = emptyList()
+            }
+        }
+    }
+
+    fun reserveClass(studentId: String, classId: String, name: String, hour: String) {
+        viewModelScope.launch {
+            try {
+                reservationRepository.reserveClass(
+                    currentUser.value.currentAcademyId, 
+                    studentId, 
+                    classId, 
+                    name, 
+                    hour, 
+                    selectedDate.value.toString()
+                )
+                // Después de reservar, recargar las reservas del usuario para la fecha seleccionada
+                loadUserReservationsForSelectedDate()
             } catch (e: Exception) {
                 println("Error al reservar clase: ${e.message}")
             }
         }
     }
+    
+    fun cancelReservation(classId: String) {
+        viewModelScope.launch {
+            try {
+                // Obtener la fecha actual seleccionada para la cancelación
+                val currentDate = selectedDate.value.toString()
+                
+                // Llamar al repositorio para cancelar la reserva
+                reservationRepository.cancelReservation(
+                    currentUser.value.uid, 
+                    currentUser.value.currentAcademyId, 
+                    classId,
+                    currentDate
+                )
+                
+                // Recargar las reservas para la fecha seleccionada
+                loadUserReservationsForSelectedDate()
+            } catch (e: Exception) {
+                println("Error al cancelar la reserva: ${e.message}")
+            }
+        }
+    }
+    
+    fun isClassReserved(classId: String): Boolean {
+        return _userReservations.value.any { it.first == classId }
+    }
+    
+    fun getReservationId(classId: String): String {
+        return _userReservations.value.firstOrNull { it.first == classId }?.second ?: ""
+    }
 
     fun goToToday() {
         _selectedDate.value = today
         _currentWeek.value = getCurrentWeek(today)
+        // Actualizar las reservas para la fecha seleccionada
+        loadUserReservationsForSelectedDate()
     }
 
     fun selectDate(dateSelected: LocalDate) {
         _selectedDate.value = dateSelected
+        // Actualizar las reservas para la nueva fecha seleccionada
+        loadUserReservationsForSelectedDate()
     }
 
     fun goToPreviousWeek() {
@@ -110,11 +181,15 @@ internal class ReservationViewModel(
         } else {
             _selectedDate.value = _currentWeek.value.first()
         }
+        // Actualizar las reservas para la nueva fecha seleccionada
+        loadUserReservationsForSelectedDate()
     }
 
     fun goToNextWeek() {
         _currentWeek.value = getNextWeek(_currentWeek.value.first())
         _selectedDate.value = _currentWeek.value.first()
+        // Actualizar las reservas para la nueva fecha seleccionada
+        loadUserReservationsForSelectedDate()
     }
 
     private fun getCurrentWeek(date: LocalDate): List<LocalDate> {
@@ -128,9 +203,6 @@ internal class ReservationViewModel(
     fun reloadClasses() {
         _classesListState.value = ClassesListUiState.Loading
         loadClasses()
-    }
-    
-    fun getTeacherName(teacherId: String): String {
-        return teachersMap.value[teacherId] ?: "Profesor sin asignar"
+        loadUserReservationsForSelectedDate()
     }
 }

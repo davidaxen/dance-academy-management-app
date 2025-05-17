@@ -50,12 +50,12 @@ class AcademyStudentsRepositoryImpl(
         return firebaseAcademyStudentsRepository.checkUserExists(email)
     }
     
-    override suspend fun getUserInvitations(email: String): List<Invitation> {
-        val invitationsResponse = firebaseAcademyStudentsRepository.getUserInvitations(email)
+    override suspend fun getUserInvitations(email: String, academyId: String): List<Invitation> {
+        val invitationsResponse = firebaseAcademyStudentsRepository.getUserInvitations(email, academyId)
         return invitationsResponse.map { it.toInvitation() }
     }
     
-    override suspend fun canCreateInvitation(email: String): Pair<Boolean, String> {
+    override suspend fun canCreateInvitation(email: String, academyId: String): Pair<Boolean, String> {
         // Primero verificar si el usuario existe
         val userExists = checkUserExists(email)
         if (!userExists) {
@@ -63,7 +63,7 @@ class AcademyStudentsRepositoryImpl(
         }
         
         // Verificar invitaciones existentes
-        val userInvitations = getUserInvitations(email)
+        val userInvitations = getUserInvitations(email, academyId)
         if (userInvitations.isEmpty()) {
             return Pair(true, "")
         }

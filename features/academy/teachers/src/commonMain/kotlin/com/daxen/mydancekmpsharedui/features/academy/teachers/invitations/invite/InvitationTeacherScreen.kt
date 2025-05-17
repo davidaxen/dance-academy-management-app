@@ -123,7 +123,9 @@ fun InvitationTeacherScreen(
     if (isModalVisible) {
         ModalBottomSheet(
             onDismissRequest = { viewModel.toggleModal() },
-            sheetState = sheetState
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground,
         ) {
             InviteTeacherForm(viewModel)
         }

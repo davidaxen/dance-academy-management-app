@@ -51,8 +51,10 @@ class FirebaseAcademyTeachersRepositoryImpl(
         return try {
             val documents = firestore.collection("invitations")
                 .where {
-                    "academyId" equalTo academyId
-                    "role" equalTo "teacher"
+                    all(
+                        "academyId" equalTo academyId,
+                        "role" equalTo "TEACHER"
+                    )
                 }
                 .get()
                 .documents
@@ -97,12 +99,15 @@ class FirebaseAcademyTeachersRepositoryImpl(
         }
     }
     
-    override suspend fun getUserInvitations(email: String): List<InvitationModel> {
+    override suspend fun getUserInvitations(email: String, academyId: String): List<InvitationModel> {
         return try {
             val documents = firestore.collection("invitations")
                 .where {
-                    "userId" equalTo email
-                    "role" equalTo "teacher"
+                    all(
+                        "userId" equalTo email,
+                        "academyId" equalTo academyId,
+                        "role" equalTo "TEACHER"
+                    )
                 }
                 .get()
                 .documents

@@ -70,7 +70,7 @@ class AcademyUserRepositoryImpl(
         _currentAcademy.value.uid = firebaseAuthService.getCurrentUserId()
             ?: throw IllegalStateException("ID de usuario nulo")
 
-        firebaseAcademyUserService.saveUserToDatabase(
+        _currentAcademy.value.academyId = firebaseAcademyUserService.saveUserAndAcademy(
             academyUserModel = _currentAcademy.value.toAcademyUserModel(),
             academyModel = _currentAcademy.value.toAcademyModel(),
             image = _selectedLogo.value
@@ -90,5 +90,9 @@ class AcademyUserRepositoryImpl(
         
         // Si no, la obtenemos del servicio
         return firebaseAcademyUserService.getAcademyLogoUrl(id)
+    }
+
+    override fun onLoginClear() {
+        _currentAcademy.value = UserAcademy.EMPTY
     }
 }

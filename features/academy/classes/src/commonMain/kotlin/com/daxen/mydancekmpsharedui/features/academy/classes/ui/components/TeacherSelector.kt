@@ -134,7 +134,6 @@ fun TeacherSelector(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeacherChip(
     teacher: Teacher,
@@ -255,7 +254,7 @@ fun TeacherSearchItem(
         Spacer(modifier = Modifier.width(12.dp))
         
         Text(
-            text = teacher.name,
+            text = "${teacher.name} ${teacher.lastName}",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface
         )

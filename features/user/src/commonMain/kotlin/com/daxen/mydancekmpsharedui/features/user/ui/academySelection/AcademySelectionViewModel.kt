@@ -107,13 +107,10 @@ class AcademySelectionViewModel(
         _loadingInvitations.value += invitation.id
         viewModelScope.launch {
             try {
-                val success = userInvitationsRepository.acceptInvitation(invitation.id)
-                
+                val success = userInvitationsRepository
+                    .acceptInvitation(invitation)
                 if (success) {
-                    val user = currentUser.value
-                    if (user.email.isNotEmpty()) {
-                        userInvitationsRepository.fetchUserAcademies(user.email)
-                    }
+                    userInvitationsRepository.fetchUserAcademies(currentUser.value.email)
                 }
             } catch (e: Exception) {
                 println("Error aceptando invitación: ${e.message}")

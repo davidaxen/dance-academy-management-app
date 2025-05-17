@@ -5,6 +5,7 @@ import kotlinx.datetime.Instant
 data class UserInvitation(
     val id: String,
     val academyId: String,
+    val userId: String,
     val academyName: String,
     val imageUrl: String = "",
     val role: UserRole,

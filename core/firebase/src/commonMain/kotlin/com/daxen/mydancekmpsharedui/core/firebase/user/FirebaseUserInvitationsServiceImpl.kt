@@ -1,6 +1,7 @@
 package com.daxen.mydancekmpsharedui.core.firebase.user
 
 import com.daxen.mydancekmpsharedui.core.firebase.academy.students.model.InvitationModel
+import com.daxen.mydancekmpsharedui.core.firebase.getCurrentTimestamp
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyDetailsModel
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.AcademyWithRoleModel
 import com.daxen.mydancekmpsharedui.core.firebase.user.models.UserWithAcademyRolesModel
@@ -16,8 +17,10 @@ class FirebaseUserInvitationsServiceImpl(
         return try {
             val documents = firestore.collection("invitations")
                 .where {
-                    "userId" equalTo email
-                    "status" equalTo "PENDING"
+                    all(
+                        "userId" equalTo email,
+                        "status" equalTo "PENDING"
+                    )
                 }
                 .get()
                 .documents
@@ -36,19 +39,13 @@ class FirebaseUserInvitationsServiceImpl(
         }
     }
     
-    override suspend fun acceptInvitation(invitationId: String): Boolean {
+    override suspend fun acceptInvitation(invitation: InvitationModel): Boolean {
         return try {
             // Actualizamos el estado de la invitación a ACCEPTED
             firestore.collection("invitations")
-                .document(invitationId)
+                .document(invitation.id)
                 .update("status" to "ACCEPTED")
-            
-            // Obtenemos los datos de la invitación
-            val invitation = firestore.collection("invitations")
-                .document(invitationId)
-                .get()
-                .data(InvitationModel.serializer())
-            
+
             // Creamos la relación usuario-academia
             firestore.collection("users")
                 .where {
@@ -62,20 +59,19 @@ class FirebaseUserInvitationsServiceImpl(
                     // Agregamos el rol del usuario en esta academia
                     firestore.collection("users")
                         .document(userId)
-                        .update("academyRoles.${invitation.academyId}" to listOf(invitation.role.lowercase()))
-                    
-                    // Añadimos al usuario como estudiante en la academia
-                    if (invitation.role.equals("STUDENT", ignoreCase = true)) {
-                        firestore.collection("academies")
-                            .document(invitation.academyId)
-                            .collection("students")
-                            .document(userId)
-                            .set(mapOf(
-                                "userId" to userId,
-                                "name" to "",
-                                "joinedAt" to com.daxen.mydancekmpsharedui.core.firebase.getCurrentTimestamp()
-                            ))
-                    }
+                        .update("academyRoles.${invitation.academyId}" to listOf(invitation.role))
+
+                    firestore.collection("academies")
+                        .document(invitation.academyId)
+                        .collection(if (invitation.role == "STUDENT") "students" else "teachers")
+                        .document(userId)
+                        .set(mapOf(
+                            "userId" to userId,
+                            "name" to userDoc.get("name"),
+                            "lastName" to userDoc.get("lastName"),
+                            "email" to invitation.userId, // This is the email
+                            "joinedAt" to getCurrentTimestamp()
+                        ))
                 }
             
             true
@@ -145,7 +141,7 @@ class FirebaseUserInvitationsServiceImpl(
                 .documents
                 .firstOrNull()
                 
-            var userRole = "student" // Por defecto, consideramos que es estudiante
+            var userRole = "STUDENT" // Por defecto, consideramos que es estudiante
             
             if (userDoc != null) {
                 val userWithRoles = userDoc.data(UserWithAcademyRolesModel.serializer())
@@ -175,14 +171,7 @@ class FirebaseUserInvitationsServiceImpl(
         } catch (e: Exception) {
             println("Error obteniendo detalles de la academia: $academyId - ${e.message}")
             // Devolvemos un modelo con valores por defecto
-            AcademyWithRoleModel(
-                id = academyId,
-                name = "Academia $academyId",
-                location = "",
-                imageUrl = "",
-                schedule = "",
-                role = "student"
-            )
+            throw e
         }
     }
     

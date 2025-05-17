@@ -10,6 +10,6 @@ interface UserInvitationsRepository {
     
     suspend fun fetchUserInvitations(email: String)
     suspend fun fetchUserAcademies(email: String)
-    suspend fun acceptInvitation(invitationId: String): Boolean
+    suspend fun acceptInvitation(invitation: UserInvitation): Boolean
     suspend fun rejectInvitation(invitationId: String): Boolean
 } 
