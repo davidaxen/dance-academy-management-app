@@ -114,7 +114,7 @@ fun ReservedClassesList(
                         items(orderedClasses) { reservedClass ->
                             ReservedClassItem(reservedClass = reservedClass)
                             if (orderedClasses.last() != reservedClass) {
-                                Divider(
+                                HorizontalDivider(
                                     modifier = Modifier.padding(horizontal = LocalPadding.current.normal),
                                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                                 )
