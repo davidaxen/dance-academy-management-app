@@ -30,6 +30,8 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -44,6 +46,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -475,6 +478,45 @@ private fun ModalDrawerContent(
     onClick: () -> Unit
 ) {
     val groupedScreens = drawerScreens.groupBy { it.section }
+    // Estado para controlar la visibilidad del diálogo de confirmación
+    var showLogoutConfirmation by remember { mutableStateOf(false) }
+    
+    // Diálogo de confirmación de cierre de sesión
+    if (showLogoutConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showLogoutConfirmation = false },
+            title = { Text("Cerrar sesión") },
+            text = { Text("¿Estás seguro de que quieres cerrar sesión?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutConfirmation = false
+                        appNavController.navigate(LoginScreenRoute) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                        onClick()
+                    }
+                ) {
+                    Text(
+                        "Sí, cerrar sesión", 
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showLogoutConfirmation = false }
+                ) {
+                    Text("Cancelar")
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.onBackground,
+            textContentColor = MaterialTheme.colorScheme.onBackground
+        )
+    }
+    
     ModalDrawerSheet(
         drawerContainerColor = MaterialTheme.colorScheme.background,
     ) {
@@ -521,7 +563,7 @@ private fun ModalDrawerContent(
                     }
                 }
             
-            // Agregar un Spacer que ocupe todo el espacio disponible
+            // Agregar un Spacer que ocupe completo el espacio disponible
             Spacer(modifier = Modifier.weight(1f))
             
             // Sección de usuario al final
@@ -547,11 +589,8 @@ private fun ModalDrawerContent(
                             currentDestination = currentDestination,
                             textColor = MaterialTheme.colorScheme.error,
                             onClick = {
-                                appNavController.navigate(LoginScreenRoute) {
-                                    popUpTo(0) { inclusive = true }
-                                    launchSingleTop = true
-                                }
-                                onClick()
+                                // Mostrar diálogo de confirmación en lugar de navegar directamente
+                                showLogoutConfirmation = true
                             }
                         )
                     } else {
