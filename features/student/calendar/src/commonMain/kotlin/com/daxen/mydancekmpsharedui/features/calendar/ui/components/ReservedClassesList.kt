@@ -153,7 +153,7 @@ private fun ReservedClassItem(reservedClass: ReservedClass) {
         leadingContent = {
             Surface(
                 shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.secondaryContainer,
+                color = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier.size(40.dp)
             ) {
                 Box(
@@ -163,7 +163,7 @@ private fun ReservedClassItem(reservedClass: ReservedClass) {
                     Icon(
                         imageVector = Icons.Outlined.Class,
                         contentDescription = "Clase",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
