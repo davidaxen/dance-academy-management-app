@@ -115,8 +115,6 @@ fun NavGraphBuilder.academyUserNavGraph(navigateToLogin: () -> Unit, appNavContr
             val viewModel: AcademyUserViewModel = koinViewModel()
             AcademyUserScreen(
                 viewModel = viewModel,
-                showTopSection = true,
-                navigateToLogin = navigateToLogin,
                 navigateToSection = { action ->
                     when (action) {
                         is AcademyProfileAction.AcademyInfoRoute -> {

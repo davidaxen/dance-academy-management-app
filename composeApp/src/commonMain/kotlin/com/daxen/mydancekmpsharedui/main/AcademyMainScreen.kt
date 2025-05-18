@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,15 +16,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -38,6 +46,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -49,10 +58,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -63,6 +76,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.features.academy.students.AcademyStudentsDestinations
 import com.daxen.mydancekmpsharedui.features.academy.students.invitations.invite.InvitationStudentViewModelProvider
@@ -70,10 +84,14 @@ import com.daxen.mydancekmpsharedui.features.academy.students.listing.ui.Student
 import com.daxen.mydancekmpsharedui.features.academy.teachers.AcademyTeachersDestinations
 import com.daxen.mydancekmpsharedui.features.academy.teachers.invitations.invite.InvitationTeacherViewModelProvider
 import com.daxen.mydancekmpsharedui.features.academy.teachers.listing.ui.TeachersListingViewModelProvider
+import com.daxen.mydancekmpsharedui.features.auth.LoginScreenRoute
+import com.daxen.mydancekmpsharedui.features.user.AcademyUserInfoProvider
 import com.daxen.mydancekmpsharedui.features.user.UserGraph
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerDestination
 import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.AcademyDrawerNavHost
+import com.daxen.mydancekmpsharedui.navigation.academyDrawerNavigation.DrawerSection
 import kotlinx.coroutines.launch
+import org.koin.compose.getKoin
 
 // Clase de ayuda para configurar qué elementos mostrar en la TopBar según la pantalla
 data class TopBarConfig(
@@ -93,6 +111,7 @@ fun AcademyMainScreen(appNavController: NavHostController) {
             AcademyDrawerDestination.ClassesList,
             AcademyDrawerDestination.ClassesCreation,
             AcademyDrawerDestination.User,
+            AcademyDrawerDestination.Logout,
         )
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -143,7 +162,7 @@ fun AcademyMainScreen(appNavController: NavHostController) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerContent(drawerScreens, currentDestination, drawerNavController) {
+            ModalDrawerContent(drawerScreens, currentDestination, drawerNavController, appNavController) {
                 scope.launch {
                     if (drawerState.isOpen) {
                         drawerState.close()
@@ -455,9 +474,49 @@ private fun ModalDrawerContent(
     drawerScreens: List<AcademyDrawerDestination<out Any>>,
     currentDestination: NavDestination?,
     drawerNavController: NavHostController,
+    appNavController: NavHostController,
     onClick: () -> Unit
 ) {
     val groupedScreens = drawerScreens.groupBy { it.section }
+    // Estado para controlar la visibilidad del diálogo de confirmación
+    var showLogoutConfirmation by remember { mutableStateOf(false) }
+    
+    // Diálogo de confirmación de cierre de sesión
+    if (showLogoutConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showLogoutConfirmation = false },
+            title = { Text("Cerrar sesión") },
+            text = { Text("¿Estás seguro de que quieres cerrar sesión?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutConfirmation = false
+                        appNavController.navigate(LoginScreenRoute) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                        onClick()
+                    }
+                ) {
+                    Text(
+                        "Sí, cerrar sesión", 
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showLogoutConfirmation = false }
+                ) {
+                    Text("Cancelar")
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.onBackground,
+            textContentColor = MaterialTheme.colorScheme.onBackground
+        )
+    }
+    
     ModalDrawerSheet(
         drawerContainerColor = MaterialTheme.colorScheme.background,
     ) {
@@ -466,55 +525,199 @@ private fun ModalDrawerContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            //ACADEMYYYY
+            UserAcademyDataSummary()
             Spacer(Modifier.height(12.dp))
-            groupedScreens.entries.withIndex().forEach { (index, entry) ->
-                val (section, items) = entry
+            
+            // Lista de todas las secciones excepto "Usuario"
+            groupedScreens.entries
+                .filter { it.key != DrawerSection.User }
+                .withIndex()
+                .forEach { (index, entry) ->
+                    val (section, items) = entry
 
+                    Text(
+                        text = section.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(LocalPadding.current.tiny)
+                    )
+
+                    items.forEach { item ->
+                        DrawerItem(
+                            item = item,
+                            currentDestination = currentDestination,
+                            onClick = {
+                                navigateToDestination(drawerNavController, item)
+                                onClick()
+                            }
+                        )
+                    }
+
+                    if (index < groupedScreens.entries.filter { it.key != DrawerSection.User }.size - 1) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = LocalPadding.current.normal),
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            
+            // Agregar un Spacer que ocupe completo el espacio disponible
+            Spacer(modifier = Modifier.weight(1f))
+            
+            // Sección de usuario al final
+            if (groupedScreens.containsKey(DrawerSection.User)) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = LocalPadding.current.normal),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                
                 Text(
-                    text = section.title,
+                    text = DrawerSection.User.title,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(LocalPadding.current.tiny)
                 )
-
-                items.forEach { item ->
-                    val isSelected =
-                        currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true
-
-                    NavigationDrawerItem(
-                        label = { Text(item.title) },
-                        icon = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                        selected = isSelected,
-                        shape = RoundedCornerShape(0),
-                        colors = NavigationDrawerItemDefaults.colors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                            unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
-                        onClick = {
-                            drawerNavController.navigate(item.route) {
-                                popUpTo(drawerNavController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
+                
+                groupedScreens[DrawerSection.User]?.forEach { item ->
+                    // Si es el item de logout, navegamos a la ruta de login con popUpTo
+                    if (item == AcademyDrawerDestination.Logout) {
+                        DrawerItem(
+                            item = item,
+                            currentDestination = currentDestination,
+                            textColor = MaterialTheme.colorScheme.error,
+                            onClick = {
+                                // Mostrar diálogo de confirmación en lugar de navegar directamente
+                                showLogoutConfirmation = true
                             }
-                            onClick()
-                        },
-                    )
+                        )
+                    } else {
+                        DrawerItem(
+                            item = item,
+                            currentDestination = currentDestination,
+                            onClick = {
+                                navigateToDestination(drawerNavController, item)
+                                onClick()
+                            }
+                        )
+                    }
                 }
+            }
+            
+            // Añadir espacio al final para dispositivos pequeños
+            Spacer(modifier = Modifier.height(LocalPadding.current.normal))
+        }
+    }
+}
 
-                if (index < groupedScreens.size - 1) {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = LocalPadding.current.normal),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.onBackground
+@Composable
+private fun DrawerItem(
+    item: AcademyDrawerDestination<out Any>,
+    currentDestination: NavDestination?,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    onClick: () -> Unit
+) {
+    val isSelected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true
+
+    NavigationDrawerItem(
+        label = { 
+            Text(
+                text = item.title, 
+                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else textColor
+            ) 
+        },
+        icon = if (isSelected) item.selectedIcon else item.unselectedIcon,
+        selected = isSelected,
+        shape = RoundedCornerShape(0),
+        colors = NavigationDrawerItemDefaults.colors(
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            unselectedIconColor = if (item == AcademyDrawerDestination.Logout) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
+            unselectedTextColor = textColor,
+            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        onClick = onClick,
+    )
+}
+
+private fun navigateToDestination(
+    navController: NavHostController,
+    item: AcademyDrawerDestination<out Any>
+) {
+    navController.navigate(item.route) {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
+@Composable
+fun UserAcademyDataSummary() {
+    val academyUserInfoProvider: AcademyUserInfoProvider = getKoin().get()
+    val user by academyUserInfoProvider.userAcademyUiFlow.collectAsState()
+    Surface(
+        elevation = 4.dp,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(
+                    vertical = LocalPadding.current.small,
+                    horizontal = LocalPadding.current.small
+                )
+                .fillMaxWidth()
+        ) {
+            // Avatar de la academia
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.size(80.dp)
+            ) {
+                if (user.logoUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = user.logoUrl,
+                        contentDescription = "Logo de la academia",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Logo de academia",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(80.dp)
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(
+                modifier = Modifier
+                    .padding(start = LocalPadding.current.tiny)
+                    .weight(1f)
+            ) {
+                Text(
+                    text = user.name,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = user.email,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = user.address,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
-
 }
