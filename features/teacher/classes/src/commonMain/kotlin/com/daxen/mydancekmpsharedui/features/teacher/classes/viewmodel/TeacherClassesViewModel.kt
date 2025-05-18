@@ -2,9 +2,9 @@ package com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daxen.mydancekmpsharedui.data.academy.classes.repository.AcademyClassesRepository
-import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
-import com.daxen.mydancekmpsharedui.data.user.repository.AcademyUserRepository
+import com.daxen.mydancekmpsharedui.data.teacher.classes.repository.TeacherClassesRepository
+import com.daxen.mydancekmpsharedui.data.user.model.User
+import com.daxen.mydancekmpsharedui.data.user.repository.UserRepository
 import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.composables.ClassesGroup
 import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.models.TeacherClassesUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +20,10 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 
 class TeacherClassesViewModel(
-    private val academyClassesRepository: AcademyClassesRepository,
-    academyUserRepository: AcademyUserRepository
+    private val teacherClassesRepository: TeacherClassesRepository,
+    userRepository: UserRepository,
 ) : ViewModel() {
-    private val currentAcademy: StateFlow<UserAcademy> = academyUserRepository.currentAcademy
+    private val currentUser: StateFlow<User> = userRepository.currentUser
 
     private val _uiState = MutableStateFlow<TeacherClassesUiState>(TeacherClassesUiState.Loading)
     val uiState: StateFlow<TeacherClassesUiState> = _uiState
@@ -91,10 +91,33 @@ class TeacherClassesViewModel(
         viewModelScope.launch {
             try {
                 _uiState.value = TeacherClassesUiState.Loading
-
-                // Por ahora simulamos que no hay clases
-                // En el futuro, este método obtendrá las clases del profesor según su ID
-                _uiState.value = TeacherClassesUiState.Success(emptyList())
+                
+                // Obtener las clases del profesor para el día seleccionado
+                val weeklyClasses = teacherClassesRepository.getWeeklyClassesByTeacherAndAcademyId(
+                    teacherId = currentUser.value.uid,
+                    academyId = currentUser.value.currentAcademyId,
+                    date = _selectedDate.value
+                )
+                
+                val specificClasses = teacherClassesRepository.getSpecificClassesByTeacherAndAcademyId(
+                    teacherId = currentUser.value.uid,
+                    academyId = currentUser.value.currentAcademyId,
+                    date = _selectedDate.value
+                )
+                
+                // Crear un grupo para el día seleccionado
+                val classesGroup = ClassesGroup(
+                    dayOfWeek = _selectedDate.value.dayOfWeek,
+                    weeklyClasses = weeklyClasses,
+                    specificClasses = specificClasses
+                )
+                
+                // Verificar si hay clases
+                if (weeklyClasses.isEmpty() && specificClasses.isEmpty()) {
+                    _uiState.value = TeacherClassesUiState.Empty(isFiltered = false)
+                } else {
+                    _uiState.value = TeacherClassesUiState.Success(listOf(classesGroup))
+                }
             } catch (e: Exception) {
                 _uiState.value =
                     TeacherClassesUiState.Error(e.message ?: "Error al cargar las clases")

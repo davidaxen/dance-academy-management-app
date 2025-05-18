@@ -1,6 +1,5 @@
 package com.daxen.mydancekmpsharedui.features.teacher.classes.ui.composables
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,11 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -26,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.dropUnlessResumed
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassModel
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.TeacherModel
@@ -98,7 +93,7 @@ fun ClassesList(
                 if (combinedClasses.isEmpty()) {
                     item {
                         Text(
-                            text = "No hay clases programadas para este día",
+                            text = "No tienes clases programadas para este día",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
@@ -130,31 +125,33 @@ private fun ClassListItem(
     
     ListItem(
         headlineContent = {
-            Text(
-                text = name,
-                style = MaterialTheme.typography.titleMedium
-            )
+            Row {
+                Text(
+                    text = hour,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                
+                Spacer(modifier = Modifier.width(12.dp))
+                
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
         },
         supportingContent = {
             Column {
                 Row {
-                    Text(
-                        text = hour,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    
-                    Spacer(modifier = Modifier.width(8.dp))
-                    
                     if (isWeekly) {
                         Text(
-                            text = "Semanal",
+                            text = "Clase Semanal",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
                     } else {
                         Text(
-                            text = "Específica",
+                            text = "Clase Específica",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -168,12 +165,6 @@ private fun ClassListItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
-                Text(
-                    text = "Profesor${if (teachers.size > 1) "es" else ""}: ${teachers.joinToString { it.name }}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         },
         leadingContent = null,
