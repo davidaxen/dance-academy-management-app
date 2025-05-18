@@ -32,7 +32,7 @@ fun NavGraphBuilder.mainNavGraph(
 
     navigation<TeacherMainGraph>(startDestination = TeacherMainScreen) {
         composable<TeacherMainScreen> {
-//            StudentMainScreen(appNavController = navController)
+            TeacherMainScreen(appNavController = navController)
         }
     }
 

@@ -4,5 +4,6 @@ enum class PostSplashDestination {
     Login,
     CompleteProfile,
     AcademySelection,
-    AcademyHome
+    AcademyHome,
+    TeacherHome, // esto se va a quitar y va a entrar a AcademySelection
 }

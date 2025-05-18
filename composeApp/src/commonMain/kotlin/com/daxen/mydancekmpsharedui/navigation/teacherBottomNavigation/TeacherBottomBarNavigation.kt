@@ -1,0 +1,52 @@
+package com.daxen.mydancekmpsharedui.navigation.teacherBottomNavigation
+
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlueLight
+
+@Composable
+fun TeacherBottomBarNavigation(navController: NavHostController) {
+    val bottomScreens = remember {
+        listOf(
+//            TeacherBottomBarDestination.User,
+            TeacherBottomBarDestination.ClassesList,
+        )
+    }
+
+    NavigationBar {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+
+        bottomScreens.forEach { item ->
+            val isSelected =
+                currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true
+            NavigationBarItem(
+                icon = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                label = { Text(item.title) },
+                selected = isSelected,
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = PrimaryBlueLight
+                ),
+                onClick = {
+                    navController.navigate(item.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    }
+}
