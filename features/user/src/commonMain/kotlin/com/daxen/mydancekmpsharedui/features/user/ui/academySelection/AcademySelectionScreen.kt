@@ -37,6 +37,7 @@ import com.daxen.mydancekmpsharedui.features.user.ui.academySelection.components
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 import com.daxen.mydancekmpsharedui.features.user.ProfileAction
 import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserViewModel
@@ -47,7 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun AcademySelectionScreen(
     viewModel: AcademySelectionViewModel,
     modifier: Modifier = Modifier,
-    navigateToAcademy: () -> Unit,
+    navigateToAcademy: (UserRole) -> Unit,
     navigateToLogin: () -> Unit,
     navigateToSection: (ProfileAction) -> Unit
 ) {
@@ -178,7 +179,7 @@ fun AcademySelectionScreen(
                                     role = academy.role.toSpanishText(),
                                     onClick = {
                                         viewModel.onAcademySelected(academy.id)
-                                        navigateToAcademy()
+                                        navigateToAcademy(viewModel.currentUser.value.role)
                                     }
                                 )
                             }

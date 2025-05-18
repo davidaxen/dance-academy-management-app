@@ -39,7 +39,6 @@ fun CentralAppNavHost(
         PostSplashDestination.AcademySelection -> AcademySelectionGraph
         PostSplashDestination.CompleteProfile -> RegisterProcessNavGraph
         PostSplashDestination.AcademyHome -> AcademyMainGraph
-        PostSplashDestination.TeacherHome -> TeacherMainGraph
     }
     NavHost(
         navController = navController,
@@ -97,7 +96,8 @@ fun CentralAppNavHost(
 
         academySelectionNavGraph(
             appNavController = navController,
-            navigateToAcademy = { navController.navigate(StudentMainGraph) },
+            navigateToStudentAcademy = { navController.navigate(StudentMainGraph) },
+            navigateToTeacherAcademy = { navController.navigate(TeacherMainGraph) },
             navigateToLogin = { navController.navigate(LoginScreenRoute) {
                     popUpTo(0) { inclusive = true }
                     launchSingleTop = true

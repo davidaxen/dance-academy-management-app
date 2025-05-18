@@ -18,8 +18,8 @@ import com.daxen.mydancekmpsharedui.core.ui.theme.PrimaryBlueLight
 fun TeacherBottomBarNavigation(navController: NavHostController) {
     val bottomScreens = remember {
         listOf(
-//            TeacherBottomBarDestination.User,
             TeacherBottomBarDestination.ClassesList,
+            TeacherBottomBarDestination.User,
         )
     }
 

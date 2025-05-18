@@ -50,8 +50,7 @@ class AuthViewModel(
                     }
                     UserRole.TEACHER -> {
                         userRepository.updateCurrentUser()
-//                        _startingDestination.value = PostSplashDestination.AcademySelection
-                        _startingDestination.value = PostSplashDestination.TeacherHome
+                        _startingDestination.value = PostSplashDestination.AcademySelection
                     }
                     UserRole.STUDENT -> {
                         userRepository.updateCurrentUser()
