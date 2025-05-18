@@ -6,6 +6,7 @@ import com.daxen.mydancekmpsharedui.features.academy.teachers.academyTeachersMod
 import com.daxen.mydancekmpsharedui.features.auth.authModule
 import com.daxen.mydancekmpsharedui.features.student.calendar.calendarModule
 import com.daxen.mydancekmpsharedui.features.student.reservation.reservationModule
+import com.daxen.mydancekmpsharedui.features.teacher.classes.teacherClassesModule
 import com.daxen.mydancekmpsharedui.features.user.userModule
 import org.koin.dsl.module
 
@@ -17,6 +18,7 @@ val appModule = module {
         calendarModule,
         academyStudentsModule,
         academyTeachersModule,
-        academyClassesModule
+        academyClassesModule,
+        teacherClassesModule
     )
 }
