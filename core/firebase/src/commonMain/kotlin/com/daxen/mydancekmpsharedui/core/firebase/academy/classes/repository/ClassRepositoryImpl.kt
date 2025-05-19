@@ -1,8 +1,12 @@
 package com.daxen.mydancekmpsharedui.core.firebase.academy.classes.repository
 
+import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.ReservationAcademyModel
 import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.SpecificClassModel
+import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.StudentInfoReservation
+import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.StudentReservation
 import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.WeeklyClassModel
 import dev.gitlive.firebase.firestore.FirebaseFirestore
+import dev.gitlive.firebase.firestore.where
 import kotlinx.serialization.DeserializationStrategy
 
 class ClassRepositoryImpl(
@@ -174,6 +178,61 @@ class ClassRepositoryImpl(
             )
         } catch (e: Exception) {
             throw e
+        }
+    }
+    
+    override suspend fun getStudentReservationsByClassAndDate(
+        academyId: String,
+        classId: String,
+        date: String
+    ): Result<List<StudentReservation>> {
+        return try {
+            // Obtener todas las reservas para la clase y fecha específicas
+            val reservationsQuery = firestore
+                .collection("/academies/$academyId/reservations")
+                .where("classId", "==", classId)
+                .where("date", "==", date)
+                .get()
+                .documents
+            
+            // Mapear cada documento a un ReservationAcademyModel
+            val reservations = reservationsQuery.map { doc ->
+                doc.data(ReservationAcademyModel.serializer()).copy(documentId = doc.id)
+            }
+            
+            // Para cada reserva, obtener los datos del estudiante
+            val studentReservations = reservations.mapNotNull { reservation ->
+                try {
+                    // Obtener datos del estudiante de la colección "users"
+                    val userDoc = firestore
+                        .collection("users")
+                        .document(reservation.userId)
+                        .get()
+                    
+                    // Usar serialización para obtener el UserModel
+                    val userModel = userDoc.data(com.daxen.mydancekmpsharedui.core.firebase.user.models.UserModel.serializer())
+                    
+                    // Crear un StudentInfoReservation con los datos del usuario
+                    val studentInfo = StudentInfoReservation(
+                        uid = userModel.uid,
+                        name = userModel.name,
+                        lastName = userModel.lastName,
+                        danceRole = userModel.danceRole
+                    )
+                    
+                    // Crear y retornar StudentReservation con los datos del estudiante y la reserva
+                    StudentReservation(
+                        studentInfo = studentInfo,
+                        reservation = reservation
+                    )
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            
+            Result.success(studentReservations)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 } 

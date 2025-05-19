@@ -1,6 +1,7 @@
 package com.daxen.mydancekmpsharedui.core.firebase.academy.classes.repository
 
 import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.SpecificClassModel
+import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.StudentReservation
 import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.WeeklyClassModel
 
 interface ClassRepository {
@@ -15,4 +16,10 @@ interface ClassRepository {
 
     suspend fun getWeeklyClassById(academyId: String, classId: String): Result<WeeklyClassModel>
     suspend fun getSpecificClassById(academyId: String, classId: String): Result<SpecificClassModel>
+    
+    suspend fun getStudentReservationsByClassAndDate(
+        academyId: String,
+        classId: String,
+        date: String
+    ): Result<List<StudentReservation>>
 } 
