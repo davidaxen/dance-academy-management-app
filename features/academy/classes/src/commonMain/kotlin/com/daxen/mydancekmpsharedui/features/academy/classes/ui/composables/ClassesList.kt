@@ -2,8 +2,10 @@ package com.daxen.mydancekmpsharedui.features.academy.classes.ui.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -93,7 +96,6 @@ fun ClassesList(
                             teachers = specificClass.teachers,
                             status = specificClass.status,
                             isWeekly = false,
-                            dateInfo = "Fecha: ${specificClass.date}",
                             onClick = dropUnlessResumed {
                                 onClassClick(specificClass, false)
                             }
@@ -136,7 +138,6 @@ private fun ClassListItem(
     teachers: List<TeacherModel>,
     status: String,
     isWeekly: Boolean,
-    dateInfo: String = "",
     onClick: () -> Unit
 ) {
     val padding = LocalPadding.current
@@ -174,14 +175,6 @@ private fun ClassListItem(
                     }
                 }
                 
-                if (dateInfo.isNotEmpty()) {
-                    Text(
-                        text = dateInfo,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                
                 Text(
                     text = "Profesor${if (teachers.size > 1) "es" else ""}: ${teachers.joinToString { it.name }}",
                     style = MaterialTheme.typography.bodyMedium,
@@ -191,7 +184,10 @@ private fun ClassListItem(
         },
         leadingContent = null,
         trailingContent = {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxHeight()
+            ) {
                 ClassStatusIndicator(status = status)
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
@@ -205,6 +201,7 @@ private fun ClassListItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .padding(horizontal = padding.tiny)
+            .height(IntrinsicSize.Min)
     )
 }
 

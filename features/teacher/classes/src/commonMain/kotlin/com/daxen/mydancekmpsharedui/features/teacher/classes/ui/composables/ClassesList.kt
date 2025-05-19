@@ -2,8 +2,10 @@ package com.daxen.mydancekmpsharedui.features.teacher.classes.ui.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -83,7 +86,6 @@ fun ClassesList(
                             hour = specificClass.hour,
                             status = specificClass.status,
                             isWeekly = false,
-                            dateInfo = "Fecha: ${specificClass.date}",
                             onClick = dropUnlessResumed {
                                 onClassClick(specificClass, false)
                             }
@@ -125,7 +127,6 @@ private fun ClassListItem(
     hour: String,
     status: String,
     isWeekly: Boolean,
-    dateInfo: String = "",
     onClick: () -> Unit
 ) {
     val padding = LocalPadding.current
@@ -162,19 +163,14 @@ private fun ClassListItem(
                         )
                     }
                 }
-
-//                if (dateInfo.isNotEmpty()) {
-//                    Text(
-//                        text = dateInfo,
-//                        style = MaterialTheme.typography.bodySmall,
-//                        color = MaterialTheme.colorScheme.onSurfaceVariant
-//                    )
-//                }
             }
         },
         leadingContent = null,
         trailingContent = {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxHeight()
+            ) {
                 ClassStatusIndicator(status = status)
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
@@ -188,6 +184,7 @@ private fun ClassListItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .padding(horizontal = padding.tiny)
+            .height(IntrinsicSize.Min)
     )
 }
 
