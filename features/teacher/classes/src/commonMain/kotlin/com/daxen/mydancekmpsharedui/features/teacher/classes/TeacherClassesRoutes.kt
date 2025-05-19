@@ -12,6 +12,7 @@ import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.ClassDetailScree
 import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.TeacherClassesScreen
 import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.ClassDetailViewModel
 import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.TeacherClassesViewModel
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -26,7 +27,8 @@ sealed class TeacherClassesDestinations {
     @Serializable
     data class ClassDetailRoute(
         val classId: String,
-        val isWeekly: Boolean
+        val isWeekly: Boolean,
+        val date: String,
     ) : TeacherClassesDestinations()
 }
 
@@ -49,13 +51,23 @@ fun NavGraphBuilder.teacherClassesGraph(
 
                     val navDestination = TeacherClassesDestinations.ClassDetailRoute(
                         classId = classId,
-                        isWeekly = isWeekly
+                        isWeekly = isWeekly,
+                        date = getSpanishDate(viewModel.selectedDate.value)
                     )
                     appNavController.navigate(navDestination)
                 }
             )
         }
     }
+}
+
+private fun getSpanishDate(date: LocalDate): String {
+    val day = date.dayOfMonth
+    val month = date.monthNumber
+    val year = date.year
+
+    // Formatear la fecha en español
+    return "$day/$month/$year"
 }
 
 fun NavGraphBuilder.teacherClassDetailGraph(
@@ -68,6 +80,7 @@ fun NavGraphBuilder.teacherClassDetailGraph(
             viewModel = viewModel,
             classId = classDetail.classId,
             isWeekly = classDetail.isWeekly,
+            dateSelected = classDetail.date,
             onBackClick = dropUnlessResumed {
                 onBackClick()
             }

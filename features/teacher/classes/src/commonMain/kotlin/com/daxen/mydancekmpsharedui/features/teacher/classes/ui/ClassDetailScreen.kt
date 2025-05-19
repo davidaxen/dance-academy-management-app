@@ -46,7 +46,6 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.BaseClassModel
-import com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassModel
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel
 import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.ClassDetailViewModel
 
@@ -56,6 +55,7 @@ fun ClassDetailScreen(
     viewModel: ClassDetailViewModel,
     classId: String,
     isWeekly: Boolean,
+    dateSelected: String,
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -109,6 +109,7 @@ fun ClassDetailScreen(
                         ClassDetailContent(
                             classModel = classModel, 
                             isWeekly = uiState.isWeeklyClass,
+                            dateSelected = dateSelected,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(LocalPadding.current.normal)
@@ -125,6 +126,7 @@ fun ClassDetailScreen(
 fun ClassDetailContent(
     classModel: BaseClassModel,
     isWeekly: Boolean,
+    dateSelected: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -142,7 +144,8 @@ fun ClassDetailContent(
         // Información básica
         ClassInfoSection(
             classModel = classModel,
-            isWeekly = isWeekly
+            isWeekly = isWeekly,
+            dateSelected = dateSelected
         )
 
         HorizontalDivider()
@@ -203,7 +206,8 @@ fun ClassHeaderSection(
 @Composable
 fun ClassInfoSection(
     classModel: BaseClassModel,
-    isWeekly: Boolean
+    isWeekly: Boolean,
+    dateSelected: String
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -220,6 +224,12 @@ fun ClassInfoSection(
             label = "Hora",
             value = classModel.hour
         )
+
+        InfoItem(
+            icon = Icons.Default.Event,
+            label = "Fecha",
+            value = dateSelected
+        )
         
         if (isWeekly && classModel is WeeklyClassModel) {
             InfoItem(
@@ -235,12 +245,6 @@ fun ClassInfoSection(
                     "SUNDAY" -> "Domingo"
                     else -> classModel.dayOfWeek
                 }
-            )
-        } else if (!isWeekly && classModel is SpecificClassModel) {
-            InfoItem(
-                icon = Icons.Default.Event,
-                label = "Fecha",
-                value = classModel.date
             )
         }
     }

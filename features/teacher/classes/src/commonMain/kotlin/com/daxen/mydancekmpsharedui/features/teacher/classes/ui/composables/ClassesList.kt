@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -126,54 +129,60 @@ private fun ClassListItem(
     onClick: () -> Unit
 ) {
     val padding = LocalPadding.current
-    
+
     ListItem(
         headlineContent = {
-            Row {
-                Text(
-                    text = hour,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                
-                Spacer(modifier = Modifier.width(12.dp))
-                
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+            Text(
+                text = name,
+                style = MaterialTheme.typography.titleMedium
+            )
         },
         supportingContent = {
             Column {
                 Row {
+                    Text(
+                        text = hour,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
                     if (isWeekly) {
                         Text(
-                            text = "Clase Semanal",
+                            text = "Semanal",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
                     } else {
                         Text(
-                            text = "Clase Específica",
+                            text = "Específica",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
-                
-                if (dateInfo.isNotEmpty()) {
-                    Text(
-                        text = dateInfo,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+
+//                if (dateInfo.isNotEmpty()) {
+//                    Text(
+//                        text = dateInfo,
+//                        style = MaterialTheme.typography.bodySmall,
+//                        color = MaterialTheme.colorScheme.onSurfaceVariant
+//                    )
+//                }
             }
         },
         leadingContent = null,
         trailingContent = {
-            ClassStatusIndicator(status = status)
+            Row {
+                ClassStatusIndicator(status = status)
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    imageVector = Icons.Filled.ChevronRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            }
         },
         modifier = Modifier
             .fillMaxWidth()
