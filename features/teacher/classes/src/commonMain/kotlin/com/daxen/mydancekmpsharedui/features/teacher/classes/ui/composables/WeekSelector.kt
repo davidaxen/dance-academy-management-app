@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -20,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +43,8 @@ fun WeekSelector(
     onDateSelected: (LocalDate) -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
+    onTodayClick: () -> Unit = {},
+    isSelectedDateToday: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val padding = LocalPadding.current
@@ -50,14 +54,36 @@ fun WeekSelector(
             .fillMaxWidth()
             .padding(padding.small)
     ) {
-        // Mostrar mes y año
-        Text(
-            text = getMesAnoText(selectedDate),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center,
+        // Fila con mes/año y botón "Hoy"
+        Box(
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            // Botón "Hoy" a la derecha
+            TextButton(
+                onClick = onTodayClick,
+                enabled = !isSelectedDateToday,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Text(
+                    text = "Hoy",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = if (!isSelectedDateToday) 
+                        MaterialTheme.colorScheme.primary 
+                    else 
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            }
+            
+            // Mostrar mes y año en el centro absoluto
+            Text(
+                text = getMesAnoText(selectedDate),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
 
         Spacer(modifier = Modifier.height(padding.small))
 
