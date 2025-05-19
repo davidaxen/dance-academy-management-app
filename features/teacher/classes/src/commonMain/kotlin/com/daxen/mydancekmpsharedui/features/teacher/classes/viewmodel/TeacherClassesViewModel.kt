@@ -89,14 +89,7 @@ class TeacherClassesViewModel(
         _selectedWeekStartDate.value = getCurrentWeekMonday()
         loadClasses()
     }
-    
-    fun isSelectedDateToday(): Boolean {
-        val today = _today.value
-        val selectedDate = _selectedDate.value
-        return today.year == selectedDate.year && 
-               today.month == selectedDate.month && 
-               today.dayOfMonth == selectedDate.dayOfMonth
-    }
+
 
     fun refreshClasses() {
         viewModelScope.launch {

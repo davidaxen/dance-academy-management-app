@@ -2,6 +2,7 @@ package com.daxen.mydancekmpsharedui.features.teacher.classes.ui.composables
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -21,8 +21,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,22 +58,25 @@ fun WeekSelector(
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Botón "Hoy" a la derecha
-            TextButton(
-                onClick = onTodayClick,
-                enabled = !isSelectedDateToday,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            ) {
-                Text(
-                    text = "Hoy",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = if (!isSelectedDateToday) 
-                        MaterialTheme.colorScheme.primary 
-                    else 
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                )
-            }
+            // Texto "Hoy" clicable a la derecha
+            Text(
+                text = "Hoy",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                // El color depende de si está habilitado o no
+                color = if (!isSelectedDateToday) 
+                    MaterialTheme.colorScheme.primary 
+                else 
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 16.dp)
+                    .clickable(
+                        enabled = !isSelectedDateToday,
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }) { onTodayClick() }
+
+            )
             
             // Mostrar mes y año en el centro absoluto
             Text(
