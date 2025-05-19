@@ -35,7 +35,8 @@ import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.TeacherCl
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeacherClassesScreen(
-    viewModel: TeacherClassesViewModel
+    viewModel: TeacherClassesViewModel,
+    onClassClick: (classData: Any, isWeekly: Boolean) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
@@ -71,6 +72,9 @@ fun TeacherClassesScreen(
                     is TeacherClassesUiState.Success -> ClassesList(
                         classesGroups = state.classesGroups,
                         onRefresh = { viewModel.refreshClasses() },
+                        onClassClick = { classData, isWeekly ->
+                            onClassClick(classData, isWeekly)
+                        },
                         isRefreshing = isRefreshing
                     )
                     

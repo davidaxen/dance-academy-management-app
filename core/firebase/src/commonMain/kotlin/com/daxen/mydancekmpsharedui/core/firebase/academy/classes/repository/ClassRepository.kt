@@ -12,4 +12,7 @@ interface ClassRepository {
     
     suspend fun deleteWeeklyClass(academyId: String, classId: String): Result<Unit>
     suspend fun deleteSpecificClass(academyId: String, classId: String): Result<Unit>
+
+    suspend fun getWeeklyClassById(academyId: String, classId: String): Result<WeeklyClassModel>
+    suspend fun getSpecificClassById(academyId: String, classId: String): Result<SpecificClassModel>
 } 

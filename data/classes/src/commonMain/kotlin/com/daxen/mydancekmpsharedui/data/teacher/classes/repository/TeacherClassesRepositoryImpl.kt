@@ -26,7 +26,7 @@ class TeacherClassesRepositoryImpl(
         // Primero obtenemos todas las clases de la academia
         val allClasses = classRepository.getWeeklyClassesByAcademyId(academyId)
             .map { it.toWeeklyClassModel() }
-        
+
         // Filtramos las clases donde el profesor es el teacherId
         // y coincide con el día de la semana seleccionado
         val selectedDayOfWeek = date.dayOfWeek.toString()
@@ -34,7 +34,7 @@ class TeacherClassesRepositoryImpl(
             weeklyClass.teachers.any { it.id == teacherId } &&
             weeklyClass.dayOfWeek == selectedDayOfWeek
         }
-        
+
         _weeklyClassesList.value = teacherClasses
         return teacherClasses
     }
@@ -47,17 +47,39 @@ class TeacherClassesRepositoryImpl(
         // Primero obtenemos todas las clases específicas de la academia
         val allClasses = classRepository.getSpecificClassesByAcademyId(academyId)
             .map { it.toSpecificClassModel() }
-        
+
         // Filtramos las clases donde el profesor es el teacherId
         // y coincide con la fecha exacta seleccionada
         val dateString = "${date.year}-${date.monthNumber.toString().padStart(2, '0')}-${date.dayOfMonth.toString().padStart(2, '0')}"
-        
+
         val teacherClasses = allClasses.filter { specificClass ->
             specificClass.teachers.any { it.id == teacherId } &&
             specificClass.date == dateString
         }
-        
+
         _specificClassesList.value = teacherClasses
         return teacherClasses
     }
-} 
+
+    override suspend fun getSpecificClassById(
+        academyId: String,
+        classId: String
+    ): SpecificClassModel {
+        val specificClass = classRepository.getSpecificClassById(academyId, classId)
+        return specificClass.fold(
+            onSuccess = { it.toSpecificClassModel() },
+            onFailure = { throw it }
+        )
+    }
+
+    override suspend fun getWeeklyClassById(
+        academyId: String,
+        classId: String
+    ): WeeklyClassModel {
+        val weeklyClass = classRepository.getWeeklyClassById(academyId, classId)
+        return weeklyClass.fold(
+            onSuccess = { it.toWeeklyClassModel() },
+            onFailure = { throw it }
+        )
+    }
+}

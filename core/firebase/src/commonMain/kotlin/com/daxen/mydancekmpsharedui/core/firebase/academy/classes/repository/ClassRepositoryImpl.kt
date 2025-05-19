@@ -130,4 +130,50 @@ class ClassRepositoryImpl(
             Result.failure(e)
         }
     }
+
+    override suspend fun getWeeklyClassById(academyId: String, classId: String): Result<WeeklyClassModel> {
+        return try {
+            val document = firestore.collection("/academies/$academyId/classes")
+                .document(classId)
+                .get()
+
+            Result.success(
+                document.data(WeeklyClassModel.serializer()).let { data ->
+                    WeeklyClassModel(
+                        dayOfWeek = data.dayOfWeek,
+                        id = classId,
+                        name = data.name,
+                        hour = data.hour,
+                        status = data.status,
+                        teachers = data.teachers
+                    )
+                }
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun getSpecificClassById(academyId: String, classId: String): Result<SpecificClassModel> {
+        return try {
+            val document = firestore.collection("/academies/$academyId/specificClasses")
+                .document(classId)
+                .get()
+
+            Result.success(
+                document.data(SpecificClassModel.serializer()).let { data ->
+                    SpecificClassModel(
+                        date = data.date,
+                        id = classId,
+                        name = data.name,
+                        hour = data.hour,
+                        status = data.status,
+                        teachers = data.teachers
+                    )
+                }
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
 } 

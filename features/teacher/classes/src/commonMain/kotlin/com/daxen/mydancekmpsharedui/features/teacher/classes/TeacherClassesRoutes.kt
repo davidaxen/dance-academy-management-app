@@ -1,10 +1,16 @@
 package com.daxen.mydancekmpsharedui.features.teacher.classes
 
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
+import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
+import com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassModel
+import com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel
+import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.ClassDetailScreen
 import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.TeacherClassesScreen
+import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.ClassDetailViewModel
 import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.TeacherClassesViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
@@ -34,20 +40,37 @@ fun NavGraphBuilder.teacherClassesGraph(
             val viewModel: TeacherClassesViewModel = koinViewModel()
             TeacherClassesScreen(
                 viewModel = viewModel,
-//                onClassClick = { classData, isWeekly ->
-//                    val classId = if (isWeekly) {
-//                        (classData as WeeklyClassModel).id
-//                    } else {
-//                        (classData as SpecificClassModel).id
-//                    }
-//
-//                    val navDestination = TeacherClassesDestinations.ClassDetailRoute(
-//                        classId = classId,
-//                        isWeekly = isWeekly
-//                    )
-//                    appNavController.navigate(navDestination)
-//                }
+                onClassClick = { classData, isWeekly ->
+                    val classId = if (isWeekly) {
+                        (classData as WeeklyClassModel).id
+                    } else {
+                        (classData as SpecificClassModel).id
+                    }
+
+                    val navDestination = TeacherClassesDestinations.ClassDetailRoute(
+                        classId = classId,
+                        isWeekly = isWeekly
+                    )
+                    appNavController.navigate(navDestination)
+                }
             )
         }
+    }
+}
+
+fun NavGraphBuilder.teacherClassDetailGraph(
+    onBackClick: () -> Unit
+) {
+    composable<TeacherClassesDestinations.ClassDetailRoute> { backStackEntry ->
+        val classDetail = backStackEntry.toRoute<TeacherClassesDestinations.ClassDetailRoute>()
+        val viewModel: ClassDetailViewModel = koinViewModel()
+        ClassDetailScreen(
+            viewModel = viewModel,
+            classId = classDetail.classId,
+            isWeekly = classDetail.isWeekly,
+            onBackClick = dropUnlessResumed {
+                onBackClick()
+            }
+        )
     }
 }

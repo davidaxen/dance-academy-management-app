@@ -11,13 +11,14 @@ interface TeacherClassesRepository {
         academyId: String,
         date: LocalDate
     ): List<WeeklyClassModel>
-    
+
     suspend fun getSpecificClassesByTeacherAndAcademyId(
         teacherId: String,
         academyId: String,
         date: LocalDate
     ): List<SpecificClassModel>
-    
+    suspend fun getWeeklyClassById(academyId: String, classId: String): WeeklyClassModel
+    suspend fun getSpecificClassById(academyId: String, classId: String): SpecificClassModel
     val weeklyClassesList: StateFlow<List<WeeklyClassModel>>
     val specificClassesList: StateFlow<List<SpecificClassModel>>
-} 
+}

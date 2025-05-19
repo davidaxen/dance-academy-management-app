@@ -1,5 +1,6 @@
 package com.daxen.mydancekmpsharedui.features.teacher.classes.ui.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,19 +23,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassModel
-import com.daxen.mydancekmpsharedui.data.academy.classes.models.TeacherModel
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel
-import kotlinx.datetime.DayOfWeek
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassesList(
     classesGroups: List<ClassesGroup>,
     onRefresh: () -> Unit,
+    onClassClick: (classData: Any, isWeekly: Boolean) -> Unit,
     isRefreshing: Boolean,
-    modifier: Modifier = Modifier
 ) {
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -67,19 +67,23 @@ fun ClassesList(
                         ClassListItem(
                             name = weeklyClass.name,
                             hour = weeklyClass.hour,
-                            teachers = weeklyClass.teachers,
                             status = weeklyClass.status,
-                            isWeekly = true
+                            isWeekly = true,
+                            onClick = dropUnlessResumed {
+                                onClassClick(weeklyClass, true)
+                            }
                         )
                     } else {
                         val specificClass = classData as SpecificClassModel
                         ClassListItem(
                             name = specificClass.name,
                             hour = specificClass.hour,
-                            teachers = specificClass.teachers,
                             status = specificClass.status,
                             isWeekly = false,
-                            dateInfo = "Fecha: ${specificClass.date}"
+                            dateInfo = "Fecha: ${specificClass.date}",
+                            onClick = dropUnlessResumed {
+                                onClassClick(specificClass, false)
+                            }
                         )
                     }
                     
@@ -116,10 +120,10 @@ fun ClassesList(
 private fun ClassListItem(
     name: String,
     hour: String,
-    teachers: List<TeacherModel>,
     status: String,
     isWeekly: Boolean,
-    dateInfo: String = ""
+    dateInfo: String = "",
+    onClick: () -> Unit
 ) {
     val padding = LocalPadding.current
     
@@ -173,6 +177,7 @@ private fun ClassListItem(
         },
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(horizontal = padding.tiny)
     )
 }
