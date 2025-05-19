@@ -68,7 +68,7 @@ sealed class AcademyDrawerDestination<T>(
 
     @Serializable
     data object ClassesList: AcademyDrawerDestination<AcademyClassesDestinations.AcademyClassesListingGraph>(
-        title = "Tus Clases",
+        title = "Mis Clases",
         selectedIcon = {
             Icon(imageVector = Icons.Filled.Event, contentDescription = "")
         },
@@ -94,7 +94,7 @@ sealed class AcademyDrawerDestination<T>(
 
     @Serializable
     data object StudentsList: AcademyDrawerDestination<AcademyStudentsDestinations.AcademyStudentsGraph>(
-        title = "Tus Alumnos",
+        title = "Mis Alumnos",
         selectedIcon = {
              Icon(imageVector = Icons.Filled.Groups, contentDescription = "")
         },
@@ -107,7 +107,7 @@ sealed class AcademyDrawerDestination<T>(
 
     @Serializable
     data object TeachersList: AcademyDrawerDestination<AcademyTeachersDestinations.AcademyTeachersGraph>(
-        title = "Tus Profesores",
+        title = "Mis Profesores",
         selectedIcon = {
             Icon(imageVector = Icons.Filled.People, contentDescription = "")
         },

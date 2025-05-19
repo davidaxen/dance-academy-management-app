@@ -32,7 +32,7 @@ sealed class TeacherBottomBarDestination<T>(
 
     @Serializable
     data object ClassesList: TeacherBottomBarDestination<TeacherClassesDestinations.TeacherClassesListingGraph>(
-        title = "Tus Clases",
+        title = "Mis Clases",
         selectedIcon = {
              Icon(imageVector = Icons.Filled.Event, contentDescription = "")
         },
