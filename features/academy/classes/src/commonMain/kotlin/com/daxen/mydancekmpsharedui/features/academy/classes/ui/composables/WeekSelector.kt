@@ -2,6 +2,7 @@ package com.daxen.mydancekmpsharedui.features.academy.classes.ui.composables
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +43,8 @@ fun WeekSelector(
     onDateSelected: (LocalDate) -> Unit,
     onPreviousWeekClick: () -> Unit,
     onNextWeekClick: () -> Unit,
+    onTodayClick: () -> Unit = {},
+    isSelectedDateToday: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val padding = LocalPadding.current
@@ -50,14 +54,39 @@ fun WeekSelector(
             .fillMaxWidth()
             .padding(padding.small)
     ) {
-        // Mostrar mes y año
-        Text(
-            text = getMesAnoText(selectedDate),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center,
+        // Fila con mes/año y botón "Hoy"
+        Box(
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            // Texto "Hoy" clicable a la derecha
+            Text(
+                text = "Hoy",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                // El color depende de si está habilitado o no
+                color = if (!isSelectedDateToday) 
+                    MaterialTheme.colorScheme.primary 
+                else 
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 16.dp)
+                    .clickable(
+                        enabled = !isSelectedDateToday,
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { onTodayClick() }
+            )
+            
+            // Mostrar mes y año en el centro absoluto
+            Text(
+                text = getMesAnoText(selectedDate),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
 
         Spacer(modifier = Modifier.height(padding.small))
 
@@ -113,7 +142,6 @@ fun WeekSelector(
             }
         }
     }
-
 }
 
 @Composable
