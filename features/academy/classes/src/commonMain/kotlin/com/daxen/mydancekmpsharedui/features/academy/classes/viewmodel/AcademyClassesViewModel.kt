@@ -37,6 +37,9 @@ class AcademyClassesViewModel(
     private val _selectedDate =
         MutableStateFlow(Clock.System.todayIn(TimeZone.currentSystemDefault()))
     val selectedDate: StateFlow<LocalDate> = _selectedDate
+    
+    private val _today = MutableStateFlow(Clock.System.todayIn(TimeZone.currentSystemDefault()))
+    val today: StateFlow<LocalDate> = _today
 
     init {
         _selectedWeekStartDate.value = getCurrentWeekMonday()
@@ -76,6 +79,14 @@ class AcademyClassesViewModel(
 
     fun onDateSelected(date: LocalDate) {
         _selectedDate.value = date
+        loadClasses()
+    }
+    
+    fun goToToday() {
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        _today.value = today
+        _selectedDate.value = today
+        _selectedWeekStartDate.value = getCurrentWeekMonday()
         loadClasses()
     }
 

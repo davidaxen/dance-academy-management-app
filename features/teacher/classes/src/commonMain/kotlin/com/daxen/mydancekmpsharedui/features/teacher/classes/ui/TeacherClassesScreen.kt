@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.academy.classes.ui
+package com.daxen.mydancekmpsharedui.features.teacher.classes.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,14 +30,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
-import com.daxen.mydancekmpsharedui.features.academy.classes.ui.composables.ClassesList
-import com.daxen.mydancekmpsharedui.features.academy.classes.ui.composables.WeekSelector
-import com.daxen.mydancekmpsharedui.features.academy.classes.ui.models.AcademyClassesUiState
-import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.AcademyClassesViewModel
+import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.composables.ClassesList
+import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.composables.WeekSelector
+import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.models.TeacherClassesUiState
+import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.TeacherClassesViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AcademyClassesScreen(
-    viewModel: AcademyClassesViewModel,
+fun TeacherClassesScreen(
+    viewModel: TeacherClassesViewModel,
     onClassClick: (classData: Any, isWeekly: Boolean) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -53,7 +56,17 @@ fun AcademyClassesScreen(
         }
     }
     
-    Scaffold { padding ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Mis Clases") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+            )
+        }
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,24 +86,24 @@ fun AcademyClassesScreen(
                 modifier = Modifier.weight(1f)
             ) {
                 when (val state = uiState) {
-                    is AcademyClassesUiState.Loading -> LoadingComponent("Cargando clases...")
+                    is TeacherClassesUiState.Loading -> LoadingComponent("Cargando clases...")
                     
-                    is AcademyClassesUiState.Success -> ClassesList(
+                    is TeacherClassesUiState.Success -> ClassesList(
                         classesGroups = state.classesGroups,
-                        onClassClick = { classData, isWeekly -> 
+                        onRefresh = { viewModel.refreshClasses() },
+                        onClassClick = { classData, isWeekly ->
                             onClassClick(classData, isWeekly)
                         },
-                        onRefresh = { viewModel.refreshClasses() },
                         isRefreshing = isRefreshing
                     )
                     
-                    is AcademyClassesUiState.Empty -> EmptyClassesContent(
+                    is TeacherClassesUiState.Empty -> EmptyClassesContent(
                         isFiltered = state.isFiltered,
                         onRefresh = { viewModel.refreshClasses() },
                         isRefreshing = isRefreshing
                     )
                     
-                    is AcademyClassesUiState.Error -> ErrorComponent(
+                    is TeacherClassesUiState.Error -> ErrorComponent(
                         message = state.message,
                         onRetry = { viewModel.refreshClasses() }
                     )
@@ -132,7 +145,7 @@ private fun EmptyClassesContent(
                 text = if (isFiltered) 
                     "No se encontraron clases con esa búsqueda" 
                 else 
-                    "No hay clases programadas para este día",
+                    "No tienes clases programadas para este día",
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center
             )
@@ -143,11 +156,11 @@ private fun EmptyClassesContent(
                 text = if (isFiltered)
                     "Intenta con otros términos de búsqueda"
                 else
-                    "Prueba con otro día o agrega clases a tu academia",
+                    "Prueba con otro día o contacta con tu academia",
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
-} 
+}

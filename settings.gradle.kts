@@ -40,6 +40,8 @@ include(":features:academy:students")
 include(":features:academy:teachers")
 include(":features:academy:classes")
 
+include(":features:teacher:classes")
+
 include(":data:auth")
 include(":data:user")
 include(":data:classes")

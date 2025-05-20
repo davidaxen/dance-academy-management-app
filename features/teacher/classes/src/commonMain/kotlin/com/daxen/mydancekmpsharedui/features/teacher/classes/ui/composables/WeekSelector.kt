@@ -1,4 +1,4 @@
-package com.daxen.mydancekmpsharedui.features.academy.classes.ui.composables
+package com.daxen.mydancekmpsharedui.features.teacher.classes.ui.composables
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -74,8 +74,8 @@ fun WeekSelector(
                     .clickable(
                         enabled = !isSelectedDateToday,
                         indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { onTodayClick() }
+                        interactionSource = remember { MutableInteractionSource() }) { onTodayClick() }
+
             )
             
             // Mostrar mes y año en el centro absoluto

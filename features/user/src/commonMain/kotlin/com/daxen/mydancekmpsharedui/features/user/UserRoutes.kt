@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.daxen.mydancekmpsharedui.data.user.model.UserRole
 import com.daxen.mydancekmpsharedui.features.user.ui.sections.personalData.PersonalDataScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserScreen
 import com.daxen.mydancekmpsharedui.features.user.ui.UserViewModel
@@ -148,7 +149,8 @@ fun NavGraphBuilder.academyUserNavGraph(navigateToLogin: () -> Unit, appNavContr
 
 fun NavGraphBuilder.academySelectionNavGraph(
     appNavController: NavController,
-    navigateToAcademy: () -> Unit,
+    navigateToStudentAcademy: () -> Unit,
+    navigateToTeacherAcademy: () -> Unit,
     navigateToLogin: () -> Unit
 ) {
     navigation<AcademySelectionGraph>(startDestination = AcademySelectionRoute) {
@@ -158,7 +160,13 @@ fun NavGraphBuilder.academySelectionNavGraph(
                 AcademySelectionScreen(
                     viewModel = viewModel,
                     navigateToLogin = navigateToLogin,
-                    navigateToAcademy = navigateToAcademy,
+                    navigateToAcademy = { userRole ->
+                        when (userRole) {
+                            UserRole.STUDENT -> navigateToStudentAcademy()
+                            UserRole.TEACHER -> navigateToTeacherAcademy()
+                            else -> {}
+                        }
+                    },
                     modifier = Modifier.align(Alignment.TopCenter),
                     navigateToSection = { action ->
                         when (action) {

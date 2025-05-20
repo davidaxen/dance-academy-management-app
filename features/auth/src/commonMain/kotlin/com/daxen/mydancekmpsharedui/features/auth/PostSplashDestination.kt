@@ -4,5 +4,5 @@ enum class PostSplashDestination {
     Login,
     CompleteProfile,
     AcademySelection,
-    AcademyHome
+    AcademyHome,
 }
