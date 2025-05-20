@@ -5,6 +5,8 @@ import com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassMod
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.mapper.toSpecificClassModel
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.mapper.toWeeklyClassModel
+import com.daxen.mydancekmpsharedui.data.teacher.classes.models.StudentReservation
+import com.daxen.mydancekmpsharedui.data.teacher.classes.models.mapper.toStudentReservation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.LocalDate
@@ -80,6 +82,25 @@ class TeacherClassesRepositoryImpl(
         return weeklyClass.fold(
             onSuccess = { it.toWeeklyClassModel() },
             onFailure = { throw it }
+        )
+    }
+    
+    override suspend fun getStudentReservationsByClassAndDate(
+        academyId: String,
+        classId: String,
+        date: String
+    ): List<StudentReservation> {
+        val result = classRepository.getStudentReservationsByClassAndDate(
+            academyId = academyId,
+            classId = classId,
+            date = date
+        )
+        
+        return result.fold(
+            onSuccess = { reservations ->
+                reservations.map { it.toStudentReservation() }
+            },
+            onFailure = { emptyList() }
         )
     }
 }
