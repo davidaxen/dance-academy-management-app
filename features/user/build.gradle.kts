@@ -46,6 +46,9 @@ kotlin {
 
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+
+            implementation(libs.peekaboo.ui)
+            implementation(libs.peekaboo.image.picker)
         }
         appleMain.dependencies {
             // Ktor client dependency required for iOS
