@@ -1,41 +1,58 @@
 package com.daxen.mydancekmpsharedui.features.teacher.classes.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 import com.daxen.mydancekmpsharedui.data.teacher.classes.models.StudentReservation
+import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.DanceRoleFilter
 import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.StudentsReservationListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,6 +66,8 @@ fun StudentsReservationListScreen(
 ) {
     val padding = LocalPadding.current
     val state by viewModel.state.collectAsState()
+    var isSearching by remember { mutableStateOf(false) }
+    var showFilterDropdown by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = classId) {
         viewModel.getStudentReservations(classId, date)
@@ -56,22 +75,113 @@ fun StudentsReservationListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = className, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
+            if (isSearching) {
+                TopAppBar(
+                    title = {
+                        TextField(
+                            value = state.searchQuery,
+                            onValueChange = viewModel::onSearchQueryChanged,
+                            placeholder = { Text("Buscar estudiante...") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
                         )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { isSearching = false }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Volver"
+                            )
+                        }
+                    },
+                    actions = {
+                        if (state.searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { viewModel.onSearchQueryChanged("") }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Limpiar búsqueda"
+                                )
+                            }
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 )
-            )
+            } else {
+                TopAppBar(
+                    title = { Text(text = className, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Volver"
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { isSearching = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Buscar"
+                            )
+                        }
+                        
+                        Box {
+                            IconButton(onClick = { showFilterDropdown = true }) {
+                                BadgedBox(
+                                    badge = {
+                                        if (state.danceRoleFilter != DanceRoleFilter.ALL) {
+                                            Badge {}
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.FilterList,
+                                        contentDescription = "Filtrar por rol"
+                                    )
+                                }
+                            }
+                            
+                            DropdownMenu(
+                                expanded = showFilterDropdown,
+                                onDismissRequest = { showFilterDropdown = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Todos") },
+                                    onClick = {
+                                        viewModel.onDanceRoleFilterChanged(DanceRoleFilter.ALL)
+                                        showFilterDropdown = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Leader") },
+                                    onClick = {
+                                        viewModel.onDanceRoleFilterChanged(DanceRoleFilter.LEADER)
+                                        showFilterDropdown = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Follower") },
+                                    onClick = {
+                                        viewModel.onDanceRoleFilterChanged(DanceRoleFilter.FOLLOWER)
+                                        showFilterDropdown = false
+                                    }
+                                )
+                            }
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                )
+            }
         }
     ) { paddingValues ->
         Box(
@@ -100,10 +210,14 @@ fun StudentsReservationListScreen(
                     )
                 }
                 else -> {
-                    StudentsList(
-                        students = state.students,
-                        contentPadding = PaddingValues(padding.normal)
-                    )
+                    Surface(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        StudentsList(
+                            students = state.students,
+                            contentPadding = PaddingValues(padding.normal)
+                        )
+                    }
                 }
             }
         }
@@ -145,56 +259,46 @@ private fun StudentsList(
 
 @Composable
 private fun StudentItem(student: StudentReservation) {
-    val padding = LocalPadding.current
+    val initials = getInitials(
+        firstName = student.studentInfo.name,
+        lastName = student.studentInfo.lastName
+    )
     
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = padding.small),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = padding.extraTiny
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(padding.normal)
-        ) {
+    ListItem(
+        headlineContent = { 
             Text(
                 text = "${student.studentInfo.name} ${student.studentInfo.lastName}",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Medium
             )
-            
-            Spacer(modifier = Modifier.height(padding.tiny))
-            
-            Row {
+        },
+        supportingContent = {
+            Text(
+                text = "Rol: ${student.studentInfo.danceRole}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        leadingContent = {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
-                    text = "Rol de baile:",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.padding(start = padding.tiny))
-                Text(
-                    text = student.studentInfo.danceRole,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(padding.tiny))
-            
-            Row {
-                Text(
-                    text = "Hora:",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.padding(start = padding.tiny))
-                Text(
-                    text = student.reservation.hour,
-                    style = MaterialTheme.typography.bodyMedium
+                    text = initials,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
-    }
+    )
+}
+
+private fun getInitials(firstName: String, lastName: String): String {
+    val firstInitial = firstName.firstOrNull()?.uppercase() ?: ""
+    val lastInitial = lastName.firstOrNull()?.uppercase() ?: ""
+    return "$firstInitial$lastInitial"
 }
