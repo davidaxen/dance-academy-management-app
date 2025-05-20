@@ -6,7 +6,6 @@ import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.StudentI
 import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.StudentReservation
 import com.daxen.mydancekmpsharedui.core.firebase.academy.classes.model.WeeklyClassModel
 import dev.gitlive.firebase.firestore.FirebaseFirestore
-import dev.gitlive.firebase.firestore.where
 import kotlinx.serialization.DeserializationStrategy
 
 class ClassRepositoryImpl(
@@ -190,8 +189,12 @@ class ClassRepositoryImpl(
             // Obtener todas las reservas para la clase y fecha específicas
             val reservationsQuery = firestore
                 .collection("/academies/$academyId/reservations")
-                .where("classId", "==", classId)
-                .where("date", "==", date)
+                .where {
+                    all(
+                        "classId" equalTo classId,
+                        "date" equalTo date
+                    )
+                }
                 .get()
                 .documents
             
@@ -210,16 +213,8 @@ class ClassRepositoryImpl(
                         .get()
                     
                     // Usar serialización para obtener el UserModel
-                    val userModel = userDoc.data(com.daxen.mydancekmpsharedui.core.firebase.user.models.UserModel.serializer())
-                    
-                    // Crear un StudentInfoReservation con los datos del usuario
-                    val studentInfo = StudentInfoReservation(
-                        uid = userModel.uid,
-                        name = userModel.name,
-                        lastName = userModel.lastName,
-                        danceRole = userModel.danceRole
-                    )
-                    
+                    val studentInfo = userDoc.data(StudentInfoReservation.serializer())
+
                     // Crear y retornar StudentReservation con los datos del estudiante y la reserva
                     StudentReservation(
                         studentInfo = studentInfo,

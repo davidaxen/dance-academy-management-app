@@ -56,10 +56,12 @@ fun ClassDetailScreen(
     classId: String,
     isWeekly: Boolean,
     dateSelected: String,
+    onListingReservations: (className: String) -> Unit,
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+    val classTitle by viewModel.classTitle.collectAsState()
+
     LaunchedEffect(classId, isWeekly) {
         viewModel.loadClass(classId, isWeekly)
     }
@@ -78,6 +80,15 @@ fun ClassDetailScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = "Volver atrás"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { onListingReservations(classTitle) }) {
+                        Icon(
+                            imageVector = Icons.Default.People,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = "Reservas"
                         )
                     }
                 }

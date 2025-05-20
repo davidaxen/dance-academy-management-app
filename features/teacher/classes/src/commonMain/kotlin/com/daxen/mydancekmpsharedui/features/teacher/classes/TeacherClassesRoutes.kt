@@ -9,10 +9,11 @@ import androidx.navigation.toRoute
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassModel
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel
 import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.ClassDetailScreen
+import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.StudentsReservationListScreen
 import com.daxen.mydancekmpsharedui.features.teacher.classes.ui.TeacherClassesScreen
 import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.ClassDetailViewModel
+import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.StudentsReservationListViewModel
 import com.daxen.mydancekmpsharedui.features.teacher.classes.viewmodel.TeacherClassesViewModel
-import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -29,6 +30,13 @@ sealed class TeacherClassesDestinations {
         val classId: String,
         val isWeekly: Boolean,
         val date: String,
+    ) : TeacherClassesDestinations()
+
+    @Serializable
+    data class StudentsReservationListRoute(
+        val classId: String,
+        val date: String,
+        val className: String,
     ) : TeacherClassesDestinations()
 }
 
@@ -52,7 +60,7 @@ fun NavGraphBuilder.teacherClassesGraph(
                     val navDestination = TeacherClassesDestinations.ClassDetailRoute(
                         classId = classId,
                         isWeekly = isWeekly,
-                        date = getSpanishDate(viewModel.selectedDate.value)
+                        date = viewModel.selectedDate.value.toString()
                     )
                     appNavController.navigate(navDestination)
                 }
@@ -61,16 +69,8 @@ fun NavGraphBuilder.teacherClassesGraph(
     }
 }
 
-private fun getSpanishDate(date: LocalDate): String {
-    val day = date.dayOfMonth
-    val month = date.monthNumber
-    val year = date.year
-
-    // Formatear la fecha en español
-    return "$day/$month/$year"
-}
-
 fun NavGraphBuilder.teacherClassDetailGraph(
+    appNavController: NavController,
     onBackClick: () -> Unit
 ) {
     composable<TeacherClassesDestinations.ClassDetailRoute> { backStackEntry ->
@@ -81,6 +81,33 @@ fun NavGraphBuilder.teacherClassDetailGraph(
             classId = classDetail.classId,
             isWeekly = classDetail.isWeekly,
             dateSelected = classDetail.date,
+            onListingReservations = { className ->
+                appNavController.navigate(
+                    TeacherClassesDestinations.StudentsReservationListRoute(
+                        classId = classDetail.classId,
+                        date = classDetail.date,
+                        className = className
+                    )
+                )
+            },
+            onBackClick = dropUnlessResumed {
+                onBackClick()
+            }
+        )
+    }
+}
+
+fun NavGraphBuilder.studentsReservationListGraph(
+    onBackClick: () -> Unit
+) {
+    composable<TeacherClassesDestinations.StudentsReservationListRoute> { backStackEntry ->
+        val studentReservations = backStackEntry.toRoute<TeacherClassesDestinations.StudentsReservationListRoute>()
+        val viewModel: StudentsReservationListViewModel = koinViewModel()
+        StudentsReservationListScreen(
+            viewModel = viewModel,
+            classId = studentReservations.classId,
+            date = studentReservations.date,
+            className = studentReservations.className,
             onBackClick = dropUnlessResumed {
                 onBackClick()
             }

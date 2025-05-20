@@ -19,6 +19,9 @@ class ClassDetailViewModel(
 ) : ViewModel() {
     
     private val currentUser: StateFlow<User> = userRepository.currentUser
+
+    private val _classTitle = MutableStateFlow("")
+    val classTitle: StateFlow<String> = _classTitle.asStateFlow()
     
     private val _uiState = MutableStateFlow(ClassDetailUiState())
     val uiState: StateFlow<ClassDetailUiState> = _uiState.asStateFlow()
@@ -32,6 +35,7 @@ class ClassDetailViewModel(
                 
                 if (isWeekly) {
                     val weeklyClass = teacherClassesRepository.getWeeklyClassById(academyId, classId)
+                    _classTitle.update { weeklyClass.name }
                     weeklyClass.let {
                         _uiState.update { state ->
                             state.copy(
@@ -43,6 +47,7 @@ class ClassDetailViewModel(
                     }
                 } else {
                     val specificClass = teacherClassesRepository.getSpecificClassById(academyId, classId)
+                    _classTitle.update { specificClass.name }
                     specificClass.let {
                         _uiState.update { state ->
                             state.copy(

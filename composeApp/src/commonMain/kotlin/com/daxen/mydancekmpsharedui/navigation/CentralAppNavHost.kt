@@ -19,6 +19,7 @@ import com.daxen.mydancekmpsharedui.features.auth.SubscriptionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.academyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.registerProcessNavGraph
+import com.daxen.mydancekmpsharedui.features.teacher.classes.studentsReservationListGraph
 import com.daxen.mydancekmpsharedui.features.teacher.classes.teacherClassDetailGraph
 import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph
 import com.daxen.mydancekmpsharedui.features.user.academyOptionsNavGraph
@@ -119,6 +120,11 @@ fun CentralAppNavHost(
         )
 
         teacherClassDetailGraph(
+            appNavController = navController,
+            onBackClick = { navController.popBackStack() }
+        )
+
+        studentsReservationListGraph(
             onBackClick = { navController.popBackStack() }
         )
         
