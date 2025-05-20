@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -83,15 +85,6 @@ fun ClassDetailScreen(
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = { onListingReservations(classTitle) }) {
-                        Icon(
-                            imageVector = Icons.Default.People,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            contentDescription = "Reservas"
-                        )
-                    }
-                }
             )
         }
     ) { paddingValues ->
@@ -128,6 +121,16 @@ fun ClassDetailScreen(
                         )
                     }
                 }
+            }
+
+            Button(
+                onClick = { onListingReservations(classTitle) },
+                shape = RoundedCornerShape(0),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
+                Text(text = "Ver reservas")
             }
         }
     }

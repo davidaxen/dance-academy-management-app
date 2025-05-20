@@ -1,10 +1,14 @@
 package com.daxen.mydancekmpsharedui.features.teacher.classes.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,9 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Badge
@@ -28,10 +33,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -44,6 +50,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,10 +75,12 @@ fun StudentsReservationListScreen(
     className: String,
     onBackClick: () -> Unit
 ) {
-    val padding = LocalPadding.current
     val state by viewModel.state.collectAsState()
     var isSearching by remember { mutableStateOf(false) }
+    var isFocused by remember { mutableStateOf(false) }
     var showFilterDropdown by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(key1 = classId) {
         viewModel.getStudentReservations(classId, date)
@@ -75,80 +88,164 @@ fun StudentsReservationListScreen(
 
     Scaffold(
         topBar = {
-            if (isSearching) {
-                TopAppBar(
-                    title = {
-                        TextField(
+            TopAppBar(
+                title = {
+                    AnimatedVisibility(
+                        visible = !isSearching,
+                        enter = slideInHorizontally(
+                            initialOffsetX = { -it }, // Empieza desde la izquierda
+                            animationSpec = tween(300)
+                        ),
+                        exit = slideOutHorizontally(
+                            targetOffsetX = { -it }, // Sale hacia la izquierda
+                            animationSpec = tween(300)
+                        )
+                    ) {
+                        Text(text = className, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+
+                    AnimatedVisibility(
+                        visible = isSearching,
+                        enter = slideInHorizontally(
+                            initialOffsetX = { it }, // Empieza desde la derecha
+                            animationSpec = tween(300)
+                        ),
+                        exit = slideOutHorizontally(
+                            targetOffsetX = { it }, // Sale hacia la derecha
+                            animationSpec = tween(300)
+                        )
+                    ) {
+                        OutlinedTextField(
                             value = state.searchQuery,
                             onValueChange = viewModel::onSearchQueryChanged,
-                            placeholder = { Text("Buscar estudiante...") },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { isSearching = false }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Volver"
-                            )
-                        }
-                    },
-                    actions = {
-                        if (state.searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { viewModel.onSearchQueryChanged("") }) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Limpiar búsqueda"
+                            modifier = Modifier
+                                .fillMaxHeight(0.8f)
+                                .fillMaxWidth(0.95f)
+                                .focusRequester(focusRequester)
+                                .onFocusChanged {
+                                    isFocused = it.isFocused
+                                },
+                            placeholder = {
+                                Text(
+                                    "Buscar",
+                                    color = if (isFocused)
+                                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                                    else
+                                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
                                 )
-                            }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                )
-            } else {
-                TopAppBar(
-                    title = { Text(text = className, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                    navigationIcon = {
+                            },
+                            leadingIcon = {
+                                IconButton(
+                                    onClick = {
+                                        isSearching = false
+                                        viewModel.onSearchQueryChanged("")
+                                        focusManager.clearFocus()
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Volver",
+                                        tint = if (isFocused)
+                                            MaterialTheme.colorScheme.onBackground
+                                        else
+                                            MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            },
+                            trailingIcon = {
+                                if (state.searchQuery.isNotEmpty()) {
+                                    IconButton(
+                                        onClick = {
+                                            viewModel.onSearchQueryChanged("")
+                                            focusManager.clearFocus()
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = "Borrar búsqueda",
+                                            tint = if (isFocused)
+                                                MaterialTheme.colorScheme.onBackground
+                                            else
+                                                MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    }
+                                }
+                            },
+                            singleLine = true,
+                            textStyle = TextStyle(
+                                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                                color = if (isFocused)
+                                    MaterialTheme.colorScheme.onBackground
+                                else
+                                    MaterialTheme.colorScheme.onPrimary
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                focusedContainerColor = MaterialTheme.colorScheme.background,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+                                focusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
+                                cursorColor = MaterialTheme.colorScheme.onBackground,
+                                focusedLeadingIconColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
+                                focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
+                            )
+                        )
+                    }
+                },
+                navigationIcon = {
+                    AnimatedVisibility(
+                        visible = !isSearching,
+                        enter = slideInHorizontally(
+                            initialOffsetX = { -it }, // Empieza desde la izquierda
+                            animationSpec = tween(300)
+                        ),
+                        exit = slideOutHorizontally(
+                            targetOffsetX = { -it }, // Sale hacia la izquierda
+                            animationSpec = tween(300)
+                        )
+                    ) {
                         IconButton(onClick = onBackClick) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Volver"
                             )
                         }
-                    },
-                    actions = {
+                    }
+                },
+                actions = {
+                    if (!isSearching) {
                         IconButton(onClick = { isSearching = true }) {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Buscar"
                             )
                         }
-                        
                         Box {
-                            IconButton(onClick = { showFilterDropdown = true }) {
-                                BadgedBox(
-                                    badge = {
-                                        if (state.danceRoleFilter != DanceRoleFilter.ALL) {
-                                            Badge {}
-                                        }
+                            BadgedBox(
+                                badge = {
+                                    if (state.danceRoleFilter != DanceRoleFilter.ALL) {
+                                        Badge(
+                                            modifier = Modifier.size(8.dp)
+                                        ) {}
                                     }
-                                ) {
+                                }
+                            ) {
+                                IconButton(onClick = { showFilterDropdown = true }) {
                                     Icon(
                                         imageVector = Icons.Default.FilterList,
                                         contentDescription = "Filtrar por rol"
                                     )
                                 }
                             }
-                            
+
                             DropdownMenu(
                                 expanded = showFilterDropdown,
-                                onDismissRequest = { showFilterDropdown = false }
+                                onDismissRequest = { showFilterDropdown = false },
+                                containerColor = MaterialTheme.colorScheme.background,
                             ) {
                                 DropdownMenuItem(
                                     text = { Text("Todos") },
@@ -173,15 +270,15 @@ fun StudentsReservationListScreen(
                                 )
                             }
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
-            }
+            )
         }
     ) { paddingValues ->
         Box(
@@ -215,7 +312,6 @@ fun StudentsReservationListScreen(
                     ) {
                         StudentsList(
                             students = state.students,
-                            contentPadding = PaddingValues(padding.normal)
                         )
                     }
                 }
@@ -245,11 +341,10 @@ private fun EmptyStudentsComponent(modifier: Modifier = Modifier) {
 @Composable
 private fun StudentsList(
     students: List<StudentReservation>,
-    contentPadding: PaddingValues
 ) {
     LazyColumn(
-        contentPadding = contentPadding
-    ) {
+        modifier = Modifier.fillMaxWidth()
+    ){
         items(students) { student ->
             StudentItem(student = student)
             HorizontalDivider()
@@ -293,7 +388,7 @@ private fun StudentItem(student: StudentReservation) {
                     fontWeight = FontWeight.Bold
                 )
             }
-        }
+        },
     )
 }
 
