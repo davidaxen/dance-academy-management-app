@@ -3,6 +3,7 @@ package com.daxen.mydancekmpsharedui.features.academy.classes.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
@@ -22,6 +23,7 @@ import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import com.daxen.mydancekmpsharedui.core.ui.composables.ErrorComponent
 import com.daxen.mydancekmpsharedui.core.ui.composables.LoadingComponent
 import com.daxen.mydancekmpsharedui.data.academy.classes.models.BaseClassModel
+import com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.ClassDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,11 +32,14 @@ fun ClassDetailScreen(
     viewModel: ClassDetailViewModel,
     classId: String,
     isWeekly: Boolean,
+    dateSelected: String,
+    onListingReservations: (String) -> Unit,
     onBackClick: () -> Unit,
     onDeletedSuccess: () -> Unit,
     onEditClick: (String, Boolean) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val classTitle by viewModel.classTitle.collectAsState()
     val showDeleteConfirmation by viewModel.showDeleteConfirmation.collectAsState()
     
     LaunchedEffect(classId, isWeekly) {
@@ -108,6 +113,7 @@ fun ClassDetailScreen(
                         ClassDetailContent(
                             classModel = classModel, 
                             isWeekly = uiState.isWeeklyClass,
+                            dateSelected = dateSelected,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(LocalPadding.current.normal)
@@ -115,6 +121,16 @@ fun ClassDetailScreen(
                         )
                     }
                 }
+            }
+
+            Button(
+                onClick = { onListingReservations(classTitle) },
+                shape = RoundedCornerShape(0),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
+                Text(text = "Ver reservas")
             }
         }
     }
@@ -132,6 +148,7 @@ fun ClassDetailScreen(
 fun ClassDetailContent(
     classModel: BaseClassModel,
     isWeekly: Boolean,
+    dateSelected: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -149,7 +166,8 @@ fun ClassDetailContent(
         // Información básica
         ClassInfoSection(
             classModel = classModel,
-            isWeekly = isWeekly
+            isWeekly = isWeekly,
+            dateSelected = dateSelected
         )
 
         HorizontalDivider()
@@ -210,7 +228,8 @@ fun ClassHeaderSection(
 @Composable
 fun ClassInfoSection(
     classModel: BaseClassModel,
-    isWeekly: Boolean
+    isWeekly: Boolean,
+    dateSelected: String
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -227,8 +246,14 @@ fun ClassInfoSection(
             label = "Hora",
             value = classModel.hour
         )
+
+        InfoItem(
+            icon = Icons.Default.Schedule,
+            label = "Hora",
+            value = dateSelected
+        )
         
-        if (isWeekly && classModel is com.daxen.mydancekmpsharedui.data.academy.classes.models.WeeklyClassModel) {
+        if (isWeekly && classModel is WeeklyClassModel) {
             InfoItem(
                 icon = Icons.Default.DateRange,
                 label = "Día de la semana",
@@ -242,12 +267,6 @@ fun ClassInfoSection(
                     "SUNDAY" -> "Domingo"
                     else -> classModel.dayOfWeek
                 }
-            )
-        } else if (!isWeekly && classModel is com.daxen.mydancekmpsharedui.data.academy.classes.models.SpecificClassModel) {
-            InfoItem(
-                icon = Icons.Default.Event,
-                label = "Fecha",
-                value = classModel.date
             )
         }
     }
