@@ -562,17 +562,18 @@ private fun ModalDrawerContent(
                         )
                     }
                 }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = LocalPadding.current.normal),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
             
             // Agregar un Spacer que ocupe completo el espacio disponible
             Spacer(modifier = Modifier.weight(1f))
             
             // Sección de usuario al final
             if (groupedScreens.containsKey(DrawerSection.User)) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = LocalPadding.current.normal),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
                 
                 Text(
                     text = DrawerSection.User.title,
