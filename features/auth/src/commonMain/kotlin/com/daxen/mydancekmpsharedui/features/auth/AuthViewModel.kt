@@ -31,15 +31,15 @@ class AuthViewModel(
 
     fun checkUserStateAfterLogin() {
         viewModelScope.launch {
+            userRepository.onLoginClear()
+            academyUserRepository.onLoginClear()
             setLoginDestinationUserLogged(userRepository.getUserToCheck())
         }
     }
 
     private fun setLoginDestinationUserLogged(user: User) {
         viewModelScope.launch {
-            userRepository.onLoginClear()
-            academyUserRepository.onLoginClear()
-            if (user == User.EMPTY) {
+            if (user.role != UserRole.ACADEMY && (user.name.isEmpty() || user.lastName.isEmpty())) {
                 _startingDestination.value = PostSplashDestination.CompleteProfile
             } else {
                 when (user.role) {

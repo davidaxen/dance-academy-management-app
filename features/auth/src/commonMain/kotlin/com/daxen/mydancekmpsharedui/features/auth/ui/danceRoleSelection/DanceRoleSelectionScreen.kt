@@ -29,6 +29,12 @@ internal fun DanceRoleSelectionScreen(
     val selectedRole by viewModel.selectedRole.collectAsState()
     val danceRoleSelectionState by viewModel.danceRoleSelectionState.collectAsState()
 
+    LaunchedEffect(danceRoleSelectionState) {
+        if (danceRoleSelectionState is DanceRoleSelectionState.Success) {
+            onNavigateNext()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -115,7 +121,6 @@ internal fun DanceRoleSelectionScreen(
                             text = "Terminar registro",
                             onClick = {
                                 viewModel.saveDanceRole()
-                                onNavigateNext()
                             },
                             isLoading = false,
                             isDisabled = selectedRole == null,
@@ -126,7 +131,6 @@ internal fun DanceRoleSelectionScreen(
                             text = "Terminar registro",
                             onClick = {
                                 viewModel.saveDanceRole()
-                                onNavigateNext()
                             },
                             isLoading = danceRoleSelectionState == DanceRoleSelectionState.Loading,
                             isDisabled = selectedRole == null,

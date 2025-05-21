@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +26,10 @@ fun TeachersListingScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.refreshTeachers()
+    }
     
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {

@@ -92,7 +92,7 @@ class AcademyUserRepositoryImpl(
         return firebaseAcademyUserService.getAcademyLogoUrl(id)
     }
 
-    override fun onLoginClear() {
+    override suspend fun onLoginClear() {
         _currentAcademy.value = UserAcademy.EMPTY
     }
 }

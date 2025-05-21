@@ -63,7 +63,7 @@ class UserRepositoryImpl(
         firebaseUserService.saveUserToDatabase(_currentUser.value.toUserResponse())
     }
 
-    override fun onLoginClear() {
+    override suspend fun onLoginClear() {
         _currentUser.value = User.EMPTY
     }
 

@@ -26,7 +26,7 @@ sealed class InviteStudentUiState {
 
 class InvitationStudentViewModel(
     private val academyStudentsRepository: AcademyStudentsRepository,
-    private val academyUserRepository: AcademyUserRepository
+    academyUserRepository: AcademyUserRepository
 ) : ViewModel() {
     private val currentAcademy: StateFlow<UserAcademy> = academyUserRepository.currentAcademy
     
@@ -105,7 +105,6 @@ class InvitationStudentViewModel(
     private fun loadCurrentAcademy() {
         viewModelScope.launch {
             try {
-                academyUserRepository.updateCurrentAcademy()
                 loadInvitations()
             } catch (e: Exception) {
                 _errorMessage.value = "Error al cargar la academia: ${e.message}"
