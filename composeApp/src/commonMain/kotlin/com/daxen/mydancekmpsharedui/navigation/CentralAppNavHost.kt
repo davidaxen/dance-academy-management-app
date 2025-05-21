@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.daxen.mydancekmpsharedui.features.academy.classes.academyClassDetailGraph
 import com.daxen.mydancekmpsharedui.features.academy.classes.academyEditClassGraph
+import com.daxen.mydancekmpsharedui.features.academy.classes.academyStudentsReservationListGraph
 import com.daxen.mydancekmpsharedui.features.academy.students.academyStudentsSectionsGraph
 import com.daxen.mydancekmpsharedui.features.academy.teachers.academyTeachersSectionsGraph
 import com.daxen.mydancekmpsharedui.features.auth.AcademyRegisterProcessNavGraph
@@ -19,7 +20,7 @@ import com.daxen.mydancekmpsharedui.features.auth.SubscriptionScreenRoute
 import com.daxen.mydancekmpsharedui.features.auth.academyRegisterProcessNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.authNavGraph
 import com.daxen.mydancekmpsharedui.features.auth.registerProcessNavGraph
-import com.daxen.mydancekmpsharedui.features.teacher.classes.studentsReservationListGraph
+import com.daxen.mydancekmpsharedui.features.teacher.classes.teacherStudentsReservationListGraph
 import com.daxen.mydancekmpsharedui.features.teacher.classes.teacherClassDetailGraph
 import com.daxen.mydancekmpsharedui.features.user.AcademySelectionGraph
 import com.daxen.mydancekmpsharedui.features.user.academyOptionsNavGraph
@@ -124,7 +125,11 @@ fun CentralAppNavHost(
             onBackClick = { navController.popBackStack() }
         )
 
-        studentsReservationListGraph(
+        teacherStudentsReservationListGraph(
+            onBackClick = { navController.popBackStack() }
+        )
+
+        academyStudentsReservationListGraph(
             onBackClick = { navController.popBackStack() }
         )
         

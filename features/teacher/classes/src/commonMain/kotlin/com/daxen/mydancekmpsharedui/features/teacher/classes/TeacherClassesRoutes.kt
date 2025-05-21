@@ -97,7 +97,7 @@ fun NavGraphBuilder.teacherClassDetailGraph(
     }
 }
 
-fun NavGraphBuilder.studentsReservationListGraph(
+fun NavGraphBuilder.teacherStudentsReservationListGraph(
     onBackClick: () -> Unit
 ) {
     composable<TeacherClassesDestinations.StudentsReservationListRoute> { backStackEntry ->

@@ -22,6 +22,9 @@ class ClassDetailViewModel(
     
     private val _uiState = MutableStateFlow(ClassDetailUiState())
     val uiState: StateFlow<ClassDetailUiState> = _uiState.asStateFlow()
+
+    private val _classTitle = MutableStateFlow("")
+    val classTitle: StateFlow<String> = _classTitle.asStateFlow()
     
     private val _showDeleteConfirmation = MutableStateFlow(false)
     val showDeleteConfirmation: StateFlow<Boolean> = _showDeleteConfirmation
@@ -36,6 +39,7 @@ class ClassDetailViewModel(
                 if (isWeekly) {
                     val weeklyClasses = academyClassesRepository.getWeeklyClassesByAcademyId(academyId)
                     val weeklyClass = weeklyClasses.find { it.id == classId }
+                    _classTitle.update { weeklyClass?.name ?: "" }
                     weeklyClass?.let {
                         _uiState.update { state ->
                             state.copy(
@@ -53,6 +57,7 @@ class ClassDetailViewModel(
                 } else {
                     val specificClasses = academyClassesRepository.getSpecificClassesByAcademyId(academyId)
                     val specificClass = specificClasses.find { it.id == classId }
+                    _classTitle.update { specificClass?.name ?: "" }
                     specificClass?.let {
                         _uiState.update { state ->
                             state.copy(

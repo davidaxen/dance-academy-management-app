@@ -15,19 +15,15 @@ class FirebaseAcademyStudentsRepositoryImpl(
             .get()
             .documents
 
-        return documents.map { doc ->
-            doc.data(StudentModel.serializer()).let { data ->
-                StudentModel(
-                    uid = doc.id,
-                    email = data.email,
-                    name = data.name,
-                    lastName = data.lastName,
-                    birthDate = data.birthDate,
-                    phoneNumber = data.phoneNumber,
-                    phoneNumberPrefix = data.phoneNumberPrefix,
-                    danceRole = data.danceRole
-                )
-            }
+        val firstListOfIds = documents.map { doc ->
+            doc.id
+        }
+
+        return firstListOfIds.map {
+            firestore.collection("users")
+                .document(it)
+                .get()
+                .data(StudentModel.serializer())
         }
     }
 

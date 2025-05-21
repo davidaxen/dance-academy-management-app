@@ -171,9 +171,6 @@ fun ClassDetailContent(
         )
         
         HorizontalDivider()
-        
-        // Estudiantes (solo visibles para profesores)
-//        StudentsSection(students = classModel.data.students)
     }
 }
 
@@ -263,67 +260,6 @@ fun ClassInfoSection(
         }
     }
 }
-
-//@Composable
-//fun StudentsSection(
-//    students: List<com.daxen.mydancekmpsharedui.data.teacher.classes.models.StudentModel>
-//) {
-//    Column(
-//        modifier = Modifier.fillMaxWidth(),
-//        verticalArrangement = Arrangement.spacedBy(16.dp)
-//    ) {
-//        Text(
-//            text = "Estudiantes",
-//            style = MaterialTheme.typography.titleMedium,
-//            fontWeight = FontWeight.Bold
-//        )
-//
-//        if (students.isEmpty()) {
-//            Text(
-//                text = "No hay estudiantes registrados en esta clase",
-//                style = MaterialTheme.typography.bodyMedium,
-//                color = MaterialTheme.colorScheme.onSurfaceVariant
-//            )
-//        } else {
-//            students.forEach { student ->
-//                StudentItem(student = student)
-//            }
-//        }
-//    }
-//}
-
-//@Composable
-//fun StudentItem(
-//    student: com.daxen.mydancekmpsharedui.data.teacher.classes.models.StudentModel
-//) {
-//    Row(
-//        modifier = Modifier.fillMaxWidth(),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Surface(
-//            modifier = Modifier.size(40.dp),
-//            shape = CircleShape,
-//            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
-//        ) {
-//            Box(
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Default.Person,
-//                    contentDescription = null,
-//                    tint = MaterialTheme.colorScheme.secondary
-//                )
-//            }
-//        }
-//
-//        Spacer(modifier = Modifier.width(16.dp))
-//
-//        Text(
-//            text = student.name,
-//            style = MaterialTheme.typography.bodyLarge
-//        )
-//    }
-//}
 
 @Composable
 fun ClassStatusSection(

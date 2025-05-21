@@ -21,34 +21,52 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessStarted
 import coil3.compose.AsyncImage
 import com.daxen.mydancekmpsharedui.core.ui.LocalPadding
 import org.koin.compose.viewmodel.koinViewModel
+import com.preat.peekaboo.image.picker.SelectionMode
+import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
 
 @Composable
 internal fun AcademyDataScreen(
     viewModel: AcademyDataViewModel = koinViewModel(),
     navigateBack: () -> Unit
 ) {
-//    val scope = rememberCoroutineScope()
-    
-//    val imagePicker = rememberImagePickerLauncher(
-//        selectionMode = SelectionMode.Single,
-//        scope = scope,
-//        onResult = { byteArrays ->
-//            byteArrays.firstOrNull()?.let { bytes ->
-//                viewModel.updateSelectedImage(bytes)
-//            }
-//        }
-//    )
+    val isUpdating by viewModel.isUpdating.collectAsState()
+    val savePressed by viewModel.savePressed.collectAsState()
+
+    LaunchedEffect(isUpdating) {
+        if (!isUpdating && savePressed) {
+            navigateBack()
+        }
+    }
+
+    val scope = rememberCoroutineScope()
+
+    val imagePicker = rememberImagePickerLauncher(
+        selectionMode = SelectionMode.Single,
+        scope = scope,
+        onResult = { byteArrays ->
+            byteArrays.firstOrNull()?.let { bytes ->
+                viewModel.updateSelectedImage(bytes)
+            }
+        }
+    )
     
     Scaffold (
         topBar = {
@@ -113,32 +131,32 @@ internal fun AcademyDataScreen(
                             .clip(CircleShape)
                     )
                 }
-//                else {
-//                    IconButton(
-//                        onClick = { imagePicker.launch() },
-//                        modifier = Modifier.size(120.dp)
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.AccountCircle,
-//                            contentDescription = "Subir logo",
-//                            tint = MaterialTheme.colorScheme.primary,
-//                            modifier = Modifier.size(120.dp)
-//                        )
-//                    }
-//                }
+                else {
+                    IconButton(
+                        onClick = { imagePicker.launch() },
+                        modifier = Modifier.size(120.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Subir logo",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(120.dp)
+                        )
+                    }
+                }
             }
             
-//            if (viewModel.logoUrl.isNotEmpty() && viewModel.selectedImage == null) {
-//                Button(
-//                    onClick = { imagePicker.launch() },
-//                    colors = ButtonDefaults.buttonColors(
-//                        backgroundColor = MaterialTheme.colorScheme.primary,
-//                        contentColor = MaterialTheme.colorScheme.onPrimary
-//                    )
-//                ) {
-//                    Text("Cambiar logo")
-//                }
-//            }
+            if (viewModel.logoUrl.isNotEmpty() && viewModel.selectedImage == null) {
+                Button(
+                    onClick = { imagePicker.launch() },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Text("Cambiar logo")
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
             
@@ -182,17 +200,25 @@ internal fun AcademyDataScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             Button(
-                onClick = { 
+                onClick = dropUnlessStarted {
                     viewModel.saveChanges()
-                    navigateBack()
                 },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
+                enabled = !isUpdating,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
             ) {
-                Text("Guardar cambios")
+                if (isUpdating) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text("Guardar cambios")
+                }
+
             }
             
             Spacer(modifier = Modifier.height(24.dp))

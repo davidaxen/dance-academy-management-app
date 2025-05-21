@@ -8,12 +8,21 @@ import androidx.lifecycle.viewModelScope
 import com.daxen.mydancekmpsharedui.data.user.model.UserAcademy
 import com.daxen.mydancekmpsharedui.data.user.repository.AcademyUserRepository
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AcademyDataViewModel(
     private val academyUserRepository: AcademyUserRepository
 ): ViewModel() {
     private val currentAcademy: StateFlow<UserAcademy> = academyUserRepository.currentAcademy
+
+    private val _isUpdating: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isUpdating: StateFlow<Boolean> = _isUpdating.asStateFlow()
+
+    private val _savePressed: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val savePressed: StateFlow<Boolean> = _savePressed.asStateFlow()
+
     var name by mutableStateOf("")
         private set
     var email by mutableStateOf("")
@@ -83,6 +92,8 @@ class AcademyDataViewModel(
     
     fun saveChanges() {
         viewModelScope.launch {
+            _savePressed.value = true
+            _isUpdating.value = true
             academyUserRepository.setAcademyInfo(
                 name = name,
                 nif = nif,
@@ -91,6 +102,7 @@ class AcademyDataViewModel(
                 closingTime = closingTime
             )
             academyUserRepository.saveToDatabase()
+            _isUpdating.value = false
         }
     }
 } 

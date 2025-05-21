@@ -12,10 +12,12 @@ import com.daxen.mydancekmpsharedui.features.academy.classes.ui.AcademyClassesSc
 import com.daxen.mydancekmpsharedui.features.academy.classes.ui.ClassDetailScreen
 import com.daxen.mydancekmpsharedui.features.academy.classes.ui.CreateClassScreen
 import com.daxen.mydancekmpsharedui.features.academy.classes.ui.EditClassScreen
+import com.daxen.mydancekmpsharedui.features.academy.classes.ui.StudentsReservationListScreen
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.AcademyClassesViewModel
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.ClassDetailViewModel
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.CreateClassViewModel
 import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.EditClassViewModel
+import com.daxen.mydancekmpsharedui.features.academy.classes.viewmodel.StudentsReservationListViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -33,7 +35,8 @@ sealed class AcademyClassesDestinations {
     @Serializable
     data class ClassDetailRoute(
         val classId: String,
-        val isWeekly: Boolean
+        val isWeekly: Boolean,
+        val date: String,
     ) : AcademyClassesDestinations()
     
     @Serializable
@@ -44,6 +47,13 @@ sealed class AcademyClassesDestinations {
 
     @Serializable
     data object CreateClassGraph : AcademyClassesDestinations()
+
+    @Serializable
+    data class StudentsReservationListRoute(
+        val classId: String,
+        val date: String,
+        val className: String,
+    ) : AcademyClassesDestinations()
 }
 
 fun NavGraphBuilder.academyClassesGraph(
@@ -65,7 +75,8 @@ fun NavGraphBuilder.academyClassesGraph(
                     
                     val navDestination = AcademyClassesDestinations.ClassDetailRoute(
                         classId = classId,
-                        isWeekly = isWeekly
+                        isWeekly = isWeekly,
+                        date = viewModel.selectedDate.value.toString()
                     )
                     appNavController.navigate(navDestination)
                 }
@@ -85,6 +96,16 @@ fun NavGraphBuilder.academyClassDetailGraph(
             viewModel = viewModel,
             classId = classDetail.classId,
             isWeekly = classDetail.isWeekly,
+            dateSelected = classDetail.date,
+            onListingReservations = { className ->
+                appNavController.navigate(
+                    AcademyClassesDestinations.StudentsReservationListRoute(
+                        classId = classDetail.classId,
+                        date = classDetail.date,
+                        className = className
+                    )
+                )
+            },
             onBackClick = dropUnlessResumed {
                 onBackClick()
             },
@@ -130,5 +151,23 @@ fun NavGraphBuilder.academyCreateClassGraph() {
             val viewModel: CreateClassViewModel = koinViewModel()
             CreateClassScreen(viewModel = viewModel)
         }
+    }
+}
+
+fun NavGraphBuilder.academyStudentsReservationListGraph(
+    onBackClick: () -> Unit
+) {
+    composable<AcademyClassesDestinations.StudentsReservationListRoute> { backStackEntry ->
+        val studentReservations = backStackEntry.toRoute<AcademyClassesDestinations.StudentsReservationListRoute>()
+        val viewModel: StudentsReservationListViewModel = koinViewModel()
+        StudentsReservationListScreen(
+            viewModel = viewModel,
+            classId = studentReservations.classId,
+            date = studentReservations.date,
+            className = studentReservations.className,
+            onBackClick = dropUnlessResumed {
+                onBackClick()
+            }
+        )
     }
 }

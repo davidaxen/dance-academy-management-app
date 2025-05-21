@@ -16,14 +16,16 @@ class FirebaseAcademyTeachersRepositoryImpl(
                 .collection("teachers")
                 .get()
                 .documents
-            
-            documents.map { doc ->
-                val teacher = doc.data(TeacherModel.serializer())
-                if (teacher.uid.isEmpty()) {
-                    teacher.copy(uid = doc.id)
-                } else {
-                    teacher
-                }
+
+            val firstListOfIds = documents.map { doc ->
+                doc.id
+            }
+
+            firstListOfIds.map {
+                firestore.collection("users")
+                    .document(it)
+                    .get()
+                    .data(TeacherModel.serializer())
             }
         } catch (e: Exception) {
             println("Error obteniendo profesores: ${e.message}")
