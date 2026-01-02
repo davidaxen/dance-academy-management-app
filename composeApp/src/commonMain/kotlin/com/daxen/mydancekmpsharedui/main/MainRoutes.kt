@@ -7,17 +7,38 @@ import androidx.navigation.compose.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object MainGraph
+data object StudentMainGraph
+@Serializable
+data object StudentMainScreen
 
 @Serializable
-data object MainScreen
+data object TeacherMainGraph
+@Serializable
+data object TeacherMainScreen
+
+@Serializable
+data object AcademyMainGraph
+@Serializable
+data object AcademyMainScreen
 
 fun NavGraphBuilder.mainNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
 ) {
-    navigation<MainGraph>(startDestination = MainScreen) {
-        composable<MainScreen> {
-            MainScreen(appNavController = navController)
+    navigation<StudentMainGraph>(startDestination = StudentMainScreen) {
+        composable<StudentMainScreen> {
+            StudentMainScreen(appNavController = navController)
+        }
+    }
+
+    navigation<TeacherMainGraph>(startDestination = TeacherMainScreen) {
+        composable<TeacherMainScreen> {
+            TeacherMainScreen(appNavController = navController)
+        }
+    }
+
+    navigation<AcademyMainGraph>(startDestination = AcademyMainScreen) {
+        composable<AcademyMainScreen> {
+            AcademyMainScreen(appNavController = navController)
         }
     }
 }

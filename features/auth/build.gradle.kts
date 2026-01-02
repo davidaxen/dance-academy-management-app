@@ -29,17 +29,31 @@ kotlin {
     }
 
     sourceSets {
+        androidMain.dependencies {
+            // Ktor client dependency required for Coil
+            implementation(libs.ktor.client.android)
+        }
         commonMain.dependencies {
-//            implementation(projects.domain.auth)
             implementation(projects.core.ui)
             implementation(projects.data.auth)
-
+            implementation(projects.data.user)
 
             implementation(libs.koin.core)
             implementation(libs.bundles.koin.compose)
 
+            implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
+
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
+
+            implementation(libs.peekaboo.ui)
+            implementation(libs.peekaboo.image.picker)
+        }
+        appleMain.dependencies {
+            // Ktor client dependency required for iOS
+            implementation(libs.ktor.client.darwin)
         }
     }
 }

@@ -32,13 +32,26 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.core.splashscreen)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(projects.core.ui)
             implementation(projects.features.auth)
             implementation(projects.features.user)
 
+            implementation(projects.features.student.reservation)
+            implementation(projects.features.student.calendar)
+
+            implementation(projects.features.academy.students)
+            implementation(projects.features.academy.teachers)
+            implementation(projects.features.academy.classes)
+
+            implementation(projects.features.teacher.classes)
+
             implementation(libs.navigation.compose)
+
+            implementation(libs.coil.compose)
 
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)

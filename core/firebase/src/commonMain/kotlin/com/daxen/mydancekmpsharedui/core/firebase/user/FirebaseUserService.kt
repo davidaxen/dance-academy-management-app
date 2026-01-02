@@ -1,7 +1,9 @@
 package com.daxen.mydancekmpsharedui.core.firebase.user
 
-import com.daxen.mydancekmpsharedui.core.firebase.user.response.UserResponse
+import com.daxen.mydancekmpsharedui.core.firebase.user.models.UserModel
 
 interface FirebaseUserService {
-    suspend fun getCurrentUserData(): UserResponse?
+    suspend fun getCurrentUserData(): UserModel
+    suspend fun saveUserToDatabase(userModel: UserModel)
+    suspend fun getUserToCheck(): UserModel
 }

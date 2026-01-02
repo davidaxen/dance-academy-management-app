@@ -3,44 +3,61 @@ package com.daxen.mydancekmpsharedui.features.auth.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daxen.mydancekmpsharedui.data.auth.repository.AuthRepository
+import com.daxen.mydancekmpsharedui.features.auth.utils.Validations
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.asStateFlow
 
 class LoginViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    fun login(email: String, password: String) {
+    private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
+    val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+
+    private val _emailError = MutableStateFlow<String?>(null)
+    val emailError: StateFlow<String?> = _emailError.asStateFlow()
+
+    private val _passwordError = MutableStateFlow<String?>(null)
+    val passwordError: StateFlow<String?> = _passwordError.asStateFlow()
+
+    private val _isLoggingIn = MutableStateFlow(false)
+    val isLoggingIn: StateFlow<Boolean> = _isLoggingIn.asStateFlow()
+
+    fun validateAndLogin(email: String, password: String) {
+        _emailError.value = Validations.validateEmail(email)
+        _passwordError.value = Validations.validatePassword(password)
+
+        if (_emailError.value == null && _passwordError.value == null) {
+            _isLoggingIn.value = true
+            login(email, password)
+        } else {
+            resetIsLoginIn()
+        }
+    }
+
+    private fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
-                println("entroooo")
+                _loginState.value = LoginState.Loading
                 authRepository.login(email.trim(), password.trim())
-            }catch (e: Exception) {
+                _loginState.value = LoginState.Success
+            } catch (e: Exception) {
                 println("LoginViewModel Error en login $e")
+                _loginState.value = LoginState.Error("Usuario o contraseña incorrectos")
             }
         }
     }
 
-    fun register(email: String, password: String) {
-        viewModelScope.launch {
-            try {
-                authRepository.register(email.trim(), password.trim())
-            }catch (e: Exception) {
-                println("UserViewModel Error en register $e")
-            }
-        }
+    fun resetIsLoginIn() {
+        _isLoggingIn.value = false
     }
 
-//    fun getCurrentUser() {
-//        viewModelScope.launch {
-//            try {
-//                val user = authRepository.getCurrentUser()
-//                _userState.value = user
-//            } catch (e: Exception) {
-//                _errorState.value = e.message
-//                Log.e("UserViewModel", "Error obteniendo usuario", e)
-//            }
-//        }
-//    }
+    fun resetErrors() {
+        _emailError.value = null
+        _passwordError.value = null
+    }
 
 //    fun logout() {
 //        viewModelScope.launch {

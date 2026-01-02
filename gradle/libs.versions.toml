@@ -5,8 +5,11 @@ android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
 androidx-lifecycle = "2.8.4"
+coilCompose = "3.0.4"
+ktor = "3.0.1"
 compose-multiplatform = "1.7.0"
 kotlin = "2.1.0"
+core-splashscreen = "1.0.1"
 
 # Google
 google-play-services = "4.4.2"
@@ -23,19 +26,27 @@ firebase-bom = "33.10.0"
 gitlive = "2.1.0"
 
 # ViewModel
+kotlinxDatetime = "0.6.2"
 viewmodel = "2.8.2"
 
 # Navigation
 navigation = "2.8.0-alpha10"
-material3Android = "1.3.1"
+
+# ImagePicker
+peekaboo = "0.5.2"
+startupRuntime = "1.2.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 
+# Splash
+core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
+
 # Kotlin
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 # Dependency Injection
@@ -49,13 +60,29 @@ koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-view
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom"}
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "gitlive" }
 firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "gitlive" }
+firebase-storage = { module = "dev.gitlive:firebase-storage", version.ref = "gitlive" }
 
+# Coil
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
+
+# Ktor
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
 # ViewModel
 viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel" }
 
 # Navigation
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation"}
+
+# ImagePicker
+peekaboo-ui = { module = "io.github.onseok:peekaboo-ui", version.ref = "peekaboo" }
+peekaboo-image-picker = { module = "io.github.onseok:peekaboo-image-picker", version.ref = "peekaboo" }
+
+
+material-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "compose-multiplatform" }
+androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startupRuntime" }
 
 [bundles]
 koin-compose = ["koin-compose", "koin-compose-viewmodel", "koin-compose-viewmodel-navigation"]
