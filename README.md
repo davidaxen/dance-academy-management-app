@@ -13,6 +13,22 @@
 > 
 > **Note:** This app requires Firebase configuration. Make sure to set up your `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) files before building.
 
+<p align="center">
+  <img width="20%" alt="login" src="https://github.com/user-attachments/assets/c4a37749-bc84-436a-8345-9b70489a6692" />
+  &nbsp;
+  <img width="20%" alt="reg_step1" src="https://github.com/user-attachments/assets/d64411a7-a4bc-4d54-ae2e-0c7ce96f7786" />
+  &nbsp;
+  <img width="20%" alt="stu_classes_list2" src="https://github.com/user-attachments/assets/100eb6bf-ef9b-4939-b16f-43b76bfd1399" />
+  &nbsp;
+  <img width="20%" alt="stu_calendar" src="https://github.com/user-attachments/assets/1012e77b-5cfe-472b-be2a-d0a4d541fec6" />
+  &nbsp;
+  <img width="20%" alt="aca_drawer" src="https://github.com/user-attachments/assets/9498fb55-a73b-4038-8e6d-46e7866910df" />
+  &nbsp;
+  <img width="20%" alt="aca_add_class_week" src="https://github.com/user-attachments/assets/c01f54d6-baea-49a7-a144-9a48d9505fef" />
+  &nbsp;
+  <img width="20%" alt="aca_classes_list2" src="https://github.com/user-attachments/assets/30aa193b-6995-4dbe-9631-b8a606a3b84a" />
+</p>
+
 ## 📱 Features
 
 ### 🎓 For Students
