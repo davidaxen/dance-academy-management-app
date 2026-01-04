@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://www.android.com/"><img alt="Platform" src="https://img.shields.io/badge/platform-android%20%7C%20ios-brightgreen.svg"/></a>
-  <a href="https://developer.android.com/about/versions/oreo"><img alt="API" src="https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat"/></a>
+  <a href="https://developer.android.com/about/versions/nougat"><img alt="API" src="https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat"/></a>
   <a href="https://github.com/JetBrains/kotlin/releases/tag/v2.1.0"><img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.1.0-blueviolet"/></a>
   <a href="https://github.com/davidaxen/dance-academy-management-app/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/davidaxen/dance-academy-management-app"/></a>
 </p>
